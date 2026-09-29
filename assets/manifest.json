@@ -235,35 +235,35 @@
     "source": "License notice, see CREDITS.md",
     "license": "License text",
     "included_in_web": true,
-    "sha256": "1521541fa69917336cd16e053a47fa03f501bcd894747379a4b7addc686374b5"
+    "sha256": "4df4e7c1961597d44820378086b0e4076a2a9033b9a07d273b3ec390d1d28e00"
   },
   {
     "file": "assets/licenses/Kenney-Particle-Pack.txt",
     "source": "License notice, see CREDITS.md",
     "license": "License text",
     "included_in_web": true,
-    "sha256": "f9e70b81d8cc07c4e07c9f2eff1d94fd371a06070b18cb67c651c41158ec2975"
+    "sha256": "4afb597023cfbbe495c92bee612074fdff33226e7427b1f879aa66f157fb44ce"
   },
   {
     "file": "assets/licenses/Kenney-UI-Adventure.txt",
     "source": "License notice, see CREDITS.md",
     "license": "License text",
     "included_in_web": true,
-    "sha256": "593b79956190ca70b37ce5d0d1c71dd4b5fb4027d4d1d29a91814e950a36e6bd"
+    "sha256": "1c35afddccccc543701b28b42add0d233ba6f953f661d6f94ce2c25252cd87a3"
   },
   {
     "file": "assets/licenses/Kenney-UI-Audio.txt",
     "source": "License notice, see CREDITS.md",
     "license": "License text",
     "included_in_web": true,
-    "sha256": "4f88ab3c885c87874834441a0d009cea8942f57461d7b870be65cf4e31362073"
+    "sha256": "59ddfd5115d504327def64663e2382009cc396919b41cb0feee638cb9490cd3a"
   },
   {
     "file": "assets/licenses/MPLUS-OFL.txt",
     "source": "License notice, see CREDITS.md",
     "license": "License text",
     "included_in_web": true,
-    "sha256": "5151af621371af19129667750bd1bad20a31460737500d89662569a29d26b236"
+    "sha256": "a80fe5dde938264f887647a3f23a3702c94bbbc452cadddeb9ac4f2e01d56def"
   },
   {
     "file": "assets/reference/color_palette_reference_v01.png",
