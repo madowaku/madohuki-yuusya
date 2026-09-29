@@ -1,0 +1,317 @@
+[
+  {
+    "file": "assets/art/sparkle.png",
+    "source": "https://kenney.nl/assets/particle-pack",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "6485ac16c773663bd39346f3bedae04465ac14c661eb47cc5cfa935cdbf6c2ec"
+  },
+  {
+    "file": "assets/audio/clear.wav",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "8e5c1d5306091001cd5dc03ca0a129cbb2e28d9e62049788b212342178c144db"
+  },
+  {
+    "file": "assets/audio/garden.wav",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "f9add93df17e9ed8ca2fb3d050b08097e4d550ff5dfea58d8398f9c924d1c13a"
+  },
+  {
+    "file": "assets/audio/place.ogg",
+    "source": "https://kenney.nl/assets/ui-audio",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "e3e7fc7ccd9c5cfdf77bffa05aee10d4973812076c76dc889ba2b16ea434127f"
+  },
+  {
+    "file": "assets/audio/retrieve.ogg",
+    "source": "https://kenney.nl/assets/ui-audio",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "7a3032d1dae63d1096cf2f1e59cb43e598d5229dcb9617e9d3fb13e96c78d5f2"
+  },
+  {
+    "file": "assets/audio/shine.wav",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "a2e28ab02b5757a5a76aa25f168fc377cca4783e7a1fd2324381e88fc0e0fbed"
+  },
+  {
+    "file": "assets/audio/step.wav",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "fdaa6fc2093e982f722f08ccc5916ff2adb2d51e25d880a0e8d86c88e4085a0c"
+  },
+  {
+    "file": "assets/audio/wipe.wav",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "6823f3fee2c97e0eda167d1d938e94228977c92c4375619a0dd6084fffc352f9"
+  },
+  {
+    "file": "assets/ChatGPT 画像 2026年9月29日 23_30_48.png",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "feb30d52a20f6256d0d546c93c252e514e4f72895f979b55b5a669c81101f6ca"
+  },
+  {
+    "file": "assets/ChatGPT 画像 2026年9月29日 23_31_00.png",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "11d6d6b18bc4d490e52720639e268ab90a35d2658343f5bda729197efc535276"
+  },
+  {
+    "file": "assets/fonts/MPLUSRounded1c-Regular.ttf",
+    "source": "https://github.com/google/fonts/tree/main/ofl/mplusrounded1c",
+    "license": "OFL-1.1",
+    "included_in_web": true,
+    "sha256": "b75708b53e45b06d17d470aeeca5b766e3d1b3999f03f13ec4eb863ca846c14c"
+  },
+  {
+    "file": "assets/generated/processed/README.md",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": false,
+    "sha256": "83c921dd5e5ccd42797f8061f79a533a751c82b98674165fc36cbfed87eaadec"
+  },
+  {
+    "file": "assets/generated/production_prompts.json",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": false,
+    "sha256": "a1fa19a8e2ac6ba20b536b532cb75800a03b3495e319374d44c8b83ca492fa36"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_carry_ladder_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "86a8c7c312dab0eccb642daef3c2255ad6ad65612931a3268c7279166a3736ef"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_climb_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "476cf13d99a60bcbc469cf8613d19e3e5c340785f3741a78f2958ff523f422c5"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_idle_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "50841acbff63f3990bf2df71b25ddb4c933bea27292a7293ea89b1b61d31f8be"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_master_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "135c1674b560864d1b796427e22ee791c72909b3eacf4f8899ba5ff23ba1a6e5"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_place_ladder_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "35de3a24c5d27fb0548f5507400110b96bf4bcea9ea5747a16e37153599bbad1"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_walk_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "efc77e7a8f2f3c374222b611cb6b55d2ff165500b2aca4d29231643acb4cb758"
+  },
+  {
+    "file": "assets/generated/raw/hero/hero_wipe_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "17f5283322188930fd7b421578c03271063999d54204862579d4515cf7d36d79"
+  },
+  {
+    "file": "assets/generated/raw/items/item_legendary_ladder_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "b7817496eb060205f5f44ae94a6030fc908268ac84424d58831371528e978a85"
+  },
+  {
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_happy_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "8de6d52acf1baf4b32a71de135728b6b53af65427a53177c6f159ba15829c66c"
+  },
+  {
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_neutral_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "871fbe231c5971799714eacb04f1dbe8ef18e5d47232d416747e67ce6c836b9d"
+  },
+  {
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_surprised_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "12990777e7493311dad844e05356be6f533868386e955b0f3809bb0788a5428e"
+  },
+  {
+    "file": "assets/generated/raw/npc/npc_moon_moth_astronomer_happy_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "56d107144db2272c9e3c0ee047b9ed7fd51004084756472f4401c74fac3ce421"
+  },
+  {
+    "file": "assets/generated/raw/windows/dirt_bird_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "ef33a15087dcd907921ccc5791f3010236d99dd98a73436e3294e2b227d74adf"
+  },
+  {
+    "file": "assets/generated/raw/windows/dirt_magic_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "ea5ec047546332623ff347e06d24071f6e7e83d47d2461dd583071a46ae0bebc"
+  },
+  {
+    "file": "assets/generated/raw/windows/dirt_mud_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "964e07b3fc44bd8585d193490871c2c31c44f6d779b9b79f4a7be2738a8da09f"
+  },
+  {
+    "file": "assets/generated/raw/windows/dirt_soot_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "f7c74f24cfd55c460a007ad59cee61ae306db549c26b2dfc240f398ff83337fa"
+  },
+  {
+    "file": "assets/generated/raw/windows/dirt_streak_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "f2071af4e4ea7a4cf1755eccb2dff018b72e64da91f5da3cd869f0a4e60d74af"
+  },
+  {
+    "file": "assets/generated/raw/windows/window_heart_clean_hint_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "5a67c262cd99d83bc738077530c2ca16f7abaaaa818403d4851f9bcf1c15ce7f"
+  },
+  {
+    "file": "assets/generated/raw/windows/window_heart_concept_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "762a3cc1c62cfe0bc891636a8176cd39705762819c6094f47a9fefece373709d"
+  },
+  {
+    "file": "assets/licenses/Godot-MIT.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "b0435e3b3e4e55238f05f4b306f30524a1b2e20147810d436eaa554fa6855c80"
+  },
+  {
+    "file": "assets/licenses/Kenney-Medieval.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "1521541fa69917336cd16e053a47fa03f501bcd894747379a4b7addc686374b5"
+  },
+  {
+    "file": "assets/licenses/Kenney-Particle-Pack.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "f9e70b81d8cc07c4e07c9f2eff1d94fd371a06070b18cb67c651c41158ec2975"
+  },
+  {
+    "file": "assets/licenses/Kenney-UI-Adventure.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "593b79956190ca70b37ce5d0d1c71dd4b5fb4027d4d1d29a91814e950a36e6bd"
+  },
+  {
+    "file": "assets/licenses/Kenney-UI-Audio.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "4f88ab3c885c87874834441a0d009cea8942f57461d7b870be65cf4e31362073"
+  },
+  {
+    "file": "assets/licenses/MPLUS-OFL.txt",
+    "source": "License notice, see CREDITS.md",
+    "license": "License text",
+    "included_in_web": true,
+    "sha256": "5151af621371af19129667750bd1bad20a31460737500d89662569a29d26b236"
+  },
+  {
+    "file": "assets/reference/color_palette_reference_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "76780948797c0160d18ffc75c09a51c0219cacc5914346376bc09fea95a7edff"
+  },
+  {
+    "file": "assets/reference/hero_master.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "135c1674b560864d1b796427e22ee791c72909b3eacf4f8899ba5ff23ba1a6e5"
+  },
+  {
+    "file": "assets/reference/palette.json",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": false,
+    "sha256": "312382f61c4333d58e73a8a01fe152c1ed0aa182b8371e7baeb18bf8cb3976b0"
+  },
+  {
+    "file": "assets/reference/style_reference_v01.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": false,
+    "sha256": "ec6e2855064d0a1cb124e08001e05f32be259caafa822ab3517f79aa032d331c"
+  },
+  {
+    "file": "assets/third_party/kenney_medieval/medieval_tilesheet.png",
+    "source": "https://kenney.nl/assets/platformer-pack-medieval",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "f309f4a0febc49c84dac68f5790511e8b3ac3d6fc21e4d3665cc4574ffaf8104"
+  },
+  {
+    "file": "assets/third_party/kenney_ui_adventure/panel_border_grey.png",
+    "source": "https://kenney.nl/assets/ui-pack-adventure",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "52abbede7e9c092db7dcbfeebf8568a7f5ed35e01e06d05211728eb96b4e2093"
+  },
+  {
+    "file": "assets/third_party/kenney_ui_adventure/panel_grey.png",
+    "source": "https://kenney.nl/assets/ui-pack-adventure",
+    "license": "CC0-1.0",
+    "included_in_web": true,
+    "sha256": "823f82a293bc1c61854d7c4f96e1de0f8aec4f767c0754124708ca3ad6bc9879"
+  }
+]

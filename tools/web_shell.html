@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#172735">
+<link rel="icon" href="data:,">
+<title>窓ふき勇者 · WINDOW HERO</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#172735;color:#f7e7c5;font-family:system-ui,sans-serif;touch-action:none;overscroll-behavior:none}
+body{display:grid;place-items:center;background:radial-gradient(ellipse at center,#35545d,#172735 70%)}
+#canvas{display:block;width:100%;height:100%;outline:0;touch-action:none}
+#status{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#172735;text-align:center;padding:24px;z-index:10}
+#status h1{font-size:24px;letter-spacing:.08em;margin:0}#status p{max-width:340px;font-size:14px;line-height:1.7;color:#bcd2bf}
+#progress{width:min(260px,75vw);height:5px;accent-color:#e4c58d}#error{color:#f6ce9d;white-space:pre-wrap;font-size:14px;max-width:480px}
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas" tabindex="0">Your browser needs WebGL 2 to play WINDOW HERO.</canvas>
+<div id="status"><div style="font-size:40px">✦</div><h1>WINDOW HERO</h1><p>お城に、光を。<br>Opening a little window to the world…</p><progress id="progress"></progress><div id="error"></div></div>
+<script src="$GODOT_URL"></script>
+<script>
+const engine = new Engine($GODOT_CONFIG);
+const status = document.getElementById('status');
+engine.startGame({canvas:document.getElementById('canvas'),onProgress:(current,total)=>{const bar=document.getElementById('progress');if(total>0){bar.value=current;bar.max=total;}}}).then(()=>{status.style.display='none';document.getElementById('canvas').focus();}).catch(error=>{document.getElementById('error').textContent='起動できませんでした。ページを再読み込みしてください。\nPlease reload, or try a browser with WebGL 2.\n'+error.message;});
+document.addEventListener('contextmenu',event=>event.preventDefault());
+</script>
+</body></html>

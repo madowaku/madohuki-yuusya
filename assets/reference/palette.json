@@ -1,0 +1,6 @@
+{
+  "note": "Canonical exact colors. The generated palette image is a visual reference, not a colorimetric source.",
+  "exterior": ["#243844", "#354F60", "#627C86", "#91A5A5"],
+  "interior": ["#795840", "#C99060", "#E8BD70", "#F3E3B5"],
+  "accents": ["#518D83", "#B9E9BE", "#E5B889", "#D88772"]
+}

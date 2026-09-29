@@ -1,0 +1,241 @@
+[
+  {
+    "name": "hero_master_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_master_v01.png",
+    "prompt": "Use case: illustration-story. Asset type: hero_master_v01.png, the canonical master character for a portrait 2D cozy fantasy game named WINDOW HERO. Generate ONE full-body, standalone original protagonist on genuinely transparent background, no ground, no contact shadow, no typography. Small endearing fantasy adventurer, approximately 2.7 heads tall, large readable head, compact limbs, kind dark eyes, tousled chestnut hair, warm light skin, tiny rosy cheeks. They wear a soft golden-ochre medieval traveling cap with a gently bent tip and broad short brim, a short teal-green cape fastened by one simple round brass clasp, cream linen tunic, muted teal shorts, brown leather ankle boots, small tan belt pouch. Hold an unmistakable broad rubber window squeegee with short wooden handle in one hand, a SMALL simple copper bucket in the other. This is a resourceful peaceful hero, not a soldier or a modern janitor. Facing screen right in a 3/4 side view, friendly quietly confident neutral standing pose, both feet visible, hands and tools separate from body silhouette. Style: charming European/Japanese picture-book inspired clean 2D game illustration, bold confident dark desaturated navy contour, rounded shapes, restrained flat cel shading with at most two tones per material, very shallow volume, minimal interior detail, no texture noise, no painterly haze. Palette: outline #243844, teal #518D83, golden cap #E8BD70, cream #F3E3B5, warm skin #E5B889, boots #795840. It must read immediately at 96 pixels total character height against a cool slate-blue castle. Character centered, fills about 80% of square image height, consistent orthographic-ish side-game camera, generous transparent margin around all tools. No sword, armor, shield, pointed weapons, cape flutter obscuring tools, realistic lighting, 3D render, pixel art, grid, checkerboard painted into background, labels, multiple characters, pose sheet. Output transparent PNG.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "style_reference_v01",
+    "category": "reference",
+    "file": "assets/reference/style_reference_v01.png",
+    "prompt": "Use case: illustration-story. Create a production STYLE REFERENCE board for the cozy 2D game WINDOW HERO. The attached hero is the canonical character reference: preserve golden floppy cap, teal short cape, cream tunic, brown boots, chestnut hair, round cute proportions. Create one cohesive square board on transparent outside margins with three generously separated illustrated vignette panels and NO TEXT. Large main vignette: cool desaturated slate-blue medieval castle wall at night, simplified rounded masonry, one grimy dark window and one freshly clean glowing amber window with an inviting tiny cozy shop interior; the EXACT referenced small hero wipes the clean window while standing on a wooden ladder, readable at thumbnail scale. Smaller vignettes: a close-up of a warm lit window and a close-up of simple mint/ochre interface buttons, each as separate graphic examples. Thick desaturated navy outlines, restrained flat cel shading, two-tone materials, shallow depth, storybook game art, no photorealism or pixel art. Cool exterior #354F60 #627C86; warm interior #E8BD70 #F3E3B5; teal #518D83 and mint #B9E9BE accents; outline #243844. Emphasize cold outdoors versus warm little lives inside. No dramatic combat, weapons, realistic texture, labels, watermarks, fake checkerboard. This is an art-direction reference, not a screenshot or new game level. Transparent background outside the isolated panels.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "color_palette_reference_v01",
+    "category": "reference",
+    "file": "assets/reference/color_palette_reference_v01.png",
+    "prompt": "Use case: infographic-diagram. Create a clean square color/style palette reference image for a cozy storybook 2D fantasy window-cleaning game. Transparent background around discrete rounded square color swatches arranged in 3 clearly separated horizontal rows, no backdrop. Top row cool exterior with four large swatches: #243844, #354F60, #627C86, #91A5A5. Middle row warm window interior with four large swatches: #795840, #C99060, #E8BD70, #F3E3B5. Bottom row hero and UI accents with four large swatches: #518D83, #B9E9BE, #E5B889, #D88772. Each swatch is a simple flat colored rounded square with one narrow darker cel-shading strip along its bottom edge and a dark navy contour, generous space between. Beneath each swatch print its EXACT hex code in readable dark navy letters on a small cream pill. Above rows the labels exactly 'NIGHT / CASTLE', 'LIGHT / HOME', 'HERO / UI'. Add only a small faithful portrait of the attached canonical gold-hat teal-cape hero at the top right as style cue, avoiding overlap with labels. Minimal production design, precise swatches, no gradients, no realistic textures, no fake checkerboard. Transparent PNG.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "item_legendary_ladder_v01",
+    "category": "items",
+    "file": "assets/generated/raw/items/item_legendary_ladder_v01.png",
+    "prompt": "Use case: stylized-concept. ONE standalone legendary ladder prop for WINDOW HERO, matching the attached hero and picture-book art reference. Tall narrow vertical ladder, orthographic front three-quarter view, complete silhouette with generous transparent margins. Warm honey wood rails, dark desaturated navy bold contours, 10 clear broad rungs; brass cuffs and tiny sky-blue inlays. At the TOP, a large amusing pair of rounded little carved CLOUD WINGS and a golden sun medallion with a humble sleepy smiling face, like a ridiculous holy relic made for washing the windows of heaven. Two small wooden extensions telescoping upward suggest this everyday tool could extend impossibly far. It must unquestionably read as a useful LADDER, not a weapon, throne, doorway or ornate sword. Feet have sturdy simple brass caps. Magical without elaborate filigree; few large shapes, shallow flat 2D cel shading, warm gold with muted teal accents, friendly cozy fantasy. Entire ladder isolated, no hero, no castle, no scenery, no ground or shadow, no atmospheric background, no labels, no particles detached far from silhouette, no realism or 3D. Portrait composition within image. Transparent PNG.",
+    "reference_images": [
+      "assets/reference/hero_master.png",
+      "assets/reference/style_reference_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_idle_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_idle_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, 3/4 game view facing RIGHT, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. Hero's head size consistent across poses; hat near top 12%, feet at 90% canvas height. One character only; no sheet, no extra limbs. Neutral relaxed standing, kind quiet smile. Hold squeegee upright to the right and small copper bucket in left hand. Slightly relaxed elbows. Keep both boots visible.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_walk_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_walk_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, 3/4 game view facing RIGHT, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. Hero's head size consistent across poses; hat near top 12%, feet at 90% canvas height. One character only; no sheet, no extra limbs. Clear energetic WALK stride to right, right foot reaching forward, left boot back, cape gently trailing, squeegee carried close to chest, bucket swings lightly from other hand. No motion lines. Same friendly face.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_carry_ladder_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_carry_ladder_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, 3/4 game view facing RIGHT, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. Hero's head size consistent across poses; hat near top 12%, feet at 90% canvas height. One character only; no sheet, no extra limbs. CARRY A PLAIN WOODEN LADDER over one shoulder; ladder runs diagonally from lower left to upper right behind the hero, four or five large rungs, both hands safely support it, alert friendly smile. The plain wood ladder is longer than hero but entirely within canvas. No squeegee or bucket in hands; tiny bucket hooked at belt. Keep hero body same size as reference, with hat/boots near the same vertical position.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_place_ladder_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_place_ladder_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, game sprite, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. One character only; no sheet, no extra limbs. PLACE LADDER pose, 3/4 view facing RIGHT, knees slightly bent, both hands forward at waist and chest height bracing a plain wooden ladder tilted diagonally upward to the right. Show only a short four-rung ladder completely inside canvas, NOT continuing off edge. It is being set firmly onto the ground. No squeegee in hand. Small bucket on belt. Clear active grounded silhouette, keep entire hat and boots visible.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_climb_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_climb_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, game sprite, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. One character only; no sheet, no extra limbs. CLIMB pose, three-quarter REAR SIDE view facing right, one arm reaching up to an imaginary rung, opposite arm bent at chest level, right knee raised distinctly, left boot lower. Show hero ONLY, NO ladder because the game draws it separately. Face partly visible in profile looking upward, happy concentration. Squeegee safely tucked into belt behind. Small copper bucket on belt. Keep full body with hand, cap and boots separate in silhouette. No window or wall. Feet baseline near 90 percent, cap top near 12 percent, raised hand may reach 5 percent.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "hero_wipe_v01",
+    "category": "hero",
+    "file": "assets/generated/raw/hero/hero_wipe_v01.png",
+    "prompt": "Edit the attached canonical WINDOW HERO master into ONE standalone action pose. Preserve EXACT identity: same face, chestnut hair, floppy ochre cap, teal short cape with round brass clasp, cream lace-up tunic, brown belt pouch, teal shorts and brown ankle boots. Same outline weight, shallow cel shading and compact cute proportions; face and costume must not be redesigned. Full body, game sprite, no text, no scene, no ground, no cast shadow or glow. Square transparent PNG. Generous margin. One character only; no sheet, no extra limbs. WIPE pose, side three-quarter facing RIGHT. Hero leans forward with a satisfied bright smile, right arm reaching diagonally up and far right using a broad rubber SQUEEGEE, blade horizontal at forehead height. Left hand balances out to side. Both boots on same baseline, knees softly bent. Small bucket on belt. Strong sweeping gesture but no motion streaks, NO glass or window, NO bubbles, no scenery. Hat top near12 percent, boots near90 percent. Entire squeegee within frame.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "npc_goblin_merchant_neutral_v01",
+    "category": "npc",
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_neutral_v01.png",
+    "prompt": "Use case: illustration-story. Create ONE original friendly GOBLIN MERCHANT, full body standalone transparent game sprite, same storybook world and drawing technique as attached WINDOW HERO. Use hero only as STYLE reference, not character identity. Cute stocky small adult goblin with sage green skin, enormous horizontally pointed ears with warm inner ears, round bulb nose, two tiny harmless lower teeth, kind large eyes behind little round brass spectacles. Ochre soft merchant beret, terracotta short vest, cream shirt, muted teal striped neck scarf, brown shoes, tan apron with one big pocket. Holds a SMALL ledger tucked under one arm and other hand relaxed open. 2.7 heads tall, broad clear silhouette, warm welcoming NEUTRAL expression, closed mouth gentle smile. Near-front three-quarter view facing slightly left toward player. Big rounded shapes, dark desaturated navy outline, flat restrained two-tone cel shading, minimal detail, readable at 85px tall. No enemy armor, weapons, menacing grin, money bags covering body, environment, counter, text, shadow, halo or ground. Square transparent PNG, entire ears hat and boots inside generous margins, centered same baseline appropriate for later emotion variants.",
+    "reference_images": [
+      "assets/reference/hero_master.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "npc_goblin_merchant_surprised_v01",
+    "category": "npc",
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_surprised_v01.png",
+    "prompt": "Edit attached neutral goblin merchant ONLY into SURPRISED expression/gesture. Eyes wider, eyebrows raised, small surprised O-shaped mouth; free hand lifted gently to cheek, a delighted 'oh!' upon seeing the newly clear window. Keep ledger in other arm. Preserve EXACT SAME character, face proportions, ear size, spectacles, gold merchant beret, chestnut hair, teal striped scarf, terracotta vest, cream shirt, tan apron and boots. Same body proportions, camera, near front three-quarter angle, scale, canvas alignment and baseline. Full body transparent PNG, one character, no background, no ground, shadow, labels or extra elements. Do not change character design or style. Keep all hat ears hands feet in frame. Large clear emotions readable at 85px height.",
+    "reference_images": [
+      "assets/generated/raw/npc/npc_goblin_merchant_neutral_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "npc_goblin_merchant_happy_v01",
+    "category": "npc",
+    "file": "assets/generated/raw/npc/npc_goblin_merchant_happy_v01.png",
+    "prompt": "Edit attached neutral goblin merchant ONLY into HAPPY expression/gesture. Big warm open smile, eyes curved into joyful crescents behind glasses, free hand raised in a broad welcoming wave at shoulder height. Keep ledger in other arm. Joyful thanks for a beautifully clean window. No floating hearts or effects. Preserve EXACT SAME character, face proportions, ear size, spectacles, gold merchant beret, chestnut hair, teal striped scarf, terracotta vest, cream shirt, tan apron and boots. Same body proportions, camera, near front three-quarter angle, scale, canvas alignment and baseline. Full body transparent PNG, one character, no background, no ground, shadow, labels or extra elements. Do not change character design or style. Keep all hat ears hands feet in frame. Large clear emotions readable at 85px height.",
+    "reference_images": [
+      "assets/generated/raw/npc/npc_goblin_merchant_neutral_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "dirt_soot_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/dirt_soot_v01.png",
+    "prompt": "Use case: stylized-concept. Production 2D DIRT OVERLAY texture for a cozy fantasy window cleaning game. A single flat front-facing square overlay of grime ONLY, genuinely transparent PNG. No glass, no frame, no window, no object, no background color, no text, no vignette. Large connected organic patches, medium blobs and broad smears, much larger than tiny flecks; about 65 percent of canvas has semi-opaque grime, about 35 percent transparent holes to glimpse a warm room underneath. Cover all areas reasonably evenly including edges, avoid a sparse central icon. Softened but clearly visible patch edges, subtle shallow cel-shaded illustration style compatible with a dark slate castle and golden lit rooms. Dirt remains visible at 132x158px; no tiny scattered spots that cause pixel hunting. NO checkerboard pattern baked into pixels. Charcoal blue-gray chimney SOOT. Rounded smoky smudges and broad dusty cloudy patches, varied opacity, dark desaturated slate #34424B with lighter ash edges. Dirty and tactile but not photoreal.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "dirt_mud_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/dirt_mud_v01.png",
+    "prompt": "Use case: stylized-concept. Production 2D DIRT OVERLAY texture for a cozy fantasy window cleaning game. A single flat front-facing square overlay of grime ONLY, genuinely transparent PNG. No glass, no frame, no window, no object, no background color, no text, no vignette. Large connected organic patches, medium blobs and broad smears, much larger than tiny flecks; about 65 percent of canvas has semi-opaque grime, about 35 percent transparent holes to glimpse a warm room underneath. Cover all areas reasonably evenly including edges, avoid a sparse central icon. Softened but clearly visible patch edges, subtle shallow cel-shaded illustration style compatible with a dark slate castle and golden lit rooms. Dirt remains visible at 132x158px; no tiny scattered spots that cause pixel hunting. NO checkerboard pattern baked into pixels. Clay-brown MUD splashes and thick rounded drips, connected ochre-brown blobs, a few broad translucent thin areas. Clearly earthy brown, muted #806347 #B29A74, not soot.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "dirt_streak_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/dirt_streak_v01.png",
+    "prompt": "Use case: stylized-concept. Production 2D DIRT OVERLAY texture for a cozy fantasy window cleaning game. A single flat front-facing square overlay of grime ONLY, genuinely transparent PNG. No glass, no frame, no window, no object, no background color, no text, no vignette. Large connected organic patches, medium blobs and broad smears, much larger than tiny flecks; about 65 percent of canvas has semi-opaque grime, about 35 percent transparent holes to glimpse a warm room underneath. Cover all areas reasonably evenly including edges, avoid a sparse central icon. Softened but clearly visible patch edges, subtle shallow cel-shaded illustration style compatible with a dark slate castle and golden lit rooms. Dirt remains visible at 132x158px; no tiny scattered spots that cause pixel hunting. NO checkerboard pattern baked into pixels. Gray-green RAIN STREAK grime: long broad downward vertical streaks and irregular dribbling bands, thicker at tops, tapering downward, many connected by a thin dirty film. Clearly directional. Muted cool sage #607B77 and gray #8A9181, not tiny droplets.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "dirt_bird_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/dirt_bird_v01.png",
+    "prompt": "Use case: stylized-concept. ONE production game DIRT OVERLAY, square transparent PNG, front-facing flat texture ONLY. No glass, no frame, no window, no scenery, no opaque backing. Cozy 2D picture-book art with broad visible simplified shapes and shallow shading, NO photo textures. Distributed all across the square: 65 percent grime patches and 35 percent truly transparent gaps. Large connected smears that remain readable at 132x158 pixels, very few isolated small details, no tiny flecks. Allow small glimpses of the warm room underneath. Do not depict the room. No labels, icons, particles floating outside texture, checkerboard, background or drop shadows. Creamy pale BIRD MESS on old glass. Six to eight broad overlapping ivory splashes with muted ochre-gray centers and gravity drips joined by a faint dusty gray film. Playful stylized rounded splat shapes, not disgusting, not realistic. Thick creamy blobs distinct from mud, broad smooth hard edges with a little translucent residue.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "dirt_magic_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/dirt_magic_v01.png",
+    "prompt": "Use case: stylized-concept. ONE production game DIRT OVERLAY, square transparent PNG, front-facing flat texture ONLY. No glass, no frame, no window, no scenery, no opaque backing. Cozy 2D picture-book art with broad visible simplified shapes and shallow shading, NO photo textures. Distributed all across the square: 65 percent grime patches and 35 percent truly transparent gaps. Large connected smears that remain readable at 132x158 pixels, very few isolated small details, no tiny flecks. Allow small glimpses of the warm room underneath. Do not depict the room. No labels, icons, particles floating outside texture, checkerboard, background or drop shadows. Mysterious MAGICAL GRIME: broad muted plum-purple and blue-gray curling smoky patches, three or four broad spiral streaks, occasional soft teal patch interiors, dark inky residue mixed with dim faded lavender. Clearly dirt to wipe away, not an attack or magical blast. All flat within plane, stylized and readable, subtle shallow shading, no glowing scene background.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "window_heart_concept_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/window_heart_concept_v01.png",
+    "prompt": "Use case: stylized-concept. One standalone HEART WINDOW concept for WINDOW HERO, same cozy storybook illustration aesthetic as attached style reference. A large imposing medieval arched castle window, taller and wider than normal windows. Heavy blue-gray stone surround, simple brass crest shaped like a closed heart at the top, few large ivy leaves. Inside the frame: glass entirely covered by layered BLACK indigo grime and muted violet ink-like curls, so it could be dirt or someone's closed-off heart. One tiny hairline amber glow low at center hints at a home waiting inside, but do NOT reveal the room. A little sinister yet poignant, peaceful mystery to clean rather than fight. Bold desaturated navy outline, rounded clear shapes, restrained two-tone shading, no photorealism or 3D. Isolated full complete window including stone sill and crest, no wall, no ground, no surrounding background or cast shadow, no hero, text, enemy face, teeth, weapons or skulls. Transparent PNG around frame, dark opaque pane within frame. Portrait prop composition with margins.",
+    "reference_images": [
+      "assets/reference/style_reference_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "window_heart_clean_hint_v01",
+    "category": "windows",
+    "file": "assets/generated/raw/windows/window_heart_clean_hint_v01.png",
+    "prompt": "Edit the attached HEART WINDOW into its CLEAN REVEAL concept. Preserve exactly the outer arched blue-gray stone surround, ivy leaves, brass heart crest, sill, window mullions, shape, viewpoint and composition. Change ONLY the dark dirty glass panes: all grime removed, revealing warm amber light and a tiny peaceful old-fashioned living room: a round wooden table with two mismatched cups, an empty cozy chair, a small pot of flowers, a lamp, a few shelves. No monster, king or person. A quiet invitation to be kind; emotionally warm after a long night. The brass heart crest catches a little warm light. Same restrained storybook 2D outlines and shallow cel shading, no realistic rendering. Keep all outer background genuinely TRANSPARENT and remove any background haze or glow outside the stone/ivy silhouette, no ground or cast shadow. Complete isolated window asset, transparent PNG, no text, no surrounding wall. Match attached frame precisely so dirty/clean concepts can be compared.",
+    "reference_images": [
+      "assets/generated/raw/windows/window_heart_concept_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29"
+  },
+  {
+    "name": "npc_moon_moth_astronomer_happy_v01",
+    "category": "npc",
+    "file": "assets/generated/raw/npc/npc_moon_moth_astronomer_happy_v01.png",
+    "prompt": "Create a production-ready 2D game character sprite, isolated on a fully transparent background: a tiny, charming moon-moth astronomer who lives in the highest tower window of a whimsical fantasy castle. The moth is a gentle little resident, not a fighter: soft cream fur, pale lilac moth wings with simple dark star markings, round curious face, small navy-blue astronomer's cloak and a tiny brass telescope held carefully in both hands. Standing full body, readable silhouette, front three-quarter view, big expressive eyes, warm welcoming expression, cute storybook picture-book illustration, hand-painted watercolor gouache with clean dark ink outlines and restrained simple shading, pale warm highlights. Match an elegant indie 2D storybook game asset, not pixel art, not photorealistic, not 3D. Keep the character centered with a generous transparent margin, no ground shadow, no props beyond the handheld brass telescope, no scenery, no window, no frame, no lettering, no logo, no watermark. Designed to remain recognizable when displayed around 80 pixels tall.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  }
+]

@@ -14,6 +14,24 @@ Godot 4.7 で制作する、**ハシゴ配置 × 窓ふき × 探索 × 軽ロ�
 
 ## Current Goal
 
+### Ladder logic puzzle prototype — 2026-09-30
+
+**1本のハシゴを、縦の道にも横の橋にも使う論理パズル。** 3城壁・16窓の短いランを実装しています。最後は四階建ての塔で、Eの窓を磨いて中段の回廊を開き、横橋を上段から最上階の到達まで使い回します。日本語 / English、マウス / タッチ、キーボード移動に対応しています。
+
+2枚目は途切れたベランダ、3枚目は上下二段の切れ目と雨戸の連鎖。住人から選ぶ道具で解法も変わります。画面の「仕掛け」で条件を確認でき、考えている間は時間が止まります。目標回数を超えてもクリア可能です。
+
+- `project.godot` を **Godot 4.7 stable** で開き、F6ではなくF5で実行。
+- Web版は `build/web/index.html` へ書き出します。`python tools/serve.py` のあと、[ローカルで遊ぶ](http://127.0.0.1:8066)。HTMLのダブルクリック起動ではなくHTTP経由で開きます。
+- itch.io提出用アーカイブ：`build/window-hero-itch.zip`（生成物のためGit対象外）。
+- [遊び方・ビルド手順](docs/BUILD_AND_PLAY.md)
+- [検証結果と残る確認](docs/PLAYTEST_2026-09-29.md)
+- [四階建て塔・縦横ハシゴの論理パズル設計](docs/LADDER_PUZZLE_v0.3.md)
+- [itch.io掲載文と提出手順](docs/ITCH_SUBMISSION.md)
+- [素材・ライセンス一覧](CREDITS.md)
+- [生成アセット21点・組み込み・レビュー方法](docs/ASSET_PRODUCTION_v0.1.md)
+
+### Scope
+
 最初に作るのは巨大なローグライトではなく、次の30秒が面白いかを検証する Vertical Slice。
 
 ```
