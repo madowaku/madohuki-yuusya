@@ -46,7 +46,7 @@ if args.certificate_bundle:
     project_file.write_text(project_text, encoding="utf-8")
 
 try:
-    for name in ["stage", "art", "run", "route_solver", "ui_runtime", "tower", "tutorial", "ux_controls", "authored", "campaign"]:
+    for name in ["stage", "art", "run", "route_solver", "ui_runtime", "tower", "tutorial", "ux_controls", "authored", "campaign", "score_attack"]:
         log = logs / f"{name}.log"
         log.write_text("", encoding="utf-8")
         try:

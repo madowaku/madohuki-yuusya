@@ -298,5 +298,41 @@
     "model": "not exposed by tool",
     "date": "2026-09-29",
     "source_file": "assets/generated/raw/windows/window_heart_clean_hint_v01.png"
+  },
+  {
+    "name": "title_backdrop_v1",
+    "category": "ui",
+    "file": "assets/generated/title_backdrop_v1.png",
+    "prompt": "Edit target: the attached WINDOW HERO portrait title-screen illustration. Preserve the exact blue midnight castle art, moon, ivy, warm windows, hero with squeegee, friendly ghost and skeleton, wooden platforms, ornate large Japanese title 窓ふき勇者 and English subtitle WINDOW HERO exactly. Production game background, portrait 9:16. REMOVE ALL FOUR MENU BUTTONS (スタート, あそびかた, ランキング, クレジット), their frames, icons and labels completely. Repaint those areas with the same continuous castle wall, quiet deep blue masonry and subtle ivy, leaving this entire lower middle area uncluttered and dark enough for real interactive Godot menu buttons to be placed later. Do not add any new typography, badges, HUD, borders, fake controls, panels or logo. Keep the hero on the platform just above the former menu. The large beautiful logo in the upper third stays identical. Full bleed portrait artwork, no padding or letterboxing. Use this as finished production title backdrop.",
+    "reference_images": [
+      "User-supplied title screen concept: ChatGPT 画像 2026年9月30日 23_23_42.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "ending_backdrop_v1",
+    "category": "ui",
+    "file": "assets/generated/ending_backdrop_v1.png",
+    "prompt": "Edit target: supplied portrait WINDOW HERO ending artwork. Preserve beautiful midnight-blue castle, glowing Heart Window, happy hero, friendly monsters at windows, and the EXTRAORDINARILY LONG GOLDEN LEGENDARY LADDER reaching out of frame through sparkling luminous clouds. Preserve ornate gold 'クリア!' and WINDOW HERO logo. Remove the two bottom buttons タイトルへ / もう一度, their frames/icons/labels, the bottom NEXT JOB panel, and the middle parchment banner including its writing completely. Repaint their areas as matching dark blue castle masonry, small warm windows and ivy. Keep the lower 20 percent relatively quiet/dark so real score text and interactive retry buttons can be rendered by the game. Do not create any new text, controls, badges or score. This is the finished 9:16 portrait game ending background. The exaggerated heavenly ladder and celebration must remain immediately unmistakable.",
+    "reference_images": [
+      "User-supplied ending concept: ChatGPT 画像 2026年9月30日 23_26_36.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "castle_wall_v1",
+    "category": "environment",
+    "file": "assets/generated/castle_wall_v1.png",
+    "prompt": "Reference: supplied WINDOW HERO gameplay screen. Generate ONE production background texture, vertical 9:16, matching its rich illustrated medieval castle masonry: cool deep indigo-blue irregular stone blocks, subtle hand-painted chips, moss and thin ivy with little cream flowers concentrated along the left and right margins, warm lantern-like ambient bounce. Flat orthographic frontal wall, no perspective. Entire image is a continuous solid blue CASTLE WALL, full bleed, no sky, no tower silhouette. Keep the middle 70 percent calm and unobstructed for gameplay windows and wooden platforms to be drawn over it. CRITICAL: no windows, doors, openings, ladders, bridges, platforms, lantern props, people, monsters, skulls, logos, letters, HUD, interface or frames. Only richly textured blue stone masonry and sparse ivy edging. Seamless/repeatable vertically, top and bottom masonry illumination closely matched. Sharp storybook fantasy game environment detail, coherent with the supplied screenshot. Opaque background.",
+    "reference_images": [
+      "User-supplied gameplay concept: codex-clipboard-5d81c74b-0416-45ea-8771-1c16f4ee7286.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
   }
 ]

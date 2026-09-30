@@ -1,0 +1,631 @@
+{
+  "stage_id": "score_attack",
+  "title": {
+    "ja": "天まで窓ふき",
+    "en": "RACE TO THE SKY"
+  },
+  "initial_hero": [
+    272,
+    1172
+  ],
+  "initial_region": 0,
+  "floors": [
+    1172,
+    888,
+    604,
+    320,
+    36,
+    -248,
+    -532,
+    -816,
+    -1100,
+    -1384
+  ],
+  "visible_floors": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "region_floors": [
+    0,
+    1,
+    1,
+    2,
+    2,
+    3,
+    3,
+    4,
+    4,
+    5,
+    5,
+    6,
+    6,
+    7,
+    7,
+    8,
+    9
+  ],
+  "gaps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "entry": -1,
+  "shutter": -1,
+  "gallery_key": -1,
+  "gallery_regions": [],
+  "interior_region": -1,
+  "interior_floor": -1,
+  "completion_region": 16,
+  "retired_bridge": -1,
+  "room_rect": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "placement_goal": 0,
+  "boss_window": 15,
+  "windows": [
+    {
+      "rect": [
+        272,
+        994,
+        88,
+        110
+      ],
+      "floor": 0,
+      "region": 0,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        722,
+        88,
+        110
+      ],
+      "floor": 1,
+      "region": 1,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        734,
+        88,
+        110
+      ],
+      "floor": 1,
+      "region": 2,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        426,
+        88,
+        110
+      ],
+      "floor": 2,
+      "region": 3,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        438,
+        88,
+        110
+      ],
+      "floor": 2,
+      "region": 4,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        166,
+        88,
+        110
+      ],
+      "floor": 3,
+      "region": 5,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        142,
+        88,
+        110
+      ],
+      "floor": 3,
+      "region": 6,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        -130,
+        88,
+        110
+      ],
+      "floor": 4,
+      "region": 7,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        -118,
+        88,
+        110
+      ],
+      "floor": 4,
+      "region": 8,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        -426,
+        88,
+        110
+      ],
+      "floor": 5,
+      "region": 9,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        -414,
+        88,
+        110
+      ],
+      "floor": 5,
+      "region": 10,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        -686,
+        88,
+        110
+      ],
+      "floor": 6,
+      "region": 11,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        -710,
+        88,
+        110
+      ],
+      "floor": 6,
+      "region": 12,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        176,
+        -982,
+        88,
+        110
+      ],
+      "floor": 7,
+      "region": 13,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        470,
+        -970,
+        88,
+        110
+      ],
+      "floor": 7,
+      "region": 14,
+      "kind": "normal",
+      "points": 400
+    },
+    {
+      "rect": [
+        436,
+        -1318,
+        168,
+        180
+      ],
+      "floor": 8,
+      "region": 15,
+      "kind": "heart",
+      "points": 100
+    }
+  ],
+  "anchors": [
+    {
+      "ends": [
+        0,
+        1
+      ],
+      "base": [
+        150,
+        1172
+      ],
+      "top": [
+        150,
+        888
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        0,
+        2
+      ],
+      "base": [
+        572,
+        1172
+      ],
+      "top": [
+        572,
+        888
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        1,
+        3
+      ],
+      "base": [
+        252,
+        888
+      ],
+      "top": [
+        252,
+        604
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        3,
+        5
+      ],
+      "base": [
+        138,
+        604
+      ],
+      "top": [
+        138,
+        320
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        4,
+        6
+      ],
+      "base": [
+        528,
+        604
+      ],
+      "top": [
+        528,
+        320
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        6,
+        8
+      ],
+      "base": [
+        590,
+        320
+      ],
+      "top": [
+        590,
+        36
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        8,
+        10
+      ],
+      "base": [
+        490,
+        36
+      ],
+      "top": [
+        490,
+        -248
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        7,
+        9
+      ],
+      "base": [
+        186,
+        36
+      ],
+      "top": [
+        186,
+        -248
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        9,
+        11
+      ],
+      "base": [
+        252,
+        -248
+      ],
+      "top": [
+        252,
+        -532
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        11,
+        13
+      ],
+      "base": [
+        154,
+        -532
+      ],
+      "top": [
+        154,
+        -816
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        12,
+        14
+      ],
+      "base": [
+        590,
+        -532
+      ],
+      "top": [
+        590,
+        -816
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        14,
+        15
+      ],
+      "base": [
+        450,
+        -816
+      ],
+      "top": [
+        450,
+        -1100
+      ],
+      "key": -1
+    },
+    {
+      "ends": [
+        3,
+        4
+      ],
+      "base": [
+        280,
+        604
+      ],
+      "top": [
+        440,
+        604
+      ],
+      "key": -1,
+      "horizontal": true
+    },
+    {
+      "ends": [
+        5,
+        6
+      ],
+      "base": [
+        280,
+        320
+      ],
+      "top": [
+        440,
+        320
+      ],
+      "key": -1,
+      "horizontal": true
+    },
+    {
+      "ends": [
+        7,
+        8
+      ],
+      "base": [
+        280,
+        36
+      ],
+      "top": [
+        440,
+        36
+      ],
+      "key": -1,
+      "horizontal": true
+    },
+    {
+      "ends": [
+        9,
+        10
+      ],
+      "base": [
+        280,
+        -248
+      ],
+      "top": [
+        440,
+        -248
+      ],
+      "key": -1,
+      "horizontal": true
+    },
+    {
+      "ends": [
+        11,
+        12
+      ],
+      "base": [
+        280,
+        -532
+      ],
+      "top": [
+        440,
+        -532
+      ],
+      "key": -1,
+      "horizontal": true
+    },
+    {
+      "ends": [
+        15,
+        16
+      ],
+      "base": [
+        540,
+        -1100
+      ],
+      "top": [
+        540,
+        -1384
+      ],
+      "key": -1
+    }
+  ],
+  "enemies": [
+    {
+      "kind": "skeleton",
+      "from": [
+        150,
+        566
+      ],
+      "to": [
+        292,
+        566
+      ],
+      "period": 5,
+      "offset": 0.15
+    },
+    {
+      "kind": "skeleton",
+      "from": [
+        444,
+        -2
+      ],
+      "to": [
+        610,
+        -2
+      ],
+      "period": 6,
+      "offset": 0.45
+    },
+    {
+      "kind": "bat",
+      "from": [
+        120,
+        -14
+      ],
+      "to": [
+        120,
+        -298
+      ],
+      "period": 4,
+      "offset": 0.25
+    },
+    {
+      "kind": "bat",
+      "from": [
+        600,
+        -582
+      ],
+      "to": [
+        600,
+        -866
+      ],
+      "period": 5,
+      "offset": 0.65
+    },
+    {
+      "kind": "ghost",
+      "from": [
+        258,
+        -570
+      ],
+      "to": [
+        592,
+        -570
+      ],
+      "period": 7,
+      "offset": 0.3
+    },
+    {
+      "kind": "ghost",
+      "from": [
+        154,
+        282
+      ],
+      "to": [
+        548,
+        282
+      ],
+      "period": 8,
+      "offset": 0.75
+    }
+  ]
+}

@@ -54,10 +54,11 @@ func reset() -> void:
 	hero = tower.initial_hero()
 	walk_target = hero.x
 	region = tower.initial_region()
+	ladder_anchor = tower.initial_ladder()
 	floor_index = _floor_for_region(region)
 	shutter_open = false
 	gallery_open = false
-	placement_mode = false
+	placement_mode = bool(tower.data.get("initial_placement_mode", false))
 	preview_anchor = -1
 	help_visible = false
 	unreachable_points.clear()
@@ -392,6 +393,7 @@ func move_to_region(destination: int, destination_x: float = -1.0) -> bool:
 	if path.size() == 1:
 		walk_to(target_x)
 		return true
+	_remember()
 	jobs.clear()
 	_append_path(path, jobs)
 	if absf(hero.x - target_x) > 1.0:
@@ -816,7 +818,7 @@ func tick(delta: float) -> void:
 	elif held_direction != 0:
 		walk_to(hero.x + held_direction * 80)
 	var previous_x: float = hero.x
-	hero.x = move_toward(hero.x, walk_target, 460.0 * delta)
+	hero.x = move_toward(hero.x, walk_target, walking_speed(delta) * delta)
 	walking_distance += absf(hero.x - previous_x)
 	if jobs.is_empty() and not inside() and gallery_open:
 		var gallery: Array[int] = tower.gallery_regions()
@@ -833,6 +835,9 @@ func tick(delta: float) -> void:
 					nearest_distance = distance
 					nearest = gallery_region
 			region = nearest
+
+func walking_speed(_delta: float) -> float:
+	return 460.0
 
 func set_paused(value: bool) -> void:
 	# Freeze the transaction in place; resume continues it without losing the ladder.

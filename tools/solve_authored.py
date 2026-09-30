@@ -28,7 +28,7 @@ def validate_geometry(board: dict[str, Any]) -> None:
         assert 0 <= window["floor"] < len(floors), f"{board['stage_id']}: bad floor on window {index}"
         assert 0 <= window["region"] < len(regions), f"{board['stage_id']}: bad region on window {index}"
         assert regions[window["region"]] == window["floor"], f"{board['stage_id']}: window/region floor mismatch {index}"
-        assert 0 <= hx and hx + hit_width <= 720 and 0 <= hy and hy + hit_height <= 1280, f"{board['stage_id']}: window hitbox out of bounds {index}"
+        assert 0 <= hx and hx + hit_width <= 720 and 104 <= hy and hy + hit_height <= 1280, f"{board['stage_id']}: window hitbox out of playable board {index}"
         for other_index, other in enumerate(windows[:index]):
             ox, oy, ow, oh = map(float, other["rect"])
             if window["floor"] == other["floor"]:
@@ -103,6 +103,8 @@ def neighbors(board: dict[str, Any], state: tuple[int, int, int, bool, bool]):
                 continue
             next_gallery = gallery_open or index == gallery_key
             yield (bits | (1 << index), region, ladder, shutter_open, next_gallery), 0, f"clean {index}"
+        if gallery_key >= 0 and bits & (1 << gallery_key) and not gallery_open and int(windows[gallery_key]["region"]) == region:
+            yield (bits, region, ladder, shutter_open, True), 0, "reactivate polished gallery"
 
     if interior >= 0 and region == interior:
         if shutter >= 0 and not shutter_open:
@@ -116,7 +118,8 @@ def neighbors(board: dict[str, Any], state: tuple[int, int, int, bool, bool]):
         if shutter >= 0 and shutter_open:
             portals.append(shutter)
         for portal in portals:
-            if portal >= 0 and region == int(windows[portal]["region"]) and bits & (1 << portal):
+            portal_open = portal == shutter and shutter_open or portal >= 0 and bool(bits & (1 << portal))
+            if portal >= 0 and region == int(windows[portal]["region"]) and portal_open:
                 yield (bits, interior, ladder, shutter_open, gallery_open), 0, f"enter {portal}"
 
     if gallery_open and len(gallery_regions) == 2 and region in gallery_regions:
@@ -142,7 +145,7 @@ def solve_board(board: dict[str, Any]) -> dict[str, Any]:
     validate_geometry(board)
     windows = board["windows"]
     all_clean = (1 << len(windows)) - 1
-    start = (0, int(board["initial_region"]), -1, False, False)
+    start = (0, int(board["initial_region"]), int(board.get("initial_ladder", -1)), False, False)
     distance = {start: 0}
     previous: dict[tuple[int, int, int, bool, bool], tuple[tuple[int, int, int, bool, bool], str]] = {}
     reverse: dict[tuple[int, int, int, bool, bool], set[tuple[int, int, int, bool, bool]]] = defaultdict(set)

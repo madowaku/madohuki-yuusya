@@ -3,13 +3,36 @@
   "boards": [
     {
       "stage_id": "switchback",
-      "title": {"ja": "縦、横、縦", "en": "UP, ACROSS, UP"},
-      "initial_hero": [248, 1172],
+      "title": {
+        "ja": "縦、横、縦",
+        "en": "UP, ACROSS, UP"
+      },
+      "initial_hero": [
+        248,
+        1172
+      ],
       "initial_region": 0,
-      "floors": [1172, 896, 610],
-      "visible_floors": [0, 1, 2],
-      "region_floors": [0, 1, 1, 2, 2],
-      "gaps": [1, 2],
+      "floors": [
+        1172,
+        896,
+        610
+      ],
+      "visible_floors": [
+        0,
+        1,
+        2
+      ],
+      "region_floors": [
+        0,
+        1,
+        1,
+        2,
+        2
+      ],
+      "gaps": [
+        1,
+        2
+      ],
       "placement_goal": 3,
       "entry": -1,
       "shutter": -1,
@@ -19,64 +42,358 @@
       "interior_floor": -1,
       "completion_region": 4,
       "retired_bridge": -1,
-      "room_rect": [0, 0, 0, 0],
+      "room_rect": [
+        0,
+        0,
+        0,
+        0
+      ],
       "windows": [
-        {"rect": [267, 1030, 76, 102], "floor": 0, "region": 0, "kind": "mechanism"},
-        {"rect": [176, 710, 82, 104], "floor": 1, "region": 1, "kind": "mechanism"},
-        {"rect": [486, 710, 82, 104], "floor": 1, "region": 2, "kind": "normal"},
-        {"rect": [478, 424, 92, 112], "floor": 2, "region": 4, "kind": "discovery"}
+        {
+          "rect": [
+            267,
+            1030,
+            76,
+            102
+          ],
+          "floor": 0,
+          "region": 0,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            176,
+            710,
+            82,
+            104
+          ],
+          "floor": 1,
+          "region": 1,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            486,
+            710,
+            82,
+            104
+          ],
+          "floor": 1,
+          "region": 2,
+          "kind": "normal"
+        },
+        {
+          "rect": [
+            478,
+            424,
+            92,
+            112
+          ],
+          "floor": 2,
+          "region": 4,
+          "kind": "discovery"
+        }
       ],
       "anchors": [
-        {"ends": [0, 1], "base": [120, 1172], "top": [120, 896], "key": 0},
-        {"ends": [1, 2], "base": [280, 896], "top": [440, 896], "key": 1, "horizontal": true},
-        {"ends": [2, 4], "base": [600, 896], "top": [600, 610], "key": 2},
-        {"ends": [0, 2], "base": [600, 1172], "top": [600, 896], "key": 0}
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            120,
+            1172
+          ],
+          "top": [
+            120,
+            896
+          ],
+          "key": 0
+        },
+        {
+          "ends": [
+            1,
+            2
+          ],
+          "base": [
+            280,
+            896
+          ],
+          "top": [
+            440,
+            896
+          ],
+          "key": 1,
+          "horizontal": true
+        },
+        {
+          "ends": [
+            2,
+            4
+          ],
+          "base": [
+            600,
+            896
+          ],
+          "top": [
+            600,
+            610
+          ],
+          "key": 2
+        },
+        {
+          "ends": [
+            0,
+            2
+          ],
+          "base": [
+            600,
+            1172
+          ],
+          "top": [
+            600,
+            896
+          ],
+          "key": 0
+        }
       ]
     },
     {
       "stage_id": "gallery_return",
-      "title": {"ja": "帰り道をひらく", "en": "OPEN THE WAY BACK"},
-      "initial_hero": [340, 1172],
+      "title": {
+        "ja": "帰り道をひらく",
+        "en": "OPEN THE WAY BACK"
+      },
+      "initial_hero": [
+        340,
+        1172
+      ],
       "initial_region": 0,
-      "floors": [1172, 896, 610, 326],
-      "visible_floors": [0, 1, 2, 3],
-      "region_floors": [0, 1, 1, 2, 2, 3],
-      "gaps": [1, 2],
+      "floors": [
+        1172,
+        896,
+        610,
+        326
+      ],
+      "visible_floors": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "region_floors": [
+        0,
+        1,
+        1,
+        2,
+        2,
+        3
+      ],
+      "gaps": [
+        1,
+        2
+      ],
       "placement_goal": 5,
       "entry": -1,
       "shutter": -1,
       "gallery_key": 2,
-      "gallery_regions": [1, 2],
+      "gallery_regions": [
+        1,
+        2
+      ],
       "interior_region": -1,
       "interior_floor": -1,
       "completion_region": 5,
       "retired_bridge": 1,
-      "room_rect": [0, 0, 0, 0],
+      "room_rect": [
+        0,
+        0,
+        0,
+        0
+      ],
       "windows": [
-        {"rect": [318, 1020, 88, 106], "floor": 0, "region": 0, "kind": "mechanism"},
-        {"rect": [138, 688, 96, 108], "floor": 1, "region": 1, "kind": "normal"},
-        {"rect": [490, 696, 90, 108], "floor": 1, "region": 2, "kind": "mechanism"},
-        {"rect": [244, 418, 100, 108], "floor": 2, "region": 3, "kind": "normal"},
-        {"rect": [508, 428, 94, 112], "floor": 2, "region": 4, "kind": "mechanism"},
-        {"rect": [398, 145, 110, 110], "floor": 3, "region": 5, "kind": "discovery"}
+        {
+          "rect": [
+            318,
+            1020,
+            88,
+            106
+          ],
+          "floor": 0,
+          "region": 0,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            138,
+            688,
+            96,
+            108
+          ],
+          "floor": 1,
+          "region": 1,
+          "kind": "normal"
+        },
+        {
+          "rect": [
+            490,
+            696,
+            90,
+            108
+          ],
+          "floor": 1,
+          "region": 2,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            244,
+            418,
+            100,
+            108
+          ],
+          "floor": 2,
+          "region": 3,
+          "kind": "normal"
+        },
+        {
+          "rect": [
+            458,
+            428,
+            94,
+            112
+          ],
+          "floor": 2,
+          "region": 4,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            398,
+            145,
+            110,
+            110
+          ],
+          "floor": 3,
+          "region": 5,
+          "kind": "discovery"
+        }
       ],
       "anchors": [
-        {"ends": [0, 1], "base": [120, 1172], "top": [120, 896], "key": 0},
-        {"ends": [1, 2], "base": [280, 896], "top": [440, 896], "key": 1, "horizontal": true},
-        {"ends": [1, 3], "base": [120, 896], "top": [120, 610], "key": 2},
-        {"ends": [2, 4], "base": [600, 896], "top": [600, 610], "key": 3},
-        {"ends": [4, 5], "base": [600, 610], "top": [600, 326], "key": 4}
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            120,
+            1172
+          ],
+          "top": [
+            120,
+            896
+          ],
+          "key": 0
+        },
+        {
+          "ends": [
+            1,
+            2
+          ],
+          "base": [
+            280,
+            896
+          ],
+          "top": [
+            440,
+            896
+          ],
+          "key": 1,
+          "horizontal": true
+        },
+        {
+          "ends": [
+            1,
+            3
+          ],
+          "base": [
+            120,
+            896
+          ],
+          "top": [
+            120,
+            610
+          ],
+          "key": 2
+        },
+        {
+          "ends": [
+            2,
+            4
+          ],
+          "base": [
+            600,
+            896
+          ],
+          "top": [
+            600,
+            610
+          ],
+          "key": 3
+        },
+        {
+          "ends": [
+            4,
+            5
+          ],
+          "base": [
+            600,
+            610
+          ],
+          "top": [
+            600,
+            326
+          ],
+          "key": 4
+        }
       ]
     },
     {
       "stage_id": "heart_window",
-      "title": {"ja": "最後の窓", "en": "THE HEART WINDOW"},
-      "initial_hero": [248, 1172],
+      "title": {
+        "ja": "最後の窓",
+        "en": "THE HEART WINDOW"
+      },
+      "initial_hero": [
+        248,
+        1172
+      ],
       "initial_region": 0,
-      "floors": [1172, 896, 610, 326],
-      "visible_floors": [0, 1, 2, 3],
-      "region_floors": [0, 1, 1, 2, 2, 3, 2],
-      "gaps": [1, 2],
+      "floors": [
+        1172,
+        896,
+        610,
+        326
+      ],
+      "visible_floors": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "region_floors": [
+        0,
+        1,
+        1,
+        2,
+        2,
+        3,
+        2
+      ],
+      "gaps": [
+        1,
+        2
+      ],
       "placement_goal": 4,
       "entry": 3,
       "shutter": 4,
@@ -86,20 +403,143 @@
       "interior_floor": 2,
       "completion_region": 5,
       "retired_bridge": -1,
-      "room_rect": [160, 410, 420, 206],
+      "room_rect": [
+        160,
+        410,
+        420,
+        206
+      ],
       "windows": [
-        {"rect": [264, 1030, 78, 102], "floor": 0, "region": 0, "kind": "mechanism"},
-        {"rect": [172, 710, 88, 108], "floor": 1, "region": 1, "kind": "mechanism"},
-        {"rect": [482, 710, 88, 108], "floor": 1, "region": 2, "kind": "normal"},
-        {"rect": [170, 424, 92, 112], "floor": 2, "region": 3, "kind": "entry"},
-        {"rect": [474, 422, 100, 116], "floor": 2, "region": 4, "kind": "shutter"},
-        {"rect": [446, 112, 168, 176], "floor": 3, "region": 5, "kind": "heart", "requires_all_other": true}
+        {
+          "rect": [
+            264,
+            1030,
+            78,
+            102
+          ],
+          "floor": 0,
+          "region": 0,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            172,
+            710,
+            88,
+            108
+          ],
+          "floor": 1,
+          "region": 1,
+          "kind": "mechanism"
+        },
+        {
+          "rect": [
+            482,
+            710,
+            88,
+            108
+          ],
+          "floor": 1,
+          "region": 2,
+          "kind": "normal"
+        },
+        {
+          "rect": [
+            170,
+            424,
+            92,
+            112
+          ],
+          "floor": 2,
+          "region": 3,
+          "kind": "entry"
+        },
+        {
+          "rect": [
+            474,
+            422,
+            100,
+            116
+          ],
+          "floor": 2,
+          "region": 4,
+          "kind": "shutter"
+        },
+        {
+          "rect": [
+            446,
+            112,
+            168,
+            176
+          ],
+          "floor": 3,
+          "region": 5,
+          "kind": "heart",
+          "requires_all_other": true
+        }
       ],
       "anchors": [
-        {"ends": [0, 1], "base": [120, 1172], "top": [120, 896], "key": 0},
-        {"ends": [1, 2], "base": [280, 896], "top": [440, 896], "key": 1, "horizontal": true},
-        {"ends": [1, 3], "base": [120, 896], "top": [120, 610], "key": 2},
-        {"ends": [4, 5], "base": [600, 610], "top": [600, 326], "key": 4}
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            120,
+            1172
+          ],
+          "top": [
+            120,
+            896
+          ],
+          "key": 0
+        },
+        {
+          "ends": [
+            1,
+            2
+          ],
+          "base": [
+            280,
+            896
+          ],
+          "top": [
+            440,
+            896
+          ],
+          "key": 1,
+          "horizontal": true
+        },
+        {
+          "ends": [
+            1,
+            3
+          ],
+          "base": [
+            120,
+            896
+          ],
+          "top": [
+            120,
+            610
+          ],
+          "key": 2
+        },
+        {
+          "ends": [
+            4,
+            5
+          ],
+          "base": [
+            600,
+            610
+          ],
+          "top": [
+            600,
+            326
+          ],
+          "key": 4
+        }
       ]
     }
   ]

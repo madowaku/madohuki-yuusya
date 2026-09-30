@@ -113,6 +113,9 @@ func initial_hero() -> Vector2:
 func initial_region() -> int:
 	return int(data.get("initial_region", 0))
 
+func initial_ladder() -> int:
+	return int(data.get("initial_ladder", -1))
+
 func visible_floors() -> Array[int]:
 	var result: Array[int] = []
 	var values: Array = data.get("visible_floors", [])

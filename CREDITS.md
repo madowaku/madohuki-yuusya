@@ -25,3 +25,9 @@ The font binary's embedded name records 13/14 explicitly identify OFL 1.1; its G
 - `assets/manifest.json` records repository asset paths, runtime inclusion, source/license notes and SHA-256 checksums.
 
 The licenses and this file are copied beside the exported game in the submission ZIP. They are not changed by the game's own future licensing decisions.
+
+## Score attack artwork
+
+The title and celebratory ending backdrops were edited with the built-in OpenAI image generator from the user-supplied 2026-09-30 concepts. Menu lettering and frames were removed for interactive Godot controls. These generated project images are separate from Kenney CC0 assets. Full prompts are recorded in `assets/generated/production_prompts.json`; the tool does not expose a model version. The repeatable blue castle wall was also generated from the supplied gameplay reference. Skeleton, bat and ghost sprites were supplied by the user as transparent AI artwork (23_36_29-4.png, 23_36_25-2.png and 23_36_27-3.png) and copied unmodified; no specific generator version or third-party CC0 grant is asserted. Patrols, sprite bobbing and wooden platforms are original project code.
+
+Additional asset sources reviewed: [Kenney Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) and [Platformer Art Extended Enemies](https://kenney.nl/assets/platformer-art-extended-enemies), both marked CC0 by Kenney. No new pack from these pages is included. Existing credited Kenney packs remain the commercial-use-friendly foundation.

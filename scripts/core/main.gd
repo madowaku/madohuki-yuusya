@@ -17,9 +17,17 @@ var step_clock: float = 0.0
 var web_clock: float = 0.0
 var tutorial_advance_timer: float = 0.0
 var hints_enabled_preference: bool = true
-# The MUST SHIP route stays active by default. The parent can enable the
-# authored 4/6/12/6-window extension after its solver and browser route pass.
-var full_campaign_enabled: bool = false
+# Compact authored campaign. The MUST-only sequence remains available to tests.
+var full_campaign_enabled: bool = true
+var score_attack_enabled: bool = true
+var score_ending_timer: float = 0.0
+var best_attack_score: int = 0
+var gesture_start: Vector2 = Vector2.ZERO
+var gesture_hero_x: float = 0.0
+var gesture_velocity: Vector2 = Vector2.ZERO
+var gesture_last_msec: int = 0
+var gesture_flicked: bool = false
+var gesture_horizontal: bool = false
 
 func _ready() -> void:
 	state.phase = "title"
@@ -50,6 +58,14 @@ func _process(delta: float) -> void:
 	if keyboard_direction != 0:
 		state.walk_to(state.hero.x + keyboard_direction * 110)
 	state.tick(minf(delta, 0.05))
+	if state is ScoreAttackState and score_ending_timer > 0 and not state.paused:
+		score_ending_timer = maxf(0, score_ending_timer - delta)
+		if score_ending_timer == 0:
+			var final_stats: Dictionary = (state as ScoreAttackState).run_stats()
+			final_stats["best_score"] = best_attack_score
+			var final_state: EndingState = EndingState.new()
+			final_state.configure_ending(final_stats)
+			_switch_state(final_state)
 	if campaign_run.active:
 		var outcome: String = campaign_run.tick(delta, state.paused)
 		if outcome == "ending":
@@ -92,7 +108,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				KEY_SPACE:
 					_command("action")
 				KEY_UP, KEY_DOWN, KEY_W, KEY_S:
-					state.climb()
+					if state is ScoreAttackState:
+						(state as ScoreAttackState).flick_vertical(-1 if key_event.physical_keycode in [KEY_DOWN, KEY_S] else 1, 0)
+					else:
+						state.climb()
 				KEY_E:
 					if not state is TowerState:
 						state.retrieve()
@@ -139,10 +158,25 @@ func _input(event: InputEvent) -> void:
 			_pointer_up()
 
 func _pointer_down(point: Vector2) -> void:
+	if state is ScoreAttackState:
+		point.y += (state as ScoreAttackState).camera_y
 	dragging = true
 	last_pointer = point
 	castle.pointer = point
 	active_window = -1
+	if state is ScoreAttackState:
+		gesture_start = point
+		gesture_hero_x = state.hero.x
+		gesture_velocity = Vector2.ZERO
+		gesture_last_msec = Time.get_ticks_msec()
+		gesture_flicked = false
+		gesture_horizontal = false
+		for index: int in state.masks.size():
+			if (state as TowerState).tower.window_hit_rect(index).has_point(point) and state.accessible(index):
+				active_window = index
+				castle.wiping = not state.is_clean(index)
+				break
+		return
 	if state is TowerState:
 		_tower_pointer_down(point)
 		return
@@ -178,6 +212,13 @@ func _pointer_down(point: Vector2) -> void:
 
 func _tower_pointer_down(point: Vector2) -> void:
 	var model: TowerState = state as TowerState
+	# The explicit ladder-selection context owns the full ghost target, even
+	# where its generous touch padding crosses a nearby window.
+	if model.placement_mode:
+		var selected_candidate: int = model.placement_candidate_at(point)
+		if selected_candidate >= 0:
+			model.request_place(selected_candidate)
+			return
 	for index: int in model.masks.size():
 		if model.tower.window_hit_rect(index).has_point(point):
 			if model.interact_window(index) and not model.is_clean(index) and model.window_unlocked(index) and not model.inside():
@@ -185,10 +226,7 @@ func _tower_pointer_down(point: Vector2) -> void:
 				castle.wiping = true
 			return
 	if model.placement_mode:
-		var candidate: int = model.placement_candidate_at(point)
-		if candidate >= 0:
-			model.request_place(candidate)
-		elif model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
+		if model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
 			model.select_ladder()
 		elif model.ladder_anchor < 0 and model.carried_ladder_hit_rect().has_point(point):
 			model.select_ladder()
@@ -209,6 +247,23 @@ func _tower_pointer_down(point: Vector2) -> void:
 func _pointer_move(point: Vector2) -> void:
 	if not dragging or not state.can_act():
 		return
+	if state is ScoreAttackState:
+		point.y += (state as ScoreAttackState).camera_y
+		if active_window < 0:
+			var now: int = Time.get_ticks_msec()
+			var seconds: float = maxf(0.008, (now - gesture_last_msec) / 1000.0)
+			gesture_velocity = gesture_velocity.lerp((point - last_pointer) / seconds, 0.6)
+			gesture_last_msec = now
+			var difference: Vector2 = point - gesture_start
+			var attack: ScoreAttackState = state as ScoreAttackState
+			if absf(difference.x) > 36 and absf(difference.x) > absf(difference.y) * 1.15:
+				gesture_flicked = true
+				gesture_horizontal = true
+				attack.drag_walk(gesture_hero_x + difference.x * 1.4)
+			elif not gesture_flicked and absf(difference.y) > 72 and absf(difference.y) > absf(difference.x) * 1.15:
+				gesture_flicked = attack.flick_vertical(1 if difference.y < 0 else -1, gesture_velocity.y)
+			last_pointer = point
+			return
 	castle.pointer = point
 	_update_tower_preview(point)
 	if active_window >= 0:
@@ -228,6 +283,11 @@ func _update_tower_preview(point: Vector2) -> void:
 	model.preview_anchor = model.placement_candidate_at(point)
 
 func _pointer_up() -> void:
+	if dragging and state is ScoreAttackState and state.can_act() and active_window < 0:
+		if gesture_horizontal:
+			(state as ScoreAttackState).coast(gesture_velocity.x * 1.4)
+		elif not gesture_flicked:
+			_score_pointer_down(last_pointer)
 	dragging = false
 	active_touch = -1
 	active_window = -1
@@ -259,6 +319,32 @@ func _switch_state(model: StageState) -> void:
 	castle.invalidate()
 	hud.refresh()
 	_sync_flow()
+
+func _begin_score_attack() -> void:
+	campaign_run.stop()
+	tutorial_advance_timer = 0.0
+	score_ending_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	_switch_state(ScoreAttackState.new())
+	sound.begin()
+
+func _score_pointer_down(point: Vector2) -> void:
+	var model: ScoreAttackState = state as ScoreAttackState
+	for index: int in model.masks.size():
+		if model.tower.window_hit_rect(index).has_point(point):
+			if model.accessible(index):
+				active_window = index
+				castle.wiping = not model.is_clean(index)
+			else:
+				model.interact_window(index)
+			return
+	var ladder: int = model.fixed_ladder_at(point)
+	if ladder >= 0:
+		model.request_cross(ladder)
+		return
+	model.tap_destination(point)
 
 func _begin_tower() -> void:
 	campaign_run.stop()
@@ -335,6 +421,9 @@ func _begin_ending() -> void:
 func flow_snapshot() -> Dictionary:
 	var result: Dictionary = state.snapshot()
 	result.merge(campaign_run.snapshot(), true)
+	if state is EndingState:
+		result["ending_stats"] = (state as EndingState).campaign_stats.duplicate(true)
+	result["best_score"] = best_attack_score
 	result["language"] = hud.language
 	return result
 
@@ -347,6 +436,20 @@ func _sync_flow() -> void:
 		hud.call("set_campaign_flow", snapshot)
 
 func _command(action: String) -> void:
+	if hud is TowerHUD and action in ["instructions", "records"]:
+		(hud as TowerHUD).instructions_open = action == "instructions"
+		(hud as TowerHUD).records_open = action == "records"
+		hud.refresh()
+		return
+	if hud is TowerHUD and action in ["back", "start", "replay", "title"]:
+		(hud as TowerHUD).instructions_open = false
+		(hud as TowerHUD).records_open = false
+	if score_attack_enabled and action in ["start", "replay"]:
+		_begin_score_attack()
+		return
+	if state is ScoreAttackState and action in ["restart", "retry_wall", "new_castle"]:
+		_begin_score_attack()
+		return
 	if action == "start_classic":
 		journey.start(journey.castle_seed)
 		_switch_state(StageState.new())
@@ -416,7 +519,7 @@ func _command(action: String) -> void:
 			journey.start(seed_value)
 			_begin_wall()
 		"pause":
-			if state.phase == "playing" or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"] and not state.paused):
+			if state.phase == "playing" or state is EndingState or state is ScoreAttackState or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"] and not state.paused):
 				_pointer_up()
 				state.set_paused(true)
 		"plan":
@@ -476,6 +579,16 @@ func _command(action: String) -> void:
 func _event(event_name: String, detail: int) -> void:
 	if event_name != "window_clean_progress":
 		print("[WindowHero] %s %d %s" % [event_name, detail, JSON.stringify(state.snapshot())])
+	if state is ScoreAttackState and event_name == "stage_cleared":
+		score_ending_timer = 0.05
+		hud.result_delay = 0.0
+		best_attack_score = maxi(best_attack_score, (state as ScoreAttackState).final_score())
+		_save_settings()
+		sound.play("clear")
+		return
+	if state is ScoreAttackState and event_name == "monster_contact":
+		sound.play("retrieve")
+		return
 	if campaign_run.active and event_name == "stage_cleared":
 		campaign_run.start_clear(campaign_run.make_record(state))
 		hud.result_delay = 0.0
@@ -556,7 +669,7 @@ func _event(event_name: String, detail: int) -> void:
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT] and is_node_ready():
 		_pointer_up()
-		if state.phase == "playing" or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"]):
+		if state.phase == "playing" or state is EndingState or (state is ScoreAttackState and score_ending_timer > 0) or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"]):
 			state.set_paused(true)
 
 func _load_settings() -> void:
@@ -567,6 +680,7 @@ func _load_settings() -> void:
 		hud.reduced_motion = bool(config.get_value("settings", "reduced_motion", false))
 		hints_enabled_preference = bool(config.get_value("settings", "hints_enabled", true))
 		hud.best_moves = int(config.get_value("record", "moves", 0))
+		best_attack_score = int(config.get_value("record", "score_attack", 0))
 		var saved_records: Variant = config.get_value("record", "castles", {})
 		if saved_records is Dictionary:
 			run_records = saved_records
@@ -579,6 +693,7 @@ func _save_settings() -> void:
 	config.set_value("settings", "reduced_motion", hud.reduced_motion)
 	config.set_value("settings", "hints_enabled", hints_enabled_preference)
 	config.set_value("record", "moves", hud.best_moves)
+	config.set_value("record", "score_attack", best_attack_score)
 	config.set_value("record", "castles", run_records)
 	config.save("user://settings.cfg")
 
@@ -590,10 +705,9 @@ func _debug_browser_command(arguments: Array) -> void:
 		_command(action)
 
 func debug_snapshot() -> Dictionary:
-	var result: Dictionary = state.snapshot()
+	var result: Dictionary = flow_snapshot()
 	result["credits_open"] = hud.credits_open
 	result["journey"] = journey.snapshot()
-	result.merge(campaign_run.snapshot(), true)
 	result["language"] = hud.language
 	result["buttons"] = hud.button_snapshot()
 	return result

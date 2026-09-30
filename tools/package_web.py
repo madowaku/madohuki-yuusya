@@ -43,6 +43,9 @@ for path in sorted((ROOT / "assets").rglob("*")):
     elif "kenney_ui_adventure" in path.parts:
         source = "https://kenney.nl/assets/ui-pack-adventure"
         license_id = "CC0-1.0"
+    elif "monsters" in path.parts:
+        source = "User-supplied AI monster artwork, 2026-09-30; see CREDITS.md"
+        license_id = "User-provided project asset; not a third-party CC0 grant"
     elif path.suffix == ".png" and ("generated" in path.parts or "reference" in path.parts):
         source = "OpenAI built-in image generation; see assets/generated/production_prompts.json"
         license_id = "AI-generated project asset; not a third-party CC0 grant"

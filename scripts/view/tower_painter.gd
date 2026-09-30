@@ -28,6 +28,7 @@ func draw(view: CastleView) -> void:
 	var model: TowerState = view.state as TowerState
 	var wall: TowerLayout = model.tower
 	var teaching: bool = model is TutorialState
+	var ascending: bool = str(view.campaign_flow.get("flow_phase", "")) == "ascent"
 	_sky(view, model)
 	_wall(view, Rect2(76, 450 if teaching else 116, 568, 830 if teaching else 1164))
 	for x: int in range(80, 650, 62):
@@ -48,11 +49,11 @@ func draw(view: CastleView) -> void:
 	_mechanisms(view, model)
 	for index: int in wall.window_count():
 		_window(view, model, index)
-	if model.ladder_anchor >= 0:
+	if model.ladder_anchor >= 0 and not ascending:
 		_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 1)
 	if model.inside():
 		_cutaway(view, model)
-	var show_candidates: bool = model.placement_mode or model.help_visible
+	var show_candidates: bool = (model.placement_mode or model.help_visible) and model.phase == "playing"
 	if show_candidates and not selection_was_visible:
 		selection_at = view.clock
 	selection_was_visible = show_candidates
@@ -66,13 +67,12 @@ func draw(view: CastleView) -> void:
 			_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 0.28, Color("c3817b"))
 		if model.busy():
 			_ghost(view, model, model.preview_anchor, 1, true)
-	var ascending: bool = str(view.campaign_flow.get("flow_phase", "")) == "ascent"
 	if not ascending:
 		_hero(view, model)
 	if not ascending and model.ladder_anchor < 0 and not model.inside() and model.phase == "playing":
 		var carry: Vector2 = model.carried_ladder_hit_rect().get_center()
-		_ladder(view, carry + Vector2(0, 30), carry - Vector2(0, 30), 1)
-	if model.help_visible:
+		_carried_ladder(view, carry, model.placement_mode)
+	if model.help_visible and model.phase == "playing":
 		_available(view, model)
 	_feedback(view, model)
 	_juice(view, model)
@@ -129,8 +129,9 @@ func _ledge(view: CastleView, x: float, y: float, width: float) -> void:
 		var point: Vector2 = Vector2(x + 22 + index * 78, y + 13)
 		view.draw_colored_polygon(PackedVector2Array([point, point + Vector2(18, 0), point + Vector2(0, 21)]), Color("626477"))
 
-func _window(view: CastleView, model: TowerState, index: int) -> void:
+func _window(view: CastleView, model: TowerState, index: int, camera_offset: Vector2 = Vector2.ZERO) -> void:
 	var area: Rect2 = model.window_rect(index)
+	area.position += camera_offset
 	var clean: bool = model.is_clean(index)
 	var kind: String = model.tower.window_kind(index)
 	var rim: Color = Color("9c9085")
@@ -307,6 +308,25 @@ func _ladder(view: CastleView, base: Vector2, top: Vector2, alpha: float, color:
 		var point: Vector2 = base + direction * rung * 22
 		view.draw_line(point - perpendicular * 14, point + perpendicular * 14, color, 4)
 
+func _carried_ladder(view: CastleView, center: Vector2, selected: bool) -> void:
+	# Keep recognizable rung spacing rather than shrinking a full-length sprite.
+	var target: Rect2 = Rect2(center - Vector2(44, 44), Vector2(88, 88))
+	view.draw_style_box(_carry_style(selected), target)
+	for side: int in [-1, 1]:
+		var offset: Vector2 = Vector2(side * 18, 0)
+		view.draw_line(center + offset - Vector2(0, 36), center + offset + Vector2(0, 36), Color("172436"), 10)
+		view.draw_line(center + offset - Vector2(0, 36), center + offset + Vector2(0, 36), Color("efd19a"), 6)
+	for rung: int in [-2, -1, 0, 1, 2]:
+		view.draw_line(center + Vector2(-18, rung * 13), center + Vector2(18, rung * 13), Color("efd19a"), 5)
+
+func _carry_style(selected: bool) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.10, 0.17, 0.25, 0.86)
+	style.border_color = Color("ffe0a0") if selected else Color("958975")
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(12)
+	return style
+
 func _marker(view: CastleView, point: Vector2, symbol: String, tint: Color) -> void:
 	view.draw_circle(point, 25, Color(0.10, 0.16, 0.25, 0.9))
 	view.draw_arc(point, 25, 0, TAU, 28, tint, 2)
@@ -379,7 +399,7 @@ func _feedback(view: CastleView, model: TowerState) -> void:
 			if not model.is_clean(index):
 				_arch_outline(view, model.window_rect(index).grow(7), Color(1, 0.86, 0.64, alpha))
 
-func _hero(view: CastleView, model: TowerState) -> void:
+func _hero(view: CastleView, model: TowerState, camera_offset: Vector2 = Vector2.ZERO) -> void:
 	var moving: bool = absf(model.hero.x - model.walk_target) > 2
 	if moving:
 		view.facing = signf(model.walk_target - model.hero.x)
@@ -391,7 +411,7 @@ func _hero(view: CastleView, model: TowerState) -> void:
 		pose = "walk" if moving else "idle"
 	if model.inside():
 		pose = "carry_ladder" if model.ladder_anchor < 0 else ("walk" if moving else "idle")
-	view.characters._draw_aligned(view, view.characters.heroes[pose], view.characters.bounds[pose], model.hero, 66, view.facing)
+	view.characters._draw_aligned(view, view.characters.heroes[pose], view.characters.bounds[pose], model.hero + camera_offset, 92.0 if model is ScoreAttackState else 66.0, view.facing)
 
 func _juice(view: CastleView, model: TowerState) -> void:
 	for index: int in model.layout.window_count():

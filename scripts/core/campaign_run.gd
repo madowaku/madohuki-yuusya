@@ -3,9 +3,9 @@ extends RefCounted
 ## Small authored sequence controller; each board remains a separate gameplay state.
 
 const DEFAULT_STAGE_IDS: Array[String] = ["tutorial_1", "tutorial_2", "tutorial_3", "tower"]
-const DEFAULT_STAGE_LABELS: Array[String] = ["T1", "T2", "T3", "Tower"]
+const DEFAULT_STAGE_LABELS: Array[String] = ["T1", "T2", "T3", "1F"]
 const FULL_STAGE_IDS: Array[String] = ["tutorial_1", "tutorial_2", "tutorial_3", "switchback", "gallery_return", "tower", "heart_window"]
-const FULL_STAGE_LABELS: Array[String] = ["T1", "T2", "T3", "1F", "2F", "Tower", "Heart"]
+const FULL_STAGE_LABELS: Array[String] = ["T1", "T2", "T3", "1F", "2F", "3F", "4F"]
 const CLEAN_PAUSE_DURATION: float = 0.6
 const ASCENT_DURATION: float = 1.4
 

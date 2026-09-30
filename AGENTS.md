@@ -14,11 +14,15 @@ The core is:
 
 **CLIMB → CLEAN → DISCOVER → OPTIMIZE**
 
-This is a hand-crafted tower logic puzzle, not a roguelite.
+The current main mode is a fixed-ladder tower route and window-cleaning score attack.
 
 ## Current Priority
 
-Execute docs/ASTRA_FINAL_SPRINT_v1.0.md.
+Execute docs/SCORE_ATTACK_v1.0.md, following the user's 2026-09-30 playtest direction.
+
+All ladders are installed. Remove placement/retrieval from the main mode. Horizontal flicks walk; vertical flicks climb or descend. Show elapsed time, never a countdown. Score is 10,000 plus 400 per polished window, minus 50 per elapsed second and 150 per monster contact; all sixteen panes add 1,500. Reaching the summit ends immediately; Heart Window and other panes are optional. Preserve the exaggerated legendary ladder Ending and immediate Retry.
+
+The older authored puzzle campaign and its tested ZIP are preserved as a fallback. Its rules below apply only when working on that campaign.
 
 This is the final jam shipping target.
 

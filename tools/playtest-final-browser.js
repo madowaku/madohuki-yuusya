@@ -124,12 +124,17 @@ async page => {
   await shot('title');
   await clickButton('Start');
   await stage('tutorial_1');
-  await tapWindow(0);
-  await wait(() => window.windowHero.state.unreachable_gap.length === 2,undefined,'missing vertical route feedback');
-  await place(0);
+  if ((await snapshot()).ladder !== 0) throw new Error('First ladder was not already installed');
   await polish(0);
-  await finishBoard('tutorial_1',1);
+  await finishBoard('tutorial_1',0);
+  if (page.url().includes('qa=ascent')) {
+    if (errors.length) throw new Error(errors.join('\n'));
+    page.off('pageerror',onError); page.off('console',onConsole); await cdp.detach();
+    return {mode,checked:['tutorial_1','single-ladder-ascent'],errors};
+  }
   await stage('tutorial_2');
+  await tapWindow(0);
+  await wait(() => window.windowHero.state.unreachable_gap.length === 2,undefined,'missing bridge route feedback');
   await place(0,true,'tutorial-horizontal-ghost');
   await polish(0);
   await finishBoard('tutorial_2',1);

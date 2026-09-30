@@ -7,6 +7,8 @@ const MOON_MOTH: Texture2D = preload("res://assets/generated/raw/npc/npc_moon_mo
 const INK: Color = Color("172735")
 const CREAM: Color = Color("fff0c8")
 const MINT: Color = Color("b9e9be")
+const TITLE_PATH: String = "res://assets/generated/title_backdrop_v1.png"
+var title_art: Texture2D = load(TITLE_PATH) as Texture2D if ResourceLoader.exists(TITLE_PATH) else null
 var characters: CharacterArt = CharacterArt.new()
 var dirt_art: DirtArt = DirtArt.new()
 var environment: EnvironmentArt = EnvironmentArt.new()
@@ -25,6 +27,7 @@ var glint: float = 0.0
 var bubble_times: Array[float] = []
 var tower_painter: TowerPainter = TowerPainter.new()
 var ending_painter: EndingPainter = EndingPainter.new()
+var score_attack_painter: ScoreAttackPainter = ScoreAttackPainter.new()
 var campaign_flow: Dictionary = {}
 
 func set_campaign_flow(value: Dictionary) -> void:
@@ -103,8 +106,14 @@ func _on_event(event_name: String, detail: int) -> void:
 func _draw() -> void:
 	if state == null:
 		return
+	if state.phase == "title" and title_art != null:
+		draw_texture_rect(title_art, Rect2(0, 0, 720, 1280), false)
+		return
 	if state is EndingState:
 		ending_painter.draw(self, state as EndingState)
+		return
+	if state is ScoreAttackState:
+		score_attack_painter.draw(self, state as ScoreAttackState)
 		return
 	if state is TowerState:
 		tower_painter.draw(self)

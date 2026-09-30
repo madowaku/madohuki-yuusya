@@ -54,9 +54,14 @@ func run() -> void:
 	current_scene = game
 	await settle()
 	(game.get_node("Sound") as SoundBank).set_muted(true)
+	game.set("score_attack_enabled", false)
 	game.call("_command", "start")
 	var model: TutorialState = game.get("state") as TutorialState
 	check(model != null and model.tutorial_step == 1, "Start begins silent tutorial T1")
+	check(model.ladder_anchor == 0, "first ladder is visible and installed before any operation")
+	game.call("_begin_tutorial", 3)
+	model = game.get("state") as TutorialState
+	model.placement_mode = false
 
 	var target: Vector2 = model.tower.window_hit_rect(0).get_center()
 	game.call("_pointer_down", target)
@@ -86,8 +91,9 @@ func run() -> void:
 	check(model.region == 1 and model.floor_index == 1, "destination window tap auto-climbs and approaches")
 	check(model.reachable_regions().has(1) and model.reachable_windows().has(0), "reachability helpers expose destinations without puzzle advice")
 
-	game.call("_begin_tutorial", 1)
+	game.call("_begin_tutorial", 3)
 	model = game.get("state") as TutorialState
+	model.placement_mode = false
 	game.call("_command", "help")
 	check(model.help_visible and not model.placement_mode, "Help reveals route options without entering placement mode")
 	check(model.snapshot()["reachable_regions"].has(0) and model.snapshot()["candidates"] == [0], "Help snapshot exposes reachable areas and legal ladder ghosts")
@@ -143,6 +149,29 @@ func run() -> void:
 	check(not long_route.accessible(4) and long_route.reachable_windows().has(4), "a destination reachable through a ladder cannot be cleaned before arrival")
 	long_route.region = 6
 	check(long_route.reachable_windows().is_empty(), "the interior offers no exterior windows to clean")
+
+	# Reproduce a real Web failure: the upper ghost crossed a polished window.
+	var collision: TowerState = TowerState.new()
+	collision.configure(AuthoredLayout.new("gallery_return"), [])
+	collision.tower.windows[4] = Rect2(508, 428, 94, 112)
+	for index: int in 5:
+		collision.masks[index].cells.fill(0)
+		collision.masks[index].remaining = 0
+	collision.region = 4
+	collision.floor_index = 2
+	collision.hero = Vector2(555, 610)
+	collision.walk_target = collision.hero.x
+	collision.ladder_anchor = 3
+	collision.moves = 4
+	collision.gallery_open = true
+	collision.placement_mode = true
+	game.call("_switch_state", collision)
+	var shared_point: Vector2 = (collision.anchor_base(4) + collision.anchor_top(4)) * 0.5
+	check(collision.tower.window_hit_rect(4).has_point(shared_point), "regression fixture overlaps a ghost shaft and window")
+	game.call("_pointer_down", shared_point)
+	game.call("_pointer_up")
+	finish_jobs(collision)
+	check(collision.ladder_anchor == 4 and collision.moves == 5, "explicit placement mode gives the full ghost priority over nearby glass")
 
 	var idle: TutorialState = TutorialState.new()
 	idle.configure_tutorial(1)

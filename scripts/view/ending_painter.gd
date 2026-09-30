@@ -5,6 +5,7 @@ extends RefCounted
 const LEGEND: Texture2D = preload("res://assets/generated/legendary_ladder_v1.png")
 const HEART: Texture2D = preload("res://assets/generated/heart_window_v1.png")
 const KING: Texture2D = preload("res://assets/generated/demon_king_v1.png")
+const POSTER: Texture2D = preload("res://assets/generated/ending_backdrop_v1.png")
 var legend_bounds: Rect2 = Rect2(LEGEND.get_image().get_used_rect())
 var heart_bounds: Rect2 = Rect2(HEART.get_image().get_used_rect())
 var king_bounds: Rect2 = Rect2(KING.get_image().get_used_rect())
@@ -31,7 +32,14 @@ func draw(view: CastleView, model: EndingState) -> void:
 		view.draw_texture_rect_region(HEART, Rect2(Vector2(360 - heart_size.x / 2, 755), heart_size), heart_bounds, Color(1, 1, 1, opening))
 		view.characters._draw_aligned(view, KING, king_bounds, Vector2(374, 979), 113, 1.0)
 	var growth: float = smoothstep(2.6, 6.6, time)
-	var length: float = lerpf(250, 740, growth)
+	var halo_at: Vector2 = Vector2(512, 366)
+	for ring: int in range(8, 0, -1):
+		view.draw_circle(halo_at, 65 + ring * 18, Color(1, 0.86, 0.46, growth * 0.016))
+	for ray: int in 16:
+		var angle: float = ray * TAU / 16 + (0.0 if view.reduced_motion else time * 0.04)
+		var direction: Vector2 = Vector2(cos(angle), sin(angle))
+		view.draw_line(halo_at + direction * 88, halo_at + direction * (180 + ray % 2 * 65), Color(1, 0.91, 0.60, growth * 0.32), 3)
+	var length: float = lerpf(250, 770, growth)
 	var ladder_rect: Rect2 = Rect2(426, 1078 - length, 172, length)
 	view.draw_texture_rect_region(LEGEND, ladder_rect, legend_bounds)
 	var feet: Vector2 = Vector2(lerpf(254, 368, smoothstep(2.6, 4.2, time)), 1078)
@@ -48,11 +56,28 @@ func draw(view: CastleView, model: EndingState) -> void:
 		var alpha: float = minf(1, (time - 0.7) * 3) * (1 - smoothstep(3.0, 4.0, time))
 		view.draw_style_box(_caption_style(alpha), Rect2(72, 620, 576, 98))
 		view.draw_string(CastleView.FONT, Vector2(88, 680), line, HORIZONTAL_ALIGNMENT_CENTER, 544, 25, Color(1, 0.94, 0.80, alpha))
-	if time > 5.2:
-		var alpha: float = smoothstep(5.2, 6.6, time)
-		view.draw_string(CastleView.FONT, Vector2(70, 152), "NEXT JOB", HORIZONTAL_ALIGNMENT_CENTER, 580, 24, Color(0.20, 0.29, 0.35, alpha))
-		view.draw_string(CastleView.FONT, Vector2(50, 208), "THE WINDOWS", HORIZONTAL_ALIGNMENT_CENTER, 620, 41, Color(0.14, 0.23, 0.29, alpha))
-		view.draw_string(CastleView.FONT, Vector2(50, 263), "OF HEAVEN", HORIZONTAL_ALIGNMENT_CENTER, 620, 41, Color(0.14, 0.23, 0.29, alpha))
+	if time > 3.0:
+		var alpha: float = smoothstep(3.0, 4.3, time)
+		var language: String = str(view.campaign_flow.get("language", "ja"))
+		var title: String = "伝説のハシゴ" if language == "ja" else "THE LEGENDARY LADDER"
+		var first: String = "真の勇者だけが、" if language == "ja" else "ONLY A TRUE HERO"
+		var second: String = "この伝説のハシゴを伸ばせる。" if language == "ja" else "CAN EXTEND THIS LEGENDARY LADDER."
+		view.draw_string(CastleView.FONT, Vector2(50, 145), title, HORIZONTAL_ALIGNMENT_CENTER, 620, 38, Color(0.14, 0.23, 0.29, alpha))
+		view.draw_string(CastleView.FONT, Vector2(60, 196), first, HORIZONTAL_ALIGNMENT_CENTER, 600, 28, Color(0.20, 0.29, 0.35, alpha))
+		view.draw_string(CastleView.FONT, Vector2(60, 237), second, HORIZONTAL_ALIGNMENT_CENTER, 600, 27, Color(0.20, 0.29, 0.35, alpha))
+		var next: String = "次の仕事は、天国の窓。" if language == "ja" else "NEXT JOB: THE WINDOWS OF HEAVEN"
+		view.draw_string(CastleView.FONT, Vector2(60, 283), next, HORIZONTAL_ALIGNMENT_CENTER, 600, 23, Color(0.20, 0.29, 0.35, smoothstep(5.2, 6.6, time)))
+	if time > 6.6:
+		var alpha: float = smoothstep(6.6, EndingState.FINAL_READY_SECONDS, time)
+		view.draw_texture_rect(POSTER, Rect2(0, 0, 720, 1280), false, Color(1, 1, 1, alpha))
+		var language: String = str(view.campaign_flow.get("language", "ja"))
+		view.draw_style_box(_caption_style(alpha * 0.8), Rect2(70, 65, 580, 110))
+		var first: String = "真の勇者だけが、" if language == "ja" else "ONLY A TRUE HERO"
+		var second: String = "この伝説のハシゴを伸ばせる。" if language == "ja" else "CAN EXTEND THIS LEGENDARY LADDER."
+		view.draw_string(CastleView.FONT, Vector2(82, 108), first, HORIZONTAL_ALIGNMENT_CENTER, 556, 28, Color(1, 0.94, 0.75, alpha))
+		view.draw_string(CastleView.FONT, Vector2(82, 153), second, HORIZONTAL_ALIGNMENT_CENTER, 556, 25, Color(1, 0.94, 0.75, alpha))
+		view.draw_style_box(_caption_style(alpha), Rect2(90, 970, 540, 52))
+		view.draw_string(CastleView.FONT, Vector2(100, 1004), "NEXT JOB: THE WINDOWS OF HEAVEN", HORIZONTAL_ALIGNMENT_CENTER, 520, 22, Color(1, 0.94, 0.75, alpha))
 
 func _cloud(view: CastleView, center: Vector2, scale_value: float, tint: Color) -> void:
 	for index: int in 5:

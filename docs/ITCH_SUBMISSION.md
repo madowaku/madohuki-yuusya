@@ -1,63 +1,44 @@
 # itch.io submission draft
 
-Status: **local build prepared; no itch.io page has been published and no jam entry submitted by this task.**
-
-## Jam check
-
-Source checked 2026-09-29: <https://itch.io/jam/slapjam-ai-1>
-
-- Theme: **Castles**. The whole puzzle is a castle facade whose rooms and residents are discovered by cleaning.
-- Format: portrait browser game with touch controls. Native reference 720×1280, tested at 360×800 as well.
-- AI assistance must be credited; tools and credits are listed below.
-- Existing engines and asset packs are allowed. The supplied repository's design was used for the implementation made during the jam window.
-- Page timestamps: submissions open 2026-09-28 15:00 UTC, close **2026-09-30 14:59:59 UTC / 2026-09-30 23:59:59 JST**. Recheck the live jam page before submission.
+Status: local release build. This task has not published an itch.io page or submitted a jam entry.
 
 ## Page fields
 
-- Title: **WINDOW HERO / 窓ふき勇者**
-- Short description: **One ladder. Up or across? Clean windows, unlock paths, and rethink your route.**
-- Kind: HTML / playable in browser.
-- Upload: `build/window-hero-itch.zip`; `index.html` is at archive root.
-- Enable “This file will be played in the browser.”
-- Enable mobile-friendly and portrait orientation.
-- Suggested embed: 450×800 or viewport/fullscreen. The game fits a 9:16 playfield inside narrower/taller screens.
-- No SharedArrayBuffer setting is needed; threading is disabled in the preset.
-- Suggested tags: puzzle, cozy, short, 2d, touch-friendly, castles, ai-assisted.
-- Suggested screenshots: `output/playwright/run-title.png`, `run-mouse-wall-3-bridge-5.png`, `run-touch-wall-2-bridge-4.png` (refresh captures when changing the build).
+- Title: WINDOW HERO / 窓ふき勇者
+- Short description: Run the ladder maze. Clean tempting windows. Dodge predictable monsters. Race your own best score.
+- HTML game: upload `build/window-hero-itch.zip`, enable played in browser, mobile friendly, portrait.
+- Embed: 450×800 or fullscreen; 9:16 playfield. Threading is disabled.
+- Tags: score-attack, action, route-optimization, short, 2d, touch-friendly, castles, ai-assisted.
+- Screenshots: `docs/images/score-attack-title-touch.png`, `score-attack-run-touch.png`, `score-attack-summit-touch.png`, `score-attack-ending-mouse.png`.
 
 ## English description
 
-**A little castle. A little kindness.**
+**RUN → WIPE → EVADE → CLIMB**
 
-The castle's windows have been dirty for so long that everyone has forgotten the world outside. You arrive with a ladder and a squeegee. That's all a hero needs today.
+The castle is full of ladders, monsters and dirty windows. Your weapon? A squeegee.
 
-Drag to wipe away the grime. Find a tiny greenhouse, a dusty library, and a friendly resident with a useful surprise. Every clean window brings a little more light—and sometimes a new way up.
+Race up one ten-floor tower. Flick to run and climb, swipe the glass, and read the patrol routes of skeletons, bats and ghosts. Every window is a tempting detour: +400 points, but cleaning makes you stop while monsters keep moving. Faster is better; spotless is better; safe is better. Which route will you choose?
 
-One ladder can be an upright route or a sideways bridge. Across three walls and sixteen windows, read the shutter keys, discover new paths, and decide when to retrieve your ladder—and when to leave a return route in place. Later walls put gaps on two levels. Gifts change the possible routes; each puzzle has a verified placement target.
+There is no countdown. Reach the summit whenever you are ready. Compare TIME, WINDOWS, DAMAGE and SCORE with your personal best, then hit RETRY. Sixteen optional windows, eighteen fixed ladders and bridges, Japanese and English. No combat or ladder-placement chores.
 
-**Play:** Drag a finger or mouse over the glass. Tap a glowing circle for an upright ladder or ↔ for a bridge. Climb or cross, then retrieve the same ladder from either end. Read the Map to inspect connections with the clock paused. Extra placements are allowed, and you can retry just the current wall. Japanese and English are included.
+Only a true hero can extend the legendary ladder. Your next job awaits above the clouds.
 
-**Made for Slapjam AI — Castles.** A three-puzzle prototype with no combat and no game-over timer. Replay the same castle to rethink your route or visit a new castle number.
-
-**Credits:** Concept and direction by madowaku. AI-assisted code, procedural scene composition and audio synthesis with OpenAI Codex. Hero, goblin merchant and dirt textures created using the built-in OpenAI image generator. Godot Engine 4.7. Kenney Medieval, UI Adventure, UI Audio and Particle Pack (CC0). M PLUS Rounded 1c (SIL OFL 1.1). Full notices are included in the download and at the game's credits screen. Godot third-party licensing: <https://godotengine.org/license/>.
+Concept and direction: madowaku. AI-assisted code and asset production: OpenAI Codex and built-in OpenAI image generation, including GPT-6 Luna subagent assistance earlier in development. The image tool does not expose its model version. Godot 4.7; Kenney Medieval, UI Adventure, UI Audio and Particle Pack (CC0); M PLUS Rounded 1c (OFL 1.1). Full credits and notices are included in the download and credits screen.
 
 ## 日本語紹介文
 
-**剣をおいて、ハシゴを持とう。**
+**走る。拭く。かわす。登る。**
 
-汚れた魔王城を、戦わずにきれいにする小さな冒険。窓をゴシゴシ磨くと、温室や書庫、ちょっと親切な住人が見えてきます。
+ハシゴだらけの魔王城を、スクイージー片手に駆け上がれ！ 横フリックで走り、上下フリックでハシゴ。窓をなぞればキュッ！ +400点。でも窓ふき中も敵は巡回する。
 
-ハシゴはたった1本。縦に掛ければ上への道、横に掛ければベランダの橋。3つの城壁・16枚の窓で、仕掛けの文字を読み、掛ける向きと回収する順番を考えます。最後は上下二段の切れ目へ。同じハシゴをどう使い回す？
+速さ・得点・安全。あの窓へ寄り道する？ 敵を待つ？ 違う経路へ回る？ 1塔10階、16窓、3種類の読めるモンスター。ハシゴは最初から全部かかっている。
 
-指やマウスでドラッグして窓ふき。光る丸へ縦掛け、↔へ横掛け。「のぼる」「わたる」「回収」で道をつなぎます。「仕掛け」で時計を止めて考えられます。住人のお礼から選ぶ道具によって、最少手順も変わります。
+時計は増えるだけ。最上階に着けばクリア。TIME / WINDOWS / DAMAGE / SCORE / BESTを見て、すぐリトライ。
 
-3問の試遊版。目標回数を超えてもクリア可能で、今の城壁だけやり直せます。タイムリミットも戦闘もありません。日本語・英語対応。
+ラストは、真の勇者だけが伸ばせる伝説のハシゴ。次の仕事は、天国の窓。日本語・英語、マウス・タッチ対応。
 
-## Final publishing steps
+## Publishing
 
-1. Upload the ZIP to the intended itch.io account and use the fields above.
-2. Run the **hosted** version once on a real phone: audio unlock, touch cleaning, pause/resume and full clear.
-3. Check screenshots, AI disclosures and credits on the page, then publish it.
-4. Join / submit that published game from the Slapjam AI jam page before the deadline.
+Upload the ZIP to the owner's intended itch.io account; check the hosted build on a physical phone, audio unlock, cleaning, pause and complete run. Add screenshots and AI disclosures, publish, then submit that page to the intended jam. Jam source: https://itch.io/jam/slapjam-ai-1. Previously checked closing time: 2026-09-30 23:59:59 JST; recheck the live page before submission.
 
-Publication, account choice and jam submission still require the owner's final action or explicit authorization.
+Account choice, publication and jam submission still require the owner's action or explicit authorization.

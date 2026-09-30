@@ -41,7 +41,7 @@ def neighbors(board, state):
 
 
 def solve_board(board):
-    start = (0, 0, -1)
+    start = (0, 0, int(board.get("initial_ladder", -1)))
     reachable = {start}
     transitions = defaultdict(list)
     reverse = defaultdict(set)

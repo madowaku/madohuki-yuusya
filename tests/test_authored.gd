@@ -81,6 +81,17 @@ func test_switchback() -> void:
 	clean(3)
 	check(model.phase == "clear" and model.region == board.completion_region(), "switchback clears on the upper landing")
 	check(clear_events == 1, "switchback emits one stage clear event")
+	# A longer right-first route remains valid, so the route choice is a puzzle.
+	model = make_model("switchback")
+	clean(0)
+	place(3, 1)
+	clean(2)
+	place(0, 2)
+	clean(1)
+	place(1, 3)
+	place(2, 4)
+	clean(3)
+	check(model.phase == "clear" and model.moves == 4, "right-first route can finish with one extra placement")
 
 func test_gallery_return() -> void:
 	model = make_model("gallery_return")

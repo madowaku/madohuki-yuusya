@@ -5,6 +5,11 @@ var undo_button: Button
 var help_button: Button
 var ending_bottom: MarginContainer
 var campaign_flow: Dictionary = {}
+var placement_counter: Label
+var best_score_label: Label
+var instructions_open: bool = false
+var records_open: bool = false
+var attack_score: Label
 
 func set_campaign_flow(value: Dictionary) -> void:
 	var should_refresh: bool = false
@@ -25,22 +30,32 @@ func rebuild() -> void:
 	for child: Node in get_children():
 		remove_child(child)
 		child.queue_free()
-	title_top = _margin(16, 176)
+	var illustrated_title: bool = ResourceLoader.exists(CastleView.TITLE_PATH)
+	title_top = _margin(700, 778) if illustrated_title else _margin(16, 176)
 	title_top.name = "TitleTop"
 	var title_column: VBoxContainer = _column(title_top)
 	title_column.add_theme_constant_override("separation", 2)
-	title_column.add_child(_label("CLIMB · CLEAN · DISCOVER", 18, Color("aab6c5")))
-	title_column.add_child(_label(tr_pair("窓ふき勇者", "WINDOW HERO"), 56))
-	title_bottom = _margin(-204, -16, true)
+	title_column.add_child(_label("CLIMB · CLEAN · SCORE", 18, Color("aab6c5")))
+	if not illustrated_title:
+		title_column.add_child(_label(tr_pair("窓ふき勇者", "WINDOW HERO"), 56))
+	best_score_label = _label("", 24, Color("dcc7a1"))
+	title_column.add_child(best_score_label)
+	title_bottom = _margin(-488, -12, true)
+	title_bottom.add_theme_constant_override("margin_left", 116)
+	title_bottom.add_theme_constant_override("margin_right", 116)
 	title_bottom.name = "TitleBottom"
 	var title_actions: VBoxContainer = _column(title_bottom)
-	var start_button: Button = _button(tr_pair("灯りをつなぐ塔へ →", "Enter the lantern tower →"), "start")
+	title_actions.add_theme_constant_override("separation", 8)
+	var start_button: Button = _button(tr_pair("スタート", "START"), "start")
+	start_button.add_theme_font_size_override("font_size", 40)
 	start_button.add_theme_stylebox_override("normal", _warm_style())
 	start_button.add_theme_color_override("font_color", Color("293d42"))
 	title_actions.add_child(start_button)
+	title_actions.add_child(_button(tr_pair("あそびかた", "HOW TO PLAY"), "instructions"))
+	title_actions.add_child(_button(tr_pair("自己ベスト", "PERSONAL BEST"), "records"))
+	title_actions.add_child(_button(tr_pair("クレジット", "Credits"), "credits"))
 	var options: HBoxContainer = _row(title_actions)
-	options.add_child(_button("日本語 / EN", "language", 204))
-	options.add_child(_button(tr_pair("クレジット", "Credits"), "credits", 204))
+	options.add_child(_button("日本語 / EN", "language", 248))
 	options.add_child(_button("♪", "sound", 140))
 	header = _margin(8, 100)
 	header.name = "Header"
@@ -50,8 +65,17 @@ func rebuild() -> void:
 	chapter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	row.add_child(chapter_label)
 	counter = _label("", 28, Color("eedbb9"))
-	counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(counter)
+	var progress_column: VBoxContainer = VBoxContainer.new()
+	progress_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	progress_column.alignment = BoxContainer.ALIGNMENT_CENTER
+	progress_column.add_theme_constant_override("separation", 0)
+	row.add_child(progress_column)
+	progress_column.add_child(counter)
+	placement_counter = _label("", 24, Color("aebecb"))
+	progress_column.add_child(placement_counter)
+	attack_score = _label("", 26, Color("eedbb9"))
+	attack_score.custom_minimum_size.x = 142
+	row.add_child(attack_score)
 	undo_button = _icon("undo")
 	undo_button.tooltip_text = tr_pair("一手もどる", "Undo one move")
 	row.add_child(undo_button)
@@ -84,11 +108,11 @@ func _rebuild_ending() -> void:
 	title_bottom = _margin(-204, -16, true)
 	header = _margin(8, 100)
 	bottom = _margin(-176, -16, true)
-	ending_bottom = _margin(-190, -8, true)
+	ending_bottom = _margin(-240, -8, true)
 	ending_bottom.name = "EndingControls"
 	var column: VBoxContainer = _column(ending_bottom)
 	column.add_theme_constant_override("separation", 4)
-	var summary: Label = _label(ending_summary(), 18, Color("253c49"))
+	var summary: Label = _label(ending_summary(), 25, Color("253c49"))
 	summary.name = "EndingSummary"
 	var summary_style: StyleBoxFlat = StyleBoxFlat.new()
 	summary_style.bg_color = Color(0.98, 0.91, 0.77, 0.92)
@@ -98,7 +122,7 @@ func _rebuild_ending() -> void:
 	summary.add_theme_stylebox_override("normal", summary_style)
 	column.add_child(summary)
 	var row: HBoxContainer = _row(column)
-	row.add_child(_button(tr_pair("もう一度", "Replay"), "replay", 196))
+	row.add_child(_button(tr_pair("リトライ", "RETRY") if bool((state as EndingState).campaign_stats.get("score_attack", false)) else tr_pair("もう一度", "Replay"), "replay", 196))
 	row.add_child(_button(tr_pair("タイトル", "Title"), "title", 176))
 	row.add_child(_button(tr_pair("クレジット", "Credits"), "credits", 196))
 	overlay = CenterContainer.new()
@@ -145,6 +169,8 @@ func _process(delta: float) -> void:
 		super._process(delta)
 		return
 	real_clock += delta
+	if state is ScoreAttackState:
+		_refresh_attack_clock()
 	if result_delay > 0:
 		result_delay = maxf(0, result_delay - delta)
 		if result_delay == 0:
@@ -163,15 +189,29 @@ func refresh() -> void:
 		return
 	var model: TowerState = state as TowerState
 	var teaching: bool = model is TutorialState
+	var attack: ScoreAttackState = model as ScoreAttackState
+	best_score_label.text = tr_pair("自己ベスト %d pt", "PERSONAL BEST %d pt") % int(campaign_flow.get("best_score", 0))
 	var in_campaign: bool = bool(campaign_flow.get("campaign_active", false))
-	var show_overlay: bool = model.paused or (model.phase == "clear" and not teaching and not in_campaign and result_delay <= 0) or credits_open
+	var show_overlay: bool = model.paused or (model.phase == "clear" and attack == null and not teaching and not in_campaign and result_delay <= 0) or credits_open or instructions_open or records_open
 	title_top.visible = model.phase == "title" and not show_overlay
 	title_bottom.visible = title_top.visible
 	header.visible = model.phase != "title" and not show_overlay
 	overlay.visible = show_overlay
-	chapter_label.text = "T%d" % (model as TutorialState).tutorial_step if teaching else "%dF" % (model.floor_index + 1)
+	chapter_label.text = "T%d" % (model as TutorialState).tutorial_step if teaching else (str(campaign_flow.get("stage_label", "1F")) if in_campaign else "%dF" % (model.floor_index + 1))
 	counter.text = "%d / %d" % [model.cleaned_count(), model.layout.window_count()]
+	placement_counter.visible = not teaching
+	placement_counter.text = tr_pair("%d回 · 最少%d", "Moves %d · min %d") % [model.moves, model.tower.placement_goal([])]
+	placement_counter.add_theme_color_override("font_color", Color("e4bb89") if model.moves > model.tower.placement_goal([]) else Color("aebecb"))
 	undo_button.disabled = model.history.is_empty() or model.paused
+	undo_button.visible = attack == null
+	attack_score.visible = attack != null
+	help_button.visible = attack == null
+	if attack != null:
+		chapter_label.custom_minimum_size.x = 70
+		chapter_label.add_theme_font_size_override("font_size", 36)
+		counter.add_theme_font_size_override("font_size", 34)
+		_refresh_attack_clock()
+		placement_counter.visible = true
 	help_button.set_pressed_no_signal(model.help_visible)
 	help_button.disabled = model.paused or model.busy() or model.phase != "playing"
 	if show_overlay:
@@ -192,12 +232,15 @@ func _refresh_ending() -> void:
 	title_bottom.visible = false
 	header.visible = false
 	bottom.visible = false
-	ending_bottom.visible = ending.final_ready and not ending.paused and not credits_open
+	ending_bottom.visible = (ending.final_ready or bool(ending.campaign_stats.get("score_attack", false))) and not ending.paused and not credits_open
 	overlay.visible = ending.paused or credits_open
 	if overlay.visible:
 		_build_overlay()
 
 func _build_overlay() -> void:
+	if instructions_open or records_open:
+		_build_title_info()
+		return
 	if credits_open:
 		super._build_overlay()
 		return
@@ -235,10 +278,39 @@ func _build_overlay() -> void:
 		settings.add_child(_button("♪ " + ("OFF" if muted else "ON"), "sound", 166))
 		settings.add_child(_button("日本語 / EN", "language", 200))
 		column.add_child(_button(tr_pair("動きを控えめに：", "Reduced motion: ") + ("ON" if reduced_motion else "OFF"), "motion"))
-		column.add_child(_button(tr_pair("操作の合図：", "Idle cues: ") + ("ON" if (state as TowerState).hints_enabled else "OFF"), "hints"))
+		if not state is ScoreAttackState:
+			column.add_child(_button(tr_pair("操作の合図：", "Idle cues: ") + ("ON" if (state as TowerState).hints_enabled else "OFF"), "hints"))
 	if not in_campaign:
-		column.add_child(_button(tr_pair("以前の3城壁で遊ぶ", "Play the original three walls"), "start_classic"))
+		if not state is ScoreAttackState:
+			column.add_child(_button(tr_pair("以前の3城壁で遊ぶ", "Play the original three walls"), "start_classic"))
 	column.add_child(_button(tr_pair("タイトルへ", "Title"), "title"))
+
+func _build_title_info() -> void:
+	for child: Node in overlay.get_children():
+		overlay.remove_child(child)
+		child.queue_free()
+	var panel: PanelContainer = PanelContainer.new()
+	panel.custom_minimum_size.x = 580
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color("172735")
+	style.border_color = Color("c49b62")
+	style.set_border_width_all(3)
+	style.set_corner_radius_all(16)
+	style.set_content_margin_all(28)
+	panel.add_theme_stylebox_override("panel", style)
+	overlay.add_child(panel)
+	var column: VBoxContainer = _column(panel)
+	column.add_theme_constant_override("separation", 22)
+	if instructions_open:
+		column.add_child(_label(tr_pair("あそびかた", "HOW TO PLAY"), 34))
+		column.add_child(_label(tr_pair("← → 横フリックで走る\n↑ ↓ 上下フリックでハシゴ\n窓をなぞって CLEAN！", "← → Flick sideways to run\n↑ ↓ Flick to climb / descend\nSwipe a window to CLEAN!"), 27))
+		column.add_child(_label(tr_pair("行き先やハシゴのタップでも移動。\n最上階に着いたらクリア。", "Tap destinations or ladders to move.\nReach the top to finish."), 23))
+		column.add_child(_label(tr_pair("窓 +400点 / 1秒 -50点\n敵との接触 -150点\n全16窓 CLEAN +1,500点", "Window +400 / second -50\nMonster contact -150\nAll 16 windows +1,500"), 24, Color("efd7a0")))
+	else:
+		column.add_child(_label(tr_pair("自己ベスト", "PERSONAL BEST"), 34))
+		column.add_child(_label("%d pt" % int(campaign_flow.get("best_score", 0)), 48, Color("efd7a0")))
+		column.add_child(_label(tr_pair("この端末に保存した最高得点。\n速さ × 窓ふき × 安全な経路。", "Best score saved on this device.\nSpeed, clean glass, a safer route."), 25))
+	column.add_child(_button(tr_pair("もどる", "Back"), "back"))
 
 func _build_ending_overlay() -> void:
 	for child: Node in overlay.get_children():
@@ -273,6 +345,8 @@ func _build_ending_overlay() -> void:
 
 func ending_summary() -> String:
 	var stats: Dictionary = (state as EndingState).campaign_stats if state is EndingState else {}
+	if bool(stats.get("score_attack", false)):
+		return "TIME  %.2f s    WINDOWS  %d / %d\nDAMAGE  %d    SCORE  %d\nBEST  %d" % [float(stats.get("seconds", 0)), int(stats.get("cleaned", 0)), int(stats.get("total_windows", 0)), int(stats.get("damage", 0)), int(stats.get("score", 0)), int(stats.get("best_score", 0))]
 	var tower_windows: int = int(stats.get("tower_windows", 0))
 	var tower_moves: int = int(stats.get("tower_placements", 0))
 	var tower_minimum: int = int(stats.get("tower_minimum", 0))
@@ -281,3 +355,11 @@ func ending_summary() -> String:
 func say(japanese: String, english: String, duration: float = 4) -> void:
 	if not state is TowerState:
 		super.say(japanese, english, duration)
+
+func _refresh_attack_clock() -> void:
+	if state is ScoreAttackState and state.phase == "playing" and not state.paused:
+		var model: ScoreAttackState = state as ScoreAttackState
+		chapter_label.text = "%dF" % (model.floor_index + 1)
+		counter.text = "%02d:%05.2f" % [int(model.elapsed / 60), fmod(model.elapsed, 60)]
+		placement_counter.text = "%d / %d CLEAN" % [model.cleaned_count(), model.masks.size()]
+		attack_score.text = "SCORE\n%d" % model.final_score()

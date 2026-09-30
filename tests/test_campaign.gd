@@ -66,11 +66,12 @@ func run() -> void:
 	await settle()
 	(game.get_node("Sound") as SoundBank).set_muted(true)
 	game.set("full_campaign_enabled", false)
+	game.set("score_attack_enabled", false)
 	game.call("_command", "start")
 	var campaign: CampaignRun = game.get("campaign_run") as CampaignRun
 	check(campaign.active and campaign.current_stage_id() == "tutorial_1", "Start begins authored campaign at T1")
 	var model: TutorialState = game.get("state") as TutorialState
-	check(model.request_place(0), "T1 ladder starts a reversible command")
+	check(model.ladder_anchor == 0 and model.interact_window(0), "T1 starts with a ladder and a reversible destination move")
 	for _step: int in 100:
 		model.tick(0.05)
 	force_clear()
@@ -84,7 +85,7 @@ func run() -> void:
 	game.call("_command", "resume")
 	game.call("_command", "undo")
 	check(campaign.flow_phase == "stage" and model.phase == "playing", "Undo cancels pending ascent and resumes exploration")
-	check(model.ladder_anchor == -1 and model.is_clean(0), "Undo restores ladder while retaining clean glass")
+	check(model.ladder_anchor == 0 and model.region == 0 and model.is_clean(0), "Undo restores the initial route while retaining clean glass")
 	force_clear()
 	drive(2.2)
 	check(campaign.current_stage_id() == "tutorial_2" and campaign.completed_records.size() == 1, "ascent advances once and records the cleared board")
@@ -123,8 +124,8 @@ func run() -> void:
 		check(campaign.current_stage_id() == id, "full campaign reaches " + id)
 		force_clear()
 		drive(2.2)
-	check(game.get("state") is EndingState and campaign.completed_records.size() == 7, "full seven-board campaign reaches Ending")
-	check((game.get("state") as EndingState).campaign_stats["total_windows"] == 32, "full campaign records thirty-two windows")
+	check(game.get("state") is EndingState and campaign.completed_records.size() == 7, "preserved seven-board campaign reaches Ending")
+	check((game.get("state") as EndingState).campaign_stats["total_windows"] == 32, "preserved campaign records every authored window")
 	game.queue_free()
 	await settle()
 	if had_settings:
