@@ -1,63 +1,95 @@
 # itch.io submission draft
 
-Status: **local build prepared; no itch.io page has been published and no jam entry submitted by this task.**
-
-## Jam check
-
-Source checked 2026-09-29: <https://itch.io/jam/slapjam-ai-1>
-
-- Theme: **Castles**. The whole puzzle is a castle facade whose rooms and residents are discovered by cleaning.
-- Format: portrait browser game with touch controls. Native reference 720×1280, tested at 360×800 as well.
-- AI assistance must be credited; tools and credits are listed below.
-- Existing engines and asset packs are allowed. The supplied repository's design was used for the implementation made during the jam window.
-- Page timestamps: submissions open 2026-09-28 15:00 UTC, close **2026-09-30 14:59:59 UTC / 2026-09-30 23:59:59 JST**. Recheck the live jam page before submission.
+Status: **final-page copy revised for the score-attack tower version.**
 
 ## Page fields
 
 - Title: **WINDOW HERO / 窓ふき勇者**
-- Short description: **One ladder. Up or across? Clean windows, unlock paths, and rethink your route.**
+- Short description: **Climb fast. Clean smart. Dodge monsters. Race to the top for the highest score.**
 - Kind: HTML / playable in browser.
-- Upload: `build/window-hero-itch.zip`; `index.html` is at archive root.
+- Genre: **Action**
+- Suggested secondary framing: **Arcade / Score Attack / Platformer**
+- Upload: `build/window-hero-itch.zip`
 - Enable “This file will be played in the browser.”
 - Enable mobile-friendly and portrait orientation.
-- Suggested embed: 450×800 or viewport/fullscreen. The game fits a 9:16 playfield inside narrower/taller screens.
-- No SharedArrayBuffer setting is needed; threading is disabled in the preset.
-- Suggested tags: puzzle, cozy, short, 2d, touch-friendly, castles, ai-assisted.
-- Suggested screenshots: `output/playwright/run-title.png`, `run-mouse-wall-3-bridge-5.png`, `run-touch-wall-2-bridge-4.png` (refresh captures when changing the build).
+- Suggested tags: **action, arcade, score-attack, platformer, speedrun, 2d, castles, cute, touch-friendly, ai-assisted**
+- Suggested cover message: **CLIMB FAST. CLEAN MORE. SCORE HIGH.**
 
 ## English description
 
-**A little castle. A little kindness.**
+### CLIMB FAST. CLEAN MORE. SCORE HIGH.
 
-The castle's windows have been dirty for so long that everyone has forgotten the world outside. You arrive with a ladder and a squeegee. That's all a hero needs today.
+The Demon King's tower has a serious window problem.
 
-Drag to wipe away the grime. Find a tiny greenhouse, a dusty library, and a friendly resident with a useful surprise. Every clean window brings a little more light—and sometimes a new way up.
+Race upward through a maze of ladders, balconies and platforms while monsters patrol the castle. Reaching the top quickly earns a better score, but every dirty window you stop to clean adds bonus points.
 
-One ladder can be an upright route or a sideways bridge. Across three walls and sixteen windows, read the shutter keys, discover new paths, and decide when to retrieve your ladder—and when to leave a return route in place. Later walls put gaps on two levels. Gifts change the possible routes; each puzzle has a verified placement target.
+So what's faster?
 
-**Play:** Drag a finger or mouse over the glass. Tap a glowing circle for an upright ladder or ↔ for a bridge. Climb or cross, then retrieve the same ladder from either end. Read the Map to inspect connections with the clock paused. Extra placements are allowed, and you can retry just the current wall. Japanese and English are included.
+Take the shortest route straight to the top, or risk a detour for one more sparkling window?
 
-**Made for Slapjam AI — Castles.** A three-puzzle prototype with no combat and no game-over timer. Replay the same castle to rethink your route or visit a new castle number.
+There is **no time limit**. The clock only counts upward, so you can finish at your own pace. Then come back and shave seconds off your route, clean more windows, dodge monsters more cleanly, and chase a better score.
 
-**Credits:** Concept and direction by madowaku. AI-assisted code, procedural scene composition and audio synthesis with OpenAI Codex. Hero, goblin merchant and dirt textures created using the built-in OpenAI image generator. Godot Engine 4.7. Kenney Medieval, UI Adventure, UI Audio and Particle Pack (CC0). M PLUS Rounded 1c (SIL OFL 1.1). Full notices are included in the download and at the game's credits screen. Godot third-party licensing: <https://godotengine.org/license/>.
+**HOW TO PLAY**
+- Climb ladders and move through the tower.
+- Clean windows for bonus points.
+- Avoid roaming monsters.
+- Reach the top as quickly as you can.
+- Replay and improve your score.
+
+A short arcade score-attack game made for **Slapjam AI — Castles**.
+
+At the very top, one final window is waiting.
+
+**NEXT JOB: THE WINDOWS OF HEAVEN.**
 
 ## 日本語紹介文
 
-**剣をおいて、ハシゴを持とう。**
+### 速く登れ。たくさん磨け。高得点を狙え。
 
-汚れた魔王城を、戦わずにきれいにする小さな冒険。窓をゴシゴシ磨くと、温室や書庫、ちょっと親切な住人が見えてきます。
+魔王城は、窓が汚れすぎている。
 
-ハシゴはたった1本。縦に掛ければ上への道、横に掛ければベランダの橋。3つの城壁・16枚の窓で、仕掛けの文字を読み、掛ける向きと回収する順番を考えます。最後は上下二段の切れ目へ。同じハシゴをどう使い回す？
+ハシゴと足場が張り巡らされた塔を駆け上がり、うろつくモンスターをかわしながら最上階を目指そう。
 
-指やマウスでドラッグして窓ふき。光る丸へ縦掛け、↔へ横掛け。「のぼる」「わたる」「回収」で道をつなぎます。「仕掛け」で時計を止めて考えられます。住人のお礼から選ぶ道具によって、最少手順も変わります。
+早くゴールするほど高得点。
+でも、途中の窓を磨けばボーナス点が入る。
 
-3問の試遊版。目標回数を超えてもクリア可能で、今の城壁だけやり直せます。タイムリミットも戦闘もありません。日本語・英語対応。
+**最短ルートで一直線に登るか。  
+少し遠回りして、もう1枚ピカピカにするか。**
 
-## Final publishing steps
+時間制限はありません。
+時計はただ進んでいくだけ。
 
-1. Upload the ZIP to the intended itch.io account and use the fields above.
-2. Run the **hosted** version once on a real phone: audio unlock, touch cleaning, pause/resume and full clear.
-3. Check screenshots, AI disclosures and credits on the page, then publish it.
-4. Join / submit that published game from the Slapjam AI jam page before the deadline.
+まずは自分のペースで最上階へ。
+クリアしたら、今度はもっと速く、もっと多くの窓を磨いて、自己ベスト更新を狙おう。
 
-Publication, account choice and jam submission still require the owner's final action or explicit authorization.
+**遊び方**
+- ハシゴや足場を使って塔を登る
+- 汚れた窓を磨くとボーナス
+- モンスターを避ける
+- できるだけ早く最上階へ
+- 何度も挑戦してスコア更新
+
+Slapjam AI「Castles」向けに制作した、短編アーケード・スコアアタックゲームです。
+
+そして塔のてっぺんには、最後の窓が待っています。
+
+**NEXT JOB: THE WINDOWS OF HEAVEN.**
+
+## Credits note
+
+Concept and direction by madowaku.
+
+AI-assisted development and asset production were used during the jam. OpenAI Codex and OpenAI image generation were used for code, iteration and generated visual assets. Godot Engine 4.7 was used for the game.
+
+Keep the complete third-party asset and license list in the in-game Credits and bundled CREDITS.md.
+
+## Final publishing checklist
+
+1. Upload the latest `build/window-hero-itch.zip`.
+2. Replace the old puzzle description with the score-attack copy above.
+3. Set Genre to **Action**.
+4. Replace puzzle/cozy-first tags with action / arcade / score-attack tags.
+5. Use the new start-screen or gameplay art for the cover.
+6. Confirm the hosted build on desktop and phone.
+7. Confirm credits / AI disclosure.
+8. Submit the published page to the jam.
