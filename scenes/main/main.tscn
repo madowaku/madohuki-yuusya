@@ -2,18 +2,18 @@
 
 [ext_resource type="Script" path="res://scripts/core/main.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/view/castle_view.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/ui/game_hud.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/tower_hud.gd" id="3_l3cfh"]
 [ext_resource type="Script" path="res://scripts/view/sound_bank.gd" id="4"]
 
-[node name="WindowHero" type="Node"]
+[node name="WindowHero" type="Node" unique_id=72593869]
 script = ExtResource("1")
 
-[node name="Castle" type="Node2D" parent="."]
+[node name="Castle" type="Node2D" parent="." unique_id=1884212193]
 script = ExtResource("2")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=82141238]
 
-[node name="HUD" type="Control" parent="UI"]
+[node name="HUD" type="Control" parent="UI" unique_id=528245280]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("3")
+script = ExtResource("3_l3cfh")
 
-[node name="Sound" type="Node" parent="."]
+[node name="Sound" type="Node" parent="." unique_id=1898292137]
 script = ExtResource("4")

@@ -77,6 +77,48 @@
     "sha256": "b75708b53e45b06d17d470aeeca5b766e3d1b3999f03f13ec4eb863ca846c14c"
   },
   {
+    "file": "assets/generated/castle_wall_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "7d208493f60871896fb552f7013caa8f0b2a27f93584fdeb00d46cddb494fbac"
+  },
+  {
+    "file": "assets/generated/demon_king_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "f95430df87564c2242c92de8e74bcf648cc6f25bd51a6a0a671e78340d284c3e"
+  },
+  {
+    "file": "assets/generated/ending_backdrop_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "ee29a01d36650b4051dab024b68c95f15f8694bf8dea41fde0e77f9706c3ea64"
+  },
+  {
+    "file": "assets/generated/heart_window_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "5a67c262cd99d83bc738077530c2ca16f7abaaaa818403d4851f9bcf1c15ce7f"
+  },
+  {
+    "file": "assets/generated/ladder_brackets_v02.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "fe2842b12f0af0c62fb2dda8ef4e86bc384773e69ec2d3030d1f7edc0cd21e60"
+  },
+  {
+    "file": "assets/generated/legendary_ladder_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "b7817496eb060205f5f44ae94a6030fc908268ac84424d58831371528e978a85"
+  },
+  {
     "file": "assets/generated/processed/README.md",
     "source": "Original project work",
     "license": "Original work; no third-party samples",
@@ -88,7 +130,7 @@
     "source": "Original project work",
     "license": "Original work; no third-party samples",
     "included_in_web": false,
-    "sha256": "a1fa19a8e2ac6ba20b536b532cb75800a03b3495e319374d44c8b83ca492fa36"
+    "sha256": "f6b8ff814bed9e27abac172391517a268f2a8da1f26a3b3d3f680af0ecd40c43"
   },
   {
     "file": "assets/generated/raw/hero/hero_carry_ladder_v01.png",
@@ -224,6 +266,20 @@
     "sha256": "762a3cc1c62cfe0bc891636a8176cd39705762819c6094f47a9fefece373709d"
   },
   {
+    "file": "assets/generated/title_backdrop_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "5e58c3c1cebe7ecbc1a7129d0ab7633df0e2aae78fc40bfbb70c28600ed9fe0a"
+  },
+  {
+    "file": "assets/generated/ux_props_v02_prompt.json",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "053c8d05fb893067b639b863936ebb41064443b6fd8ec8516296501cfdbdd417"
+  },
+  {
     "file": "assets/licenses/Godot-MIT.txt",
     "source": "License notice, see CREDITS.md",
     "license": "License text",
@@ -264,6 +320,27 @@
     "license": "License text",
     "included_in_web": true,
     "sha256": "a80fe5dde938264f887647a3f23a3702c94bbbc452cadddeb9ac4f2e01d56def"
+  },
+  {
+    "file": "assets/monsters/bat.png",
+    "source": "User-supplied AI monster artwork, 2026-09-30; see CREDITS.md",
+    "license": "User-provided project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "cea8f0071c02ace1fa1a002a5685d2d62e8a1076cc4f6407099642c9fa2d7d24"
+  },
+  {
+    "file": "assets/monsters/ghost.png",
+    "source": "User-supplied AI monster artwork, 2026-09-30; see CREDITS.md",
+    "license": "User-provided project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "a3b5119345dd7ae64c881c8af2707425705985681cb9cee59f363686b10465e8"
+  },
+  {
+    "file": "assets/monsters/skeleton.png",
+    "source": "User-supplied AI monster artwork, 2026-09-30; see CREDITS.md",
+    "license": "User-provided project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "ed7946604509d0a870a8913e94dcb71ea92d08a2a1e54d921abab7496f3c8b3b"
   },
   {
     "file": "assets/reference/color_palette_reference_v01.png",

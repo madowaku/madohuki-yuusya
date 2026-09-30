@@ -1,18 +1,88 @@
 {
   "scene_path": "scenes/main/main.tscn",
-  "viewport_size": {"width": 720, "height": 1280},
+  "viewport_size": {
+    "width": 720,
+    "height": 1280
+  },
   "settle_frames": 6,
   "steps": [
-    {"type": "ui_report", "label": "title", "node_path": "UI/HUD", "fail_on": ["any"]},
-    {"type": "mouse_button", "position": {"x": 360, "y": 1120}, "pressed": true},
-    {"type": "mouse_button", "position": {"x": 360, "y": 1120}, "pressed": false},
-    {"type": "wait_frames", "frames": 4},
-    {"type": "assert", "assertion": "property", "node_path": ".", "property": "state:phase", "expected": "playing"},
-    {"type": "ui_report", "label": "playing", "node_path": "UI/HUD", "fail_on": ["any"]},
-    {"type": "mouse_button", "position": {"x": 650, "y": 60}, "pressed": true},
-    {"type": "mouse_button", "position": {"x": 650, "y": 60}, "pressed": false},
-    {"type": "wait_frames", "frames": 4},
-    {"type": "assert", "assertion": "property", "node_path": ".", "property": "state:paused", "expected": true},
-    {"type": "ui_report", "label": "paused", "node_path": "UI/HUD", "fail_on": ["any"]}
+    {
+      "type": "ui_report",
+      "label": "title",
+      "node_path": "UI/HUD",
+      "fail_on": [
+        "any"
+      ]
+    },
+    {
+      "type": "mouse_button",
+      "position": {
+        "x": 360,
+        "y": 836
+      },
+      "pressed": true
+    },
+    {
+      "type": "mouse_button",
+      "position": {
+        "x": 360,
+        "y": 836
+      },
+      "pressed": false
+    },
+    {
+      "type": "wait_frames",
+      "frames": 4
+    },
+    {
+      "type": "assert",
+      "assertion": "property",
+      "node_path": ".",
+      "property": "state:phase",
+      "expected": "playing"
+    },
+    {
+      "type": "ui_report",
+      "label": "playing",
+      "node_path": "UI/HUD",
+      "fail_on": [
+        "any"
+      ]
+    },
+    {
+      "type": "mouse_button",
+      "position": {
+        "x": 650,
+        "y": 60
+      },
+      "pressed": true
+    },
+    {
+      "type": "mouse_button",
+      "position": {
+        "x": 650,
+        "y": 60
+      },
+      "pressed": false
+    },
+    {
+      "type": "wait_frames",
+      "frames": 4
+    },
+    {
+      "type": "assert",
+      "assertion": "property",
+      "node_path": ".",
+      "property": "state:paused",
+      "expected": true
+    },
+    {
+      "type": "ui_report",
+      "label": "paused",
+      "node_path": "UI/HUD",
+      "fail_on": [
+        "any"
+      ]
+    }
   ]
 }

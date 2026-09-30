@@ -6,6 +6,7 @@ const HEIGHT: int = 40
 const FINISH_FRACTION: float = 0.055
 var cells: PackedByteArray = PackedByteArray()
 var remaining: int = WIDTH * HEIGHT
+var total_cells: int = WIDTH * HEIGHT
 var revision: int = 0
 
 func _init() -> void:
@@ -13,7 +14,7 @@ func _init() -> void:
 	cells.fill(1)
 
 func fraction() -> float:
-	return float(remaining) / float(WIDTH * HEIGHT)
+	return float(remaining) / float(total_cells)
 
 func erase_segment(from: Vector2, to: Vector2, area: Rect2, radius: float = 32.0) -> int:
 	var erased: int = 0

@@ -14,109 +14,118 @@ The core is:
 
 **CLIMB → CLEAN → DISCOVER → OPTIMIZE**
 
-Combat is not the default solution.
+The current main mode is a fixed-ladder tower route and window-cleaning score attack.
 
 ## Current Priority
 
-Implement and polish the Visual / UX Pass defined in:
+Execute docs/SCORE_ATTACK_v1.0.md, following the user's 2026-09-30 playtest direction.
 
-`docs/VISUAL_UX_PASS_v0.1.md`
+All ladders are installed. Remove placement/retrieval from the main mode. Horizontal flicks walk; vertical flicks climb or descend. Show elapsed time, never a countdown. Score is 10,000 plus 400 per polished window, minus 50 per elapsed second and 150 per monster contact; all sixteen panes add 1,500. Reaching the summit ends immediately; Heart Window and other panes are optional. Preserve the exaggerated legendary ladder Ending and immediate Retry.
 
-The current design direction is a hand-crafted tower logic puzzle:
+The older authored puzzle campaign and its tested ZIP are preserved as a fallback. Its rules below apply only when working on that campaign.
 
-- many small windows arranged irregularly
-- one ladder reused as vertical ladder and horizontal bridge
-- meaningful ladder placement / leaving / repositioning decisions
-- occasional exterior-to-interior routes through windows
-- inner shutters opened from inside
-- minimal explanatory UI and no unnecessary item systems
+This is the final jam shipping target.
 
-Preserve the validated ladder-puzzle behavior in `docs/LADDER_PUZZLE_v0.3.md`.
+Work top-to-bottom by PHASE and keep a shippable Web build after every completed phase.
 
-Do not broaden scope beyond the current pass until its Acceptance Criteria are checked.
+Primary UX principle:
+
+**操作方法を推理させない。解法だけを推理させる。**
+
+Primary production principle:
+
+**Always preserve a submission-ready build.**
+
+Relevant source docs:
+
+- docs/UX_PASS_v0.2.md
+- docs/VISUAL_UX_PASS_v0.1.md
+- docs/VISUAL_UX_PASS_RESULTS_v0.1.md
+- docs/LADDER_PUZZLE_v0.3.md
+
+## Autonomous Execution
+
+Time is limited. Make reasonable implementation decisions without waiting for small approvals.
+
+Do stop and avoid scope expansion when a choice would:
+
+- change the core puzzle identity
+- add a large new system
+- risk the working Web submission
+- weaken first-use control clarity
+
+Commit coherent milestones and keep the itch ZIP current.
 
 ## Engineering Rules
 
 - Keep gameplay data separate from presentation where practical.
 - Prefer small composable scenes/resources over one giant script.
-- Support mouse and touch from the start.
+- Support mouse and touch.
 - Portrait reference: 720x1280.
-- Also verify 360x800 usability.
-- Avoid hard-coded screen coordinates where anchors/containers can be used.
-- Keep game state restartable and deterministic enough for automated tests.
-- Add debug hooks that help AI agents inspect state.
-- Warnings and runtime errors are treated as failures.
-- Do not add dependencies without a clear reason.
-- Keep visual windows small if desired, but keep mobile hit targets at least 44px-equivalent and non-overlapping.
-- Automate routine ladder retrieval; preserve only meaningful player decisions about whether and where to move the ladder.
-- Prefer visual feedback over explanatory text.
-- Undo should support puzzle experimentation without forcing repeated cleaning work.
+- Verify 360x800.
+- Mobile hit targets >=44px-equivalent.
+- No warnings or runtime errors.
+- Keep game state deterministic enough for solver/tests.
+- Direct manipulation: ladder controls ladder; destination controls movement.
+- Routine ladder retrieval is automatic.
+- Destination choice always belongs to the player.
+- Prefer ghost ladders over abstract hook-only UI.
+- Unreachable taps must respond visually.
+- Undo restores meaningful decisions.
+- Do not make players repeat cleaning work due to route experimentation.
 
-## Suggested Structure
+## Shipping Priority
 
-```
-project.godot
-scenes/
-  main/
-  hero/
-  ladder/
-  window/
-  rooms/
-scripts/
-  core/
-  gameplay/
-  ui/
-resources/
-  ladders/
-  windows/
-  rooms/
-assets/
-  art/
-  audio/
-docs/
-tests/
-```
+1. UX PASS v0.2
+2. Silent tutorial T1/T2/T3
+3. Polish the 12-window tower
+4. Preserve shippable itch build
+5. Tower ascent flow
+6. Heart Window final floor
+7. Ending
+8. Extra authored floors only if time remains
 
-## Core Signals / Events
+A strong short game is better than a long weak game.
 
-Prefer explicit gameplay events such as:
+## Do Not Build
 
-- ladder_placed
-- ladder_retrieved
-- ladder_repositioned
-- hero_started_climb
-- hero_finished_climb
-- hero_entered_window
-- hero_exited_window
-- shutter_opened
-- window_clean_progress
-- window_cleaned
-- window_revealed
-- mechanism_activated
-- stage_cleared
+Before submission, do not add:
 
-## AI Agent Workflow
+- roguelite progression
+- procedural runs
+- shop
+- meta upgrades
+- combat
+- enemy AI
+- inventory
+- large item systems
+- interior maze systems
+- multiple ladder management
+- 3D conversion
+- large art rewrites
 
-For each task:
+## Validation Gate
 
-1. Read README + relevant docs.
-2. State the acceptance criteria being implemented.
-3. Make the smallest coherent change.
-4. Run available validation.
-5. Inspect actual game behavior, not only static checks.
-6. Record known limitations.
-7. Do not silently broaden scope.
+After each meaningful milestone:
+
+1. run available tests
+2. run solver when puzzle topology changed
+3. inspect actual game behavior
+4. verify mouse
+5. verify touch
+6. export Web
+7. rebuild itch ZIP
+8. record limitations
 
 ## Feel Before Content
 
-If any of these fail, stop adding content:
+Stop adding content if:
 
-- ladder placement feels awkward
-- routine ladder retrieval creates busywork
-- small windows are hard to tap
-- interior traversal loses spatial clarity
-- climbing feels slow
-- cleaning feels like chores
-- final dirt becomes pixel hunting
-- reveal lacks payoff
-- player does not want to reach the next window
+- player does not know what to tap
+- player searches for Retrieve
+- ladder destinations are ambiguous
+- unreachable targets fail silently
+- control confusion is mistaken for puzzle difficulty
+- cleaning becomes chores
+- a new floor adds length but no AHA
+- the current build is no longer safely submittable

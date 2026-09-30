@@ -5,11 +5,15 @@ var failures: int = 0
 
 func _initialize() -> void:
 	var records: Array = JSON.parse_string(FileAccess.get_file_as_string("res://assets/generated/production_prompts.json"))
-	verify(records.size() == 21, "all 21 generated PNG deliverables recorded")
+	verify(records.size() >= 27, "sprite and full-screen illustration deliverables recorded")
 	for record: Dictionary in records:
 		var path: String = "res://" + str(record["file"])
 		var source: Image = Image.new()
 		verify(source.load_png_from_buffer(FileAccess.get_file_as_bytes(path)) == OK, "PNG decodes: " + path)
+		if str(record["category"]) in ["ui", "environment"]:
+			verify(source.get_height() > source.get_width(), "portrait background: " + path)
+			verify(not source.is_invisible(), "full-screen background contains artwork: " + path)
+			continue
 		verify(source.detect_alpha() != Image.ALPHA_NONE, "alpha present: " + path)
 		var transparent: bool = false
 		var visible: bool = false
@@ -20,6 +24,11 @@ func _initialize() -> void:
 				visible = visible or alpha > 0.9
 		verify(transparent and visible, "visible artwork with transparent background: " + path)
 	var renderer: DirtArt = DirtArt.new()
+	for monster: String in ["skeleton", "bat", "ghost"]:
+		var image: Image = Image.new()
+		image.load_png_from_buffer(FileAccess.get_file_as_bytes("res://assets/monsters/%s.png" % monster))
+		verify(image != null and image.detect_alpha() != Image.ALPHA_NONE, "provided monster has transparent silhouette: " + monster)
+		verify(image != null and image.get_used_rect().has_area(), "provided monster has usable bounds: " + monster)
 	for index: int in 5:
 		var mask: DirtMask = DirtMask.new()
 		var dirty: Image = renderer.compose(index, mask)

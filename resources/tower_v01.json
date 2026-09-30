@@ -1,0 +1,31 @@
+{
+  "floors": [1172, 896, 610, 326],
+  "placement_goal": 4,
+  "entry": 7,
+  "shutter": 8,
+  "gallery_key": 8,
+  "windows": [
+    {"rect": [180,1040,66,86], "floor": 0, "region": 0, "kind": "mechanism"},
+    {"rect": [365,1008,74,96], "floor": 0, "region": 0, "kind": "normal"},
+    {"rect": [518,1056,62,84], "floor": 0, "region": 0, "kind": "normal"},
+    {"rect": [174,714,68,94], "floor": 1, "region": 1, "kind": "mechanism"},
+    {"rect": [281,740,64,82], "floor": 1, "region": 1, "kind": "normal"},
+    {"rect": [498,730,74,100], "floor": 1, "region": 2, "kind": "mechanism"},
+    {"rect": [186,443,64,86], "floor": 2, "region": 3, "kind": "normal"},
+    {"rect": [281,451,64,88], "floor": 2, "region": 3, "kind": "entry"},
+    {"rect": [498,447,74,102], "floor": 2, "region": 4, "kind": "shutter"},
+    {"rect": [170,179,64,82], "floor": 3, "region": 5, "kind": "normal"},
+    {"rect": [340,143,78,108], "floor": 3, "region": 5, "kind": "normal"},
+    {"rect": [526,183,62,86], "floor": 3, "region": 5, "kind": "discovery"}
+  ],
+  "anchors": [
+    {"ends": [0,1], "base": [120,1172], "top": [120,896], "key": 0},
+    {"ends": [0,2], "base": [600,1172], "top": [600,896], "key": 0},
+    {"ends": [1,3], "base": [120,896], "top": [120,610], "key": 5},
+    {"ends": [2,4], "base": [600,896], "top": [600,610], "key": 5},
+    {"ends": [1,2], "base": [280,896], "top": [440,896], "key": 3, "horizontal": true},
+    {"ends": [3,4], "base": [280,610], "top": [440,610], "key": 6, "horizontal": true},
+    {"ends": [3,5], "base": [120,610], "top": [120,326], "key": 8},
+    {"ends": [4,5], "base": [600,610], "top": [600,326], "key": 8}
+  ]
+}

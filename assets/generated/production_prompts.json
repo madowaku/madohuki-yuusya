@@ -237,5 +237,102 @@
     "tool": "built-in image_gen",
     "model": "not exposed by tool",
     "date": "2026-09-30"
+  },
+  {
+    "name": "ladder_brackets_v02",
+    "category": "props",
+    "file": "assets/generated/ladder_brackets_v02.png",
+    "prompt": "Use case: stylized-concept. Asset type: 2D game prop atlas on a genuinely transparent background, for a portrait medieval castle window cleaning logic puzzle. Primary request: one neat sprite atlas with exactly two separately isolated objects: on the left a front-facing narrow wooden ladder with two straight parallel honey oak rails and twelve evenly spaced rungs, iron wrapped ends; on the right a small front-facing dark wrought iron paired ladder bracket fixture, two riveted attachment plates connected by a short curved socket. Style: crisp painterly pixel art, dark navy outlines, warm amber light, muted bronze highlights, detailed but readable at tiny sizes. Composition: ladder occupies x=15..45 percent and y=10..90 percent, bracket occupies x=65..90 percent and y=35..60 percent, large transparent space separating them, no contact shadows beyond sprite borders. Orthographic 2D front view, rails vertical, no perspective. Constraints: transparent alpha, no scene, no characters, no lettering, no arrows, no icons, no checkerboard painted into image, no watermark. Objects intended as gameplay props, readable silhouettes.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30",
+    "atlas_regions": {
+      "ladder": [
+        130,
+        54,
+        318,
+        1426
+      ],
+      "bracket": [
+        612,
+        612,
+        316,
+        230
+      ]
+    }
+  },
+  {
+    "name": "demon_king_v1",
+    "category": "npc",
+    "file": "assets/generated/demon_king_v1.png",
+    "prompt": "Use case: illustration-story. Asset type: one standalone sprite for WINDOW HERO, a peaceful medieval window-cleaning logic puzzle. Primary request: a small tired but gentle Demon King seen in three-quarter side view looking toward screen left, seated upright on a modest wooden chair. Round compact adult creature, two small blunt curved ivory horns, tousled dark violet hair, sleepy expressive eyes, warm pale lavender skin, dark plum royal robe with a simple pale-gold collar and tiny crown slightly crooked. One open hand rests on the chair arm; calm wistful expression, no anger. Style: storybook 2D game illustration, bold dark desaturated navy contours, restrained flat cel shading, two tones per material, rounded readable forms, same cozy palette as an ochre-cap teal-cape window-cleaner hero. Composition: single full-body seated character and chair fully visible, centered with generous transparent margins, facing left; readable at 100 pixels total height. Lighting: soft amber side light from a newly polished window on the left. Constraints: genuinely transparent alpha PNG, no scenery, no window, no floor, no contact shadow, no lettering, no dialog, no weapons, no armor, no battle pose, no glow background, no checkerboard, no watermark.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "legendary_ladder_v1",
+    "category": "runtime_copy",
+    "file": "assets/generated/legendary_ladder_v1.png",
+    "prompt": "Use case: stylized-concept. ONE standalone legendary ladder prop for WINDOW HERO, matching the attached hero and picture-book art reference. Tall narrow vertical ladder, orthographic front three-quarter view, complete silhouette with generous transparent margins. Warm honey wood rails, dark desaturated navy bold contours, 10 clear broad rungs; brass cuffs and tiny sky-blue inlays. At the TOP, a large amusing pair of rounded little carved CLOUD WINGS and a golden sun medallion with a humble sleepy smiling face, like a ridiculous holy relic made for washing the windows of heaven. Two small wooden extensions telescoping upward suggest this everyday tool could extend impossibly far. It must unquestionably read as a useful LADDER, not a weapon, throne, doorway or ornate sword. Feet have sturdy simple brass caps. Magical without elaborate filigree; few large shapes, shallow flat 2D cel shading, warm gold with muted teal accents, friendly cozy fantasy. Entire ladder isolated, no hero, no castle, no scenery, no ground or shadow, no atmospheric background, no labels, no particles detached far from silhouette, no realism or 3D. Portrait composition within image. Transparent PNG.",
+    "reference_images": [
+      "assets/reference/hero_master.png",
+      "assets/reference/style_reference_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29",
+    "source_file": "assets/generated/raw/items/item_legendary_ladder_v01.png"
+  },
+  {
+    "name": "heart_window_v1",
+    "category": "runtime_copy",
+    "file": "assets/generated/heart_window_v1.png",
+    "prompt": "Edit the attached HEART WINDOW into its CLEAN REVEAL concept. Preserve exactly the outer arched blue-gray stone surround, ivy leaves, brass heart crest, sill, window mullions, shape, viewpoint and composition. Change ONLY the dark dirty glass panes: all grime removed, revealing warm amber light and a tiny peaceful old-fashioned living room: a round wooden table with two mismatched cups, an empty cozy chair, a small pot of flowers, a lamp, a few shelves. No monster, king or person. A quiet invitation to be kind; emotionally warm after a long night. The brass heart crest catches a little warm light. Same restrained storybook 2D outlines and shallow cel shading, no realistic rendering. Keep all outer background genuinely TRANSPARENT and remove any background haze or glow outside the stone/ivy silhouette, no ground or cast shadow. Complete isolated window asset, transparent PNG, no text, no surrounding wall. Match attached frame precisely so dirty/clean concepts can be compared.",
+    "reference_images": [
+      "assets/generated/raw/windows/window_heart_concept_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29",
+    "source_file": "assets/generated/raw/windows/window_heart_clean_hint_v01.png"
+  },
+  {
+    "name": "title_backdrop_v1",
+    "category": "ui",
+    "file": "assets/generated/title_backdrop_v1.png",
+    "prompt": "Edit target: the attached WINDOW HERO portrait title-screen illustration. Preserve the exact blue midnight castle art, moon, ivy, warm windows, hero with squeegee, friendly ghost and skeleton, wooden platforms, ornate large Japanese title 窓ふき勇者 and English subtitle WINDOW HERO exactly. Production game background, portrait 9:16. REMOVE ALL FOUR MENU BUTTONS (スタート, あそびかた, ランキング, クレジット), their frames, icons and labels completely. Repaint those areas with the same continuous castle wall, quiet deep blue masonry and subtle ivy, leaving this entire lower middle area uncluttered and dark enough for real interactive Godot menu buttons to be placed later. Do not add any new typography, badges, HUD, borders, fake controls, panels or logo. Keep the hero on the platform just above the former menu. The large beautiful logo in the upper third stays identical. Full bleed portrait artwork, no padding or letterboxing. Use this as finished production title backdrop.",
+    "reference_images": [
+      "User-supplied title screen concept: ChatGPT 画像 2026年9月30日 23_23_42.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "ending_backdrop_v1",
+    "category": "ui",
+    "file": "assets/generated/ending_backdrop_v1.png",
+    "prompt": "Edit target: supplied portrait WINDOW HERO ending artwork. Preserve beautiful midnight-blue castle, glowing Heart Window, happy hero, friendly monsters at windows, and the EXTRAORDINARILY LONG GOLDEN LEGENDARY LADDER reaching out of frame through sparkling luminous clouds. Preserve ornate gold 'クリア!' and WINDOW HERO logo. Remove the two bottom buttons タイトルへ / もう一度, their frames/icons/labels, the bottom NEXT JOB panel, and the middle parchment banner including its writing completely. Repaint their areas as matching dark blue castle masonry, small warm windows and ivy. Keep the lower 20 percent relatively quiet/dark so real score text and interactive retry buttons can be rendered by the game. Do not create any new text, controls, badges or score. This is the finished 9:16 portrait game ending background. The exaggerated heavenly ladder and celebration must remain immediately unmistakable.",
+    "reference_images": [
+      "User-supplied ending concept: ChatGPT 画像 2026年9月30日 23_26_36.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "castle_wall_v1",
+    "category": "environment",
+    "file": "assets/generated/castle_wall_v1.png",
+    "prompt": "Reference: supplied WINDOW HERO gameplay screen. Generate ONE production background texture, vertical 9:16, matching its rich illustrated medieval castle masonry: cool deep indigo-blue irregular stone blocks, subtle hand-painted chips, moss and thin ivy with little cream flowers concentrated along the left and right margins, warm lantern-like ambient bounce. Flat orthographic frontal wall, no perspective. Entire image is a continuous solid blue CASTLE WALL, full bleed, no sky, no tower silhouette. Keep the middle 70 percent calm and unobstructed for gameplay windows and wooden platforms to be drawn over it. CRITICAL: no windows, doors, openings, ladders, bridges, platforms, lantern props, people, monsters, skulls, logos, letters, HUD, interface or frames. Only richly textured blue stone masonry and sparse ivy edging. Seamless/repeatable vertically, top and bottom masonry illumination closely matched. Sharp storybook fantasy game environment detail, coherent with the supplied screenshot. Opaque background.",
+    "reference_images": [
+      "User-supplied gameplay concept: codex-clipboard-5d81c74b-0416-45ea-8771-1c16f4ee7286.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
   }
 ]

@@ -31,7 +31,7 @@ func run() -> void:
 			game.call("_command", "back")
 			await settle()
 			check_layout(hud, "%s title %s" % [str(dimensions), language])
-			game.call("_command", "start")
+			game.call("_command", "start_classic")
 			await settle()
 			check_layout(hud, "%s playing %s" % [str(dimensions), language])
 			game.call("_command", "pause")
@@ -102,6 +102,7 @@ func verify(condition: bool, message: String) -> void:
 		push_error(message)
 
 func check_final_hook_input() -> void:
+	game.call("_command", "start_classic")
 	var model: StageState = game.get("state") as StageState
 	for anchor: int in [6, 7]:
 		model.configure(WallLayout.new(257, 2), [])

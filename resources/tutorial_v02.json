@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "boards": [
+    {
+      "step": 1,
+      "hero": [
+        360,
+        1040
+      ],
+      "floors": [
+        1040,
+        760
+      ],
+      "visible_floors": [
+        0,
+        1
+      ],
+      "region_floors": [
+        0,
+        1
+      ],
+      "gaps": [],
+      "placement_goal": 0,
+      "windows": [
+        {
+          "rect": [
+            320,
+            628,
+            80,
+            104
+          ],
+          "floor": 1,
+          "region": 1,
+          "kind": "normal"
+        }
+      ],
+      "anchors": [
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            360,
+            1040
+          ],
+          "top": [
+            360,
+            760
+          ],
+          "requires_window": -1
+        }
+      ],
+      "initial_ladder": 0
+    },
+    {
+      "step": 2,
+      "hero": [
+        230,
+        1040
+      ],
+      "floors": [
+        1040
+      ],
+      "visible_floors": [
+        0
+      ],
+      "region_floors": [
+        0,
+        0
+      ],
+      "gaps": [
+        0
+      ],
+      "placement_goal": 1,
+      "windows": [
+        {
+          "rect": [
+            496,
+            852,
+            80,
+            108
+          ],
+          "floor": 0,
+          "region": 1,
+          "kind": "normal"
+        }
+      ],
+      "anchors": [
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            280,
+            1040
+          ],
+          "top": [
+            440,
+            1040
+          ],
+          "horizontal": true,
+          "requires_window": -1
+        }
+      ],
+      "initial_placement_mode": true
+    },
+    {
+      "step": 3,
+      "hero": [
+        260,
+        1040
+      ],
+      "floors": [
+        1040,
+        760
+      ],
+      "visible_floors": [
+        0,
+        1
+      ],
+      "region_floors": [
+        0,
+        1,
+        1
+      ],
+      "gaps": [
+        1
+      ],
+      "placement_goal": 2,
+      "windows": [
+        {
+          "rect": [
+            220,
+            628,
+            80,
+            104
+          ],
+          "floor": 1,
+          "region": 1,
+          "kind": "normal"
+        },
+        {
+          "rect": [
+            500,
+            628,
+            80,
+            104
+          ],
+          "floor": 1,
+          "region": 2,
+          "kind": "normal"
+        }
+      ],
+      "anchors": [
+        {
+          "ends": [
+            0,
+            1
+          ],
+          "base": [
+            260,
+            1040
+          ],
+          "top": [
+            260,
+            760
+          ],
+          "requires_window": -1
+        },
+        {
+          "ends": [
+            1,
+            2
+          ],
+          "base": [
+            280,
+            760
+          ],
+          "top": [
+            440,
+            760
+          ],
+          "horizontal": true,
+          "requires_window": 0
+        }
+      ],
+      "initial_placement_mode": true
+    }
+  ]
+}

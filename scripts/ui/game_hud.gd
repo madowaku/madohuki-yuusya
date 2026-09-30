@@ -31,6 +31,8 @@ var debug_label: Label
 var result_delay: float = 0.0
 
 func bind(model: StageState, run_model: CastleRun) -> void:
+	if state != null and state.changed.is_connected(refresh):
+		state.changed.disconnect(refresh)
 	journey = run_model
 	state = model
 	state.changed.connect(refresh)

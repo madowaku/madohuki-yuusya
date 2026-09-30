@@ -3,8 +3,9 @@ extends Node
 @onready var castle: CastleView = $Castle
 @onready var hud: GameHUD = $UI/HUD
 @onready var sound: SoundBank = $Sound
-var state: StageState = StageState.new()
+var state: StageState = TowerState.new()
 var journey: CastleRun = CastleRun.new()
+var campaign_run: CampaignRun = CampaignRun.new()
 var run_records: Dictionary = {}
 var active_window: int = -1
 var active_touch: int = -1
@@ -14,16 +15,31 @@ var browser_callback: JavaScriptObject
 var debug_visible: bool = false
 var step_clock: float = 0.0
 var web_clock: float = 0.0
+var tutorial_advance_timer: float = 0.0
+var hints_enabled_preference: bool = true
+# Compact authored campaign. The MUST-only sequence remains available to tests.
+var full_campaign_enabled: bool = true
+var score_attack_enabled: bool = true
+var score_ending_timer: float = 0.0
+var best_attack_score: int = 0
+var gesture_start: Vector2 = Vector2.ZERO
+var gesture_hero_x: float = 0.0
+var gesture_velocity: Vector2 = Vector2.ZERO
+var gesture_last_msec: int = 0
+var gesture_flicked: bool = false
+var gesture_horizontal: bool = false
 
 func _ready() -> void:
 	state.phase = "title"
 	_load_settings()
+	(state as TowerState).set_hints_enabled(hints_enabled_preference)
 	castle.bind(state)
 	hud.bind(state, journey)
 	hud.command.connect(_command)
 	hud.direction_changed.connect(func(value: float) -> void: state.held_direction = value)
 	state.event_occurred.connect(_event)
 	sound.muted = hud.muted
+	_sync_flow()
 	if OS.has_feature("web"):
 		# Read-only instrumentation stays available in the shipped build.
 		JavaScriptBridge.eval("window.windowHero = {state: {}, ready: true};")
@@ -42,10 +58,37 @@ func _process(delta: float) -> void:
 	if keyboard_direction != 0:
 		state.walk_to(state.hero.x + keyboard_direction * 110)
 	state.tick(minf(delta, 0.05))
+	if state is ScoreAttackState and score_ending_timer > 0 and not state.paused:
+		score_ending_timer = maxf(0, score_ending_timer - delta)
+		if score_ending_timer == 0:
+			var final_stats: Dictionary = (state as ScoreAttackState).run_stats()
+			final_stats["best_score"] = best_attack_score
+			var final_state: EndingState = EndingState.new()
+			final_state.configure_ending(final_stats)
+			_switch_state(final_state)
+	if campaign_run.active:
+		var outcome: String = campaign_run.tick(delta, state.paused)
+		if outcome == "ending":
+			_begin_ending()
+		elif not outcome.is_empty() and outcome != "ascent_started":
+			_begin_campaign_stage(outcome)
 	step_clock += delta
 	if state.climbing and not state.paused and step_clock > 0.36:
 		sound.play("step")
 		step_clock = 0
+	if tutorial_advance_timer > 0.0 and state is TutorialState:
+		var tutorial: TutorialState = state as TutorialState
+		if tutorial.phase != "clear":
+			tutorial_advance_timer = 0.0
+		elif not tutorial.paused:
+			tutorial_advance_timer = maxf(0.0, tutorial_advance_timer - delta)
+			if tutorial_advance_timer == 0.0:
+				if tutorial.tutorial_step >= 3:
+					_begin_tower()
+				else:
+					_begin_tutorial(tutorial.tutorial_step + 1)
+	if campaign_run.active or state is EndingState:
+		_sync_flow()
 	if OS.has_feature("web"):
 		web_clock += delta
 		if web_clock > 0.2:
@@ -65,9 +108,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				KEY_SPACE:
 					_command("action")
 				KEY_UP, KEY_DOWN, KEY_W, KEY_S:
-					state.climb()
+					if state is ScoreAttackState:
+						(state as ScoreAttackState).flick_vertical(-1 if key_event.physical_keycode in [KEY_DOWN, KEY_S] else 1, 0)
+					else:
+						state.climb()
 				KEY_E:
-					state.retrieve()
+					if not state is TowerState:
+						state.retrieve()
+				KEY_Z:
+					_command("undo")
 				KEY_F3:
 					debug_visible = not debug_visible
 					hud.debug_label.visible = debug_visible
@@ -82,6 +131,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				_pointer_up()
 	elif event is InputEventMouseMotion:
 		var motion: InputEventMouseMotion = event as InputEventMouseMotion
+		_update_tower_preview(motion.position)
 		if dragging and active_touch < 0:
 			_pointer_move(motion.position)
 	elif event is InputEventScreenTouch:
@@ -108,10 +158,28 @@ func _input(event: InputEvent) -> void:
 			_pointer_up()
 
 func _pointer_down(point: Vector2) -> void:
+	if state is ScoreAttackState:
+		point.y += (state as ScoreAttackState).camera_y
 	dragging = true
 	last_pointer = point
 	castle.pointer = point
 	active_window = -1
+	if state is ScoreAttackState:
+		gesture_start = point
+		gesture_hero_x = state.hero.x
+		gesture_velocity = Vector2.ZERO
+		gesture_last_msec = Time.get_ticks_msec()
+		gesture_flicked = false
+		gesture_horizontal = false
+		for index: int in state.masks.size():
+			if (state as TowerState).tower.window_hit_rect(index).has_point(point) and state.accessible(index):
+				active_window = index
+				castle.wiping = not state.is_clean(index)
+				break
+		return
+	if state is TowerState:
+		_tower_pointer_down(point)
+		return
 	for index: int in state.masks.size():
 		if state.window_rect(index).grow(8).has_point(point):
 			if not state.window_unlocked(index):
@@ -142,10 +210,62 @@ func _pointer_down(point: Vector2) -> void:
 	if point.y > StageData.FLOORS[state.floor_index] - 100 and point.y < StageData.FLOORS[state.floor_index] + 22:
 		state.walk_to(point.x)
 
+func _tower_pointer_down(point: Vector2) -> void:
+	var model: TowerState = state as TowerState
+	# The explicit ladder-selection context owns the full ghost target, even
+	# where its generous touch padding crosses a nearby window.
+	if model.placement_mode:
+		var selected_candidate: int = model.placement_candidate_at(point)
+		if selected_candidate >= 0:
+			model.request_place(selected_candidate)
+			return
+	for index: int in model.masks.size():
+		if model.tower.window_hit_rect(index).has_point(point):
+			if model.interact_window(index) and not model.is_clean(index) and model.window_unlocked(index) and not model.inside():
+				active_window = index
+				castle.wiping = true
+			return
+	if model.placement_mode:
+		if model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
+			model.select_ladder()
+		elif model.ladder_anchor < 0 and model.carried_ladder_hit_rect().has_point(point):
+			model.select_ladder()
+		return
+	if model.help_visible:
+		var help_candidate: int = model.placement_candidate_at(point)
+		if help_candidate >= 0:
+			model.request_place(help_candidate)
+			return
+	if model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
+		model.select_ladder()
+		return
+	if model.ladder_anchor < 0 and model.carried_ladder_hit_rect().has_point(point):
+		model.select_ladder()
+		return
+	model.tap_destination(point)
+
 func _pointer_move(point: Vector2) -> void:
 	if not dragging or not state.can_act():
 		return
+	if state is ScoreAttackState:
+		point.y += (state as ScoreAttackState).camera_y
+		if active_window < 0:
+			var now: int = Time.get_ticks_msec()
+			var seconds: float = maxf(0.008, (now - gesture_last_msec) / 1000.0)
+			gesture_velocity = gesture_velocity.lerp((point - last_pointer) / seconds, 0.6)
+			gesture_last_msec = now
+			var difference: Vector2 = point - gesture_start
+			var attack: ScoreAttackState = state as ScoreAttackState
+			if absf(difference.x) > 36 and absf(difference.x) > absf(difference.y) * 1.15:
+				gesture_flicked = true
+				gesture_horizontal = true
+				attack.drag_walk(gesture_hero_x + difference.x * 1.4)
+			elif not gesture_flicked and absf(difference.y) > 72 and absf(difference.y) > absf(difference.x) * 1.15:
+				gesture_flicked = attack.flick_vertical(1 if difference.y < 0 else -1, gesture_velocity.y)
+			last_pointer = point
+			return
 	castle.pointer = point
+	_update_tower_preview(point)
 	if active_window >= 0:
 		var erased: int = state.wipe(active_window, last_pointer, point)
 		if erased > 0:
@@ -154,13 +274,27 @@ func _pointer_move(point: Vector2) -> void:
 			castle.wiping = false
 	last_pointer = point
 
+func _update_tower_preview(point: Vector2) -> void:
+	if not state is TowerState:
+		return
+	var model: TowerState = state as TowerState
+	if not model.placement_mode:
+		return
+	model.preview_anchor = model.placement_candidate_at(point)
+
 func _pointer_up() -> void:
+	if dragging and state is ScoreAttackState and state.can_act() and active_window < 0:
+		if gesture_horizontal:
+			(state as ScoreAttackState).coast(gesture_velocity.x * 1.4)
+		elif not gesture_flicked:
+			_score_pointer_down(last_pointer)
 	dragging = false
 	active_touch = -1
 	active_window = -1
 	castle.wiping = false
 
 func _begin_wall() -> void:
+	campaign_run.stop()
 	_pointer_up()
 	hud.result_delay = 0.0
 	hud.message_until = 0.0
@@ -172,7 +306,205 @@ func _begin_wall() -> void:
 	sound.begin()
 	sound.play("retrieve")
 
+func _switch_state(model: StageState) -> void:
+	_pointer_up()
+	if state.event_occurred.is_connected(_event):
+		state.event_occurred.disconnect(_event)
+	state = model
+	if state is TowerState:
+		(state as TowerState).set_hints_enabled(hints_enabled_preference)
+	castle.bind(state)
+	hud.bind(state, journey)
+	state.event_occurred.connect(_event)
+	castle.invalidate()
+	hud.refresh()
+	_sync_flow()
+
+func _begin_score_attack() -> void:
+	campaign_run.stop()
+	tutorial_advance_timer = 0.0
+	score_ending_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	_switch_state(ScoreAttackState.new())
+	sound.begin()
+
+func _score_pointer_down(point: Vector2) -> void:
+	var model: ScoreAttackState = state as ScoreAttackState
+	for index: int in model.masks.size():
+		if model.tower.window_hit_rect(index).has_point(point):
+			if model.accessible(index):
+				active_window = index
+				castle.wiping = not model.is_clean(index)
+			else:
+				model.interact_window(index)
+			return
+	var ladder: int = model.fixed_ladder_at(point)
+	if ladder >= 0:
+		model.request_cross(ladder)
+		return
+	model.tap_destination(point)
+
+func _begin_tower() -> void:
+	campaign_run.stop()
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0
+	hud.credits_open = false
+	hud.planning_open = false
+	_switch_state(TowerState.new())
+	sound.begin()
+
+func _begin_tutorial(step: int, keep_campaign: bool = false) -> void:
+	if not keep_campaign:
+		campaign_run.stop()
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var tutorial: TutorialState = TutorialState.new()
+	tutorial.configure_tutorial(step)
+	_switch_state(tutorial)
+	sound.begin()
+
+func _start_campaign() -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var stage_ids: Array[String] = CampaignRun.FULL_STAGE_IDS if full_campaign_enabled else CampaignRun.DEFAULT_STAGE_IDS
+	var stage_labels: Array[String] = CampaignRun.FULL_STAGE_LABELS if full_campaign_enabled else CampaignRun.DEFAULT_STAGE_LABELS
+	var first_stage: String = campaign_run.begin(stage_ids, stage_labels)
+	if first_stage == "ending":
+		_begin_ending()
+	else:
+		_begin_campaign_stage(first_stage)
+
+func _begin_campaign_stage(stage_id: String) -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	match stage_id:
+		"tutorial_1":
+			var first: TutorialState = TutorialState.new()
+			first.configure_tutorial(1)
+			_switch_state(first)
+		"tutorial_2":
+			var second: TutorialState = TutorialState.new()
+			second.configure_tutorial(2)
+			_switch_state(second)
+		"tutorial_3":
+			var third: TutorialState = TutorialState.new()
+			third.configure_tutorial(3)
+			_switch_state(third)
+		"tower":
+			_switch_state(TowerState.new())
+		"switchback", "gallery_return", "heart_window":
+			var authored: TowerState = TowerState.new()
+			authored.configure(AuthoredLayout.new(stage_id), [])
+			_switch_state(authored)
+		_:
+			push_warning("Unknown campaign stage: %s" % stage_id)
+			_start_campaign()
+	sound.begin()
+
+func _begin_ending() -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var ending: EndingState = EndingState.new()
+	ending.configure_ending(campaign_run.ending_stats())
+	_switch_state(ending)
+
+func flow_snapshot() -> Dictionary:
+	var result: Dictionary = state.snapshot()
+	result.merge(campaign_run.snapshot(), true)
+	if state is EndingState:
+		result["ending_stats"] = (state as EndingState).campaign_stats.duplicate(true)
+	result["best_score"] = best_attack_score
+	result["language"] = hud.language
+	return result
+
+func _sync_flow() -> void:
+	if not is_node_ready() or castle == null or hud == null:
+		return
+	var snapshot: Dictionary = flow_snapshot()
+	castle.set_campaign_flow(snapshot)
+	if hud.has_method("set_campaign_flow"):
+		hud.call("set_campaign_flow", snapshot)
+
 func _command(action: String) -> void:
+	if hud is TowerHUD and action in ["instructions", "records"]:
+		(hud as TowerHUD).instructions_open = action == "instructions"
+		(hud as TowerHUD).records_open = action == "records"
+		hud.refresh()
+		return
+	if hud is TowerHUD and action in ["back", "start", "replay", "title"]:
+		(hud as TowerHUD).instructions_open = false
+		(hud as TowerHUD).records_open = false
+	if score_attack_enabled and action in ["start", "replay"]:
+		_begin_score_attack()
+		return
+	if state is ScoreAttackState and action in ["restart", "retry_wall", "new_castle"]:
+		_begin_score_attack()
+		return
+	if action == "start_classic":
+		journey.start(journey.castle_seed)
+		_switch_state(StageState.new())
+		_begin_wall()
+		return
+	if action == "undo" and state is TowerState:
+		_pointer_up()
+		hud.result_delay = 0
+		var tower_state: TowerState = state as TowerState
+		if campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent"] and not tower_state.history.is_empty() and not tower_state.paused:
+			campaign_run.cancel_transition()
+		if state is TutorialState and not campaign_run.active:
+			tutorial_advance_timer = 0.0
+		tower_state.undo()
+		_sync_flow()
+		return
+	if action == "action" and state is TowerState:
+		(state as TowerState).select_ladder()
+		return
+	if action == "help" and state is TowerState:
+		(state as TowerState).toggle_help()
+		return
+	if action == "hints" and state is TowerState:
+		hints_enabled_preference = not hints_enabled_preference
+		(state as TowerState).set_hints_enabled(hints_enabled_preference)
+		_save_settings()
+		hud.refresh()
+		return
+	if action == "replay":
+		_start_campaign()
+		return
+	if action == "title":
+		_begin_tower()
+		state.phase = "title"
+		hud.refresh()
+		return
+	if campaign_run.active and action in ["restart", "retry_wall", "new_castle"]:
+		if state is EndingState:
+			_start_campaign()
+		else:
+			var current_stage: String = campaign_run.restart_current()
+			_begin_campaign_stage(current_stage)
+		return
+	if action == "start" and state is TowerState and state.phase == "title":
+		_start_campaign()
+		return
+	if action == "start" and state is EndingState:
+		_start_campaign()
+		return
+	if state is TutorialState and action in ["start", "restart", "retry_wall", "new_castle"]:
+		_begin_tutorial((state as TutorialState).tutorial_step)
+		return
+	if state is TowerState and action in ["start", "restart", "retry_wall", "new_castle"]:
+		_begin_tower()
+		return
 	if action.begins_with("gift:"):
 		if journey.choose_gift(action.trim_prefix("gift:")):
 			_begin_wall()
@@ -186,17 +518,8 @@ func _command(action: String) -> void:
 					seed_value = seed_value % 999999 + 1
 			journey.start(seed_value)
 			_begin_wall()
-		"title":
-			_pointer_up()
-			hud.planning_open = false
-			hud.result_delay = 0.0
-			journey.start(journey.castle_seed)
-			state.configure(journey.layout(), journey.gifts)
-			state.phase = "title"
-			castle.invalidate()
-			hud.refresh()
 		"pause":
-			if state.phase == "playing":
+			if state.phase == "playing" or state is EndingState or state is ScoreAttackState or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"] and not state.paused):
 				_pointer_up()
 				state.set_paused(true)
 		"plan":
@@ -214,6 +537,7 @@ func _command(action: String) -> void:
 			hud.language = "en" if hud.language == "ja" else "ja"
 			hud.message_until = 0
 			hud.rebuild()
+			_sync_flow()
 			_save_settings()
 		"sound":
 			hud.muted = not hud.muted
@@ -255,6 +579,40 @@ func _command(action: String) -> void:
 func _event(event_name: String, detail: int) -> void:
 	if event_name != "window_clean_progress":
 		print("[WindowHero] %s %d %s" % [event_name, detail, JSON.stringify(state.snapshot())])
+	if state is ScoreAttackState and event_name == "stage_cleared":
+		score_ending_timer = 0.05
+		hud.result_delay = 0.0
+		best_attack_score = maxi(best_attack_score, (state as ScoreAttackState).final_score())
+		_save_settings()
+		sound.play("clear")
+		return
+	if state is ScoreAttackState and event_name == "monster_contact":
+		sound.play("retrieve")
+		return
+	if campaign_run.active and event_name == "stage_cleared":
+		campaign_run.start_clear(campaign_run.make_record(state))
+		hud.result_delay = 0.0
+		sound.play("clear")
+		_sync_flow()
+		return
+	if state is TutorialState:
+		match event_name:
+			"ladder_placed": sound.play("place")
+			"window_cleaned": sound.play("shine")
+			"state_undone": sound.play("retrieve")
+			"stage_cleared":
+				tutorial_advance_timer = 0.8
+				sound.play("clear")
+		return
+	if state is TowerState:
+		match event_name:
+			"ladder_placed", "shutter_opened": sound.play("place")
+			"ladder_retrieved", "state_undone", "shutter_rattled": sound.play("retrieve")
+			"window_cleaned", "mechanism_activated": sound.play("shine")
+			"stage_cleared":
+				hud.result_delay = 1.2
+				sound.play("clear")
+		return
 	match event_name:
 		"ladder_placed":
 			sound.play("place")
@@ -311,7 +669,7 @@ func _event(event_name: String, detail: int) -> void:
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT] and is_node_ready():
 		_pointer_up()
-		if state.phase == "playing":
+		if state.phase == "playing" or state is EndingState or (state is ScoreAttackState and score_ending_timer > 0) or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"]):
 			state.set_paused(true)
 
 func _load_settings() -> void:
@@ -320,7 +678,9 @@ func _load_settings() -> void:
 		hud.language = str(config.get_value("settings", "language", "ja"))
 		hud.muted = bool(config.get_value("settings", "muted", false))
 		hud.reduced_motion = bool(config.get_value("settings", "reduced_motion", false))
+		hints_enabled_preference = bool(config.get_value("settings", "hints_enabled", true))
 		hud.best_moves = int(config.get_value("record", "moves", 0))
+		best_attack_score = int(config.get_value("record", "score_attack", 0))
 		var saved_records: Variant = config.get_value("record", "castles", {})
 		if saved_records is Dictionary:
 			run_records = saved_records
@@ -331,7 +691,9 @@ func _save_settings() -> void:
 	config.set_value("settings", "language", hud.language)
 	config.set_value("settings", "muted", hud.muted)
 	config.set_value("settings", "reduced_motion", hud.reduced_motion)
+	config.set_value("settings", "hints_enabled", hints_enabled_preference)
 	config.set_value("record", "moves", hud.best_moves)
+	config.set_value("record", "score_attack", best_attack_score)
 	config.set_value("record", "castles", run_records)
 	config.save("user://settings.cfg")
 
@@ -339,11 +701,12 @@ func _debug_browser_command(arguments: Array) -> void:
 	if arguments.is_empty():
 		return
 	var action: String = str(arguments[0])
-	if action in ["start", "restart", "pause", "resume", "title", "language"]:
+	if action in ["start", "restart", "pause", "resume", "title", "language", "help", "hints"]:
 		_command(action)
 
 func debug_snapshot() -> Dictionary:
-	var result: Dictionary = state.snapshot()
+	var result: Dictionary = flow_snapshot()
+	result["credits_open"] = hud.credits_open
 	result["journey"] = journey.snapshot()
 	result["language"] = hud.language
 	result["buttons"] = hud.button_snapshot()

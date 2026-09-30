@@ -1,72 +1,27 @@
 # 窓ふき勇者 / WINDOW HERO
 
-> 汚れた魔王城を、戦わず、ハシゴで登り、窓を磨いて攻略する。
+**RUN → WIPE → EVADE → CLIMB**
 
-Godot 4.7 で制作する、**ハシゴ配置 × 窓ふき × 探索 × 軽ローグライト**。
+ハシゴが張り巡らされた夜の塔を駆け上がる、短いルート最適化アクション / スコアアタック。Godot 4.7、縦画面、日本語・英語、マウス・タッチ対応。
 
-## Game Pillars
+10階・16窓・18本の固定ハシゴと横橋。勇者は横フリックで走り、上下フリックで上り下りする。窓をなぞれば CLEAN。足場やハシゴをタップしても移動できる。掛け替え・回収操作はない。
 
-1. **CLIMB** - ハシゴをどこへ掛ければ届くか考える
-2. **CLEAN** - 窓をゴシゴシして最後の「キュッ！」を気持ちよくする
-3. **DISCOVER** - 磨いた窓の向こうに部屋・住人・仕掛けが現れる
-4. **OPTIMIZE** - 掛け替え回数や移動距離を詰められる
-5. **HEAL** - 敵を倒さず、最後まで「綺麗にする」で解決する
+時計は増えるだけで、制限時間はない。窓ふきには最低1.2秒かかり、その間も骸骨・コウモリ・ゴーストが決まった経路を巡回する。速さ・得点・安全を比べて寄り道を選ぼう。最上階に着いた瞬間に終了。
 
-## Current Goal
+`得点 = max(0, round(10,000 + CLEAN×400 + 全窓ボーナス1,500 − 秒数×50 − 接触×150))`
 
-### Ladder logic puzzle prototype — 2026-09-30
+最後は、真の勇者だけが伸ばせる伝説のハシゴが天へ。結果と自己ベストを見て、すぐリトライできる。
 
-**1本のハシゴを、縦の道にも横の橋にも使う論理パズル。** 3城壁・16窓の短いランを実装しています。最後は四階建ての塔で、Eの窓を磨いて中段の回廊を開き、横橋を上段から最上階の到達まで使い回します。日本語 / English、マウス / タッチ、キーボード移動に対応しています。
+## Play / Build
 
-2枚目は途切れたベランダ、3枚目は上下二段の切れ目と雨戸の連鎖。住人から選ぶ道具で解法も変わります。画面の「仕掛け」で条件を確認でき、考えている間は時間が止まります。目標回数を超えてもクリア可能です。
+- [ローカルで遊ぶ](http://127.0.0.1:8066/) — `python tools/serve.py` で起動。
+- 提出用ZIP: `build/window-hero-itch.zip`（生成物、Git対象外）。
+- [現在の仕様](docs/SCORE_ATTACK_v1.0.md)
+- [操作・検証・ビルド](docs/BUILD_AND_PLAY.md)
+- [検証結果とZIP](docs/FINAL_SPRINT_RESULTS_v1.0.md)
+- [itch.io掲載文・提出手順](docs/ITCH_SUBMISSION.md)
+- [素材とライセンス](CREDITS.md)
 
-- `project.godot` を **Godot 4.7 stable** で開き、F6ではなくF5で実行。
-- Web版は `build/web/index.html` へ書き出します。`python tools/serve.py` のあと、[ローカルで遊ぶ](http://127.0.0.1:8066)。HTMLのダブルクリック起動ではなくHTTP経由で開きます。
-- itch.io提出用アーカイブ：`build/window-hero-itch.zip`（生成物のためGit対象外）。
-- [遊び方・ビルド手順](docs/BUILD_AND_PLAY.md)
-- [検証結果と残る確認](docs/PLAYTEST_2026-09-29.md)
-- [四階建て塔・縦横ハシゴの論理パズル設計](docs/LADDER_PUZZLE_v0.3.md)
-- [itch.io掲載文と提出手順](docs/ITCH_SUBMISSION.md)
-- [素材・ライセンス一覧](CREDITS.md)
-- [生成アセット21点・組み込み・レビュー方法](docs/ASSET_PRODUCTION_v0.1.md)
+2026-09-30のユーザー試遊を受けて主モードを変更した。以前の掛け替えパズルとT1/T2/T3はソース・テストと検証済みチェックポイントZIPに保持。通常のスタートは固定ハシゴ版へ入る。
 
-### Scope
-
-最初に作るのは巨大なローグライトではなく、次の30秒が面白いかを検証する Vertical Slice。
-
-```
-ハシゴを持つ
-→ 掛ける
-→ 登る
-→ 汚れた窓を指/マウスで拭く
-→ キュッ！
-→ ガラスが透明になる
-→ 窓の向こうの住人/仕掛けが見える
-→ 次の窓へ行きたくなる
-```
-
-このループが気持ちよくなるまで、コンテンツ量を増やさない。
-
-## Target
-
-- Engine: Godot 4.7
-- Primary: Web / mobile portrait
-- Reference resolution: 720 × 1280
-- Input: mouse + touch
-- Jam build: 8-12 minutes
-- Product vision: 20-30 minute roguelite runs
-
-## Docs
-
-- [MASTER DESIGN v0.1](docs/MASTER_DESIGN_v0.1.md)
-- [Vertical Slice v0.1](docs/VERTICAL_SLICE_v0.1.md)
-- [Implementation Sprint v0.1](docs/IMPLEMENTATION_SPRINT_v0.1.md)
-- [AI development rules](AGENTS.md)
-
-## Core Ending
-
-魔王を倒さず「心の窓」を磨く。
-
-最後に勇者だけが抜ける**伝説のハシゴ**を引き抜くと、天まで伸びる。
-
-> NEXT JOB: THE WINDOWS OF HEAVEN
+参照解像度720×1280。360×800でも検証。ゲーム中の外部AIサービス接続はない。
