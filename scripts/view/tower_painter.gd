@@ -4,6 +4,10 @@ extends RefCounted
 const PROPS: Texture2D = preload("res://assets/generated/ladder_brackets_v02.png")
 const LADDER_REGION: Rect2 = Rect2(130, 54, 318, 1426)
 const BRACKET_REGION: Rect2 = Rect2(612, 612, 316, 230)
+const HEART: Texture2D = preload("res://assets/generated/heart_window_v1.png")
+const KING: Texture2D = preload("res://assets/generated/demon_king_v1.png")
+var heart_bounds: Rect2 = Rect2(HEART.get_image().get_used_rect())
+var king_bounds: Rect2 = Rect2(KING.get_image().get_used_rect())
 var rattle_at: float = -10
 var shutter_at: float = -10
 var route_at: float = -10
@@ -33,9 +37,7 @@ func draw(view: CastleView) -> void:
 	view._ivy(Vector2(110, 960), 18)
 	if not teaching:
 		view._banner(Vector2(108, 420), Color("88556b"))
-	var visible_floors: Array = [0, 1, 2, 3]
-	if teaching:
-		visible_floors = (wall as TutorialLayout).tutorial_step_data()["visible_floors"]
+	var visible_floors: Array[int] = wall.visible_floors()
 	for floor_value: int in visible_floors:
 		var y: float = wall.floor_y(floor_value)
 		if model.floor_has_gap(floor_value):
@@ -64,14 +66,18 @@ func draw(view: CastleView) -> void:
 			_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 0.28, Color("c3817b"))
 		if model.busy():
 			_ghost(view, model, model.preview_anchor, 1, true)
-	_hero(view, model)
-	if model.ladder_anchor < 0 and not model.inside() and model.phase == "playing":
+	var ascending: bool = str(view.campaign_flow.get("flow_phase", "")) == "ascent"
+	if not ascending:
+		_hero(view, model)
+	if not ascending and model.ladder_anchor < 0 and not model.inside() and model.phase == "playing":
 		var carry: Vector2 = model.carried_ladder_hit_rect().get_center()
 		_ladder(view, carry + Vector2(0, 30), carry - Vector2(0, 30), 1)
 	if model.help_visible:
 		_available(view, model)
 	_feedback(view, model)
 	_juice(view, model)
+	if ascending:
+		_ascent(view, model)
 	if view.wiping:
 		view._box(Rect2(view.pointer - Vector2(17, 4), Vector2(34, 8)), Color("fae4a8"), CastleView.INK, 2)
 		view.draw_line(view.pointer + Vector2(0, 4), view.pointer + Vector2(5, 19), Color("8dd4c1"), 5)
@@ -154,9 +160,17 @@ func _window(view: CastleView, model: TowerState, index: int) -> void:
 		if clean:
 			view.draw_polyline(PackedVector2Array([area.get_center() + Vector2(-8, 0), area.get_center() + Vector2(4, 0), area.get_center() + Vector2(0, -5), area.get_center() + Vector2(4, 0), area.get_center() + Vector2(0, 5)]), Color("f3d59a"), 2)
 	else:
+		_room_vignette(view, area, index)
 		view.draw_line(Vector2(area.get_center().x, area.position.y + 2), Vector2(area.get_center().x, area.end.y), Color("775b45"), 3)
 		view.draw_line(Vector2(area.position.x + 2, area.position.y + area.size.x / 2), Vector2(area.end.x - 2, area.position.y + area.size.x / 2), Color("775b45"), 3)
-	if kind == "discovery":
+	if kind == "heart":
+		view.draw_texture_rect_region(HEART, area.grow(5), heart_bounds)
+		view.characters._draw_aligned(view, KING, king_bounds, Vector2(area.get_center().x + area.size.x * 0.13, area.end.y - 9), area.size.y * 0.47, 1.0)
+		if not model.window_unlocked(index) and not clean:
+			var lock_at: Vector2 = area.get_center() + Vector2(0, 23)
+			view.draw_arc(lock_at - Vector2(0, 8), 8, PI, TAU, 16, Color("d8bd8d"), 3)
+			view._box(Rect2(lock_at - Vector2(10, 4), Vector2(20, 17)), Color("354154"), Color("d8bd8d"), 2)
+	elif kind == "discovery":
 		view.draw_texture_rect(CastleView.MOON_MOTH, area.grow(-3), false)
 	elif index in [1, 4, 9]:
 		view.draw_set_transform(area.get_center() + Vector2(0, 18), 0, Vector2(0.5, 0.5))
@@ -175,7 +189,7 @@ func _window(view: CastleView, model: TowerState, index: int) -> void:
 			var inset: float = _inset(area, row)
 			var target: Rect2 = Rect2(area.position.x + inset, area.position.y + row, area.size.x - inset * 2, minf(2, area.size.y - row))
 			var source: Rect2 = Rect2(Vector2(inset / area.size.x, row / area.size.y) * texture.get_size(), target.size / area.size * texture.get_size())
-			view.draw_texture_rect_region(texture, target, source)
+			view.draw_texture_rect_region(texture, target, source, Color("5d5671") if kind == "heart" else Color.WHITE)
 	if kind == "shutter" and not model.shutter_open:
 		var shake: float = 0.0 if view.reduced_motion else sin((view.clock - rattle_at) * 70) * maxf(0, 1 - (view.clock - rattle_at) / 0.35) * 3
 		var shutter: Rect2 = Rect2(area.position + Vector2(shake, 0), area.size)
@@ -201,6 +215,33 @@ func _window(view: CastleView, model: TowerState, index: int) -> void:
 	elif model.can_reach_floor(index) and model.window_unlocked(index) and not model.inside():
 		view.draw_line(area.position + Vector2(0, area.size.y + 14), area.end + Vector2(0, 14), Color("b0c5bc"), 2)
 
+func _room_vignette(view: CastleView, area: Rect2, index: int) -> void:
+	# Small silhouettes give each newly polished window a life beyond its counter.
+	var inner: Rect2 = area.grow(-7)
+	var base: float = inner.end.y - 4
+	var wood: Color = Color("795440")
+	view.draw_rect(Rect2(inner.position.x, base, inner.size.x, 4), wood)
+	if index % 3 == 0:
+		var shelf_y: float = base - inner.size.y * 0.26
+		view.draw_rect(Rect2(inner.position.x + 4, shelf_y, inner.size.x - 8, 4), wood)
+		for book: int in 4:
+			var x: float = inner.position.x + 6 + book * (inner.size.x - 14) / 4
+			var height: float = 13 + book % 3 * 4
+			var tint: Color = [Color("66877d"), Color("c07c61"), Color("e1b674"), Color("85718a")][book]
+			view.draw_rect(Rect2(x, shelf_y - height, 6, height), tint)
+	elif index % 3 == 1:
+		var lamp: Vector2 = Vector2(inner.position.x + inner.size.x * 0.77, base - 23)
+		view.draw_line(lamp, lamp + Vector2(0, 20), wood, 3)
+		view.draw_colored_polygon(PackedVector2Array([lamp + Vector2(-6, -8), lamp + Vector2(6, -8), lamp + Vector2(10, 2), lamp + Vector2(-10, 2)]), Color("f5d293"))
+		view.draw_line(lamp + Vector2(-6, 20), lamp + Vector2(6, 20), wood, 3)
+	else:
+		var pot: Vector2 = Vector2(inner.get_center().x, base)
+		view.draw_colored_polygon(PackedVector2Array([pot + Vector2(-10, -13), pot + Vector2(10, -13), pot + Vector2(7, 0), pot + Vector2(-7, 0)]), Color("bc7a58"))
+		for leaf: int in 3:
+			var tip: Vector2 = pot + Vector2((leaf - 1) * 10, -24 - leaf % 2 * 7)
+			view.draw_line(pot + Vector2(0, -12), tip, Color("548071"), 3)
+			view.draw_circle(tip, 5, Color("77a384"))
+
 func _inset(area: Rect2, row: float) -> float:
 	var radius: float = area.size.x / 2
 	if row >= radius:
@@ -219,20 +260,21 @@ func _arch(view: CastleView, area: Rect2, color: Color) -> void:
 
 func _cutaway(view: CastleView, model: TowerState) -> void:
 	view.draw_rect(Rect2(76, 116, 568, 1164), Color(0.02, 0.03, 0.10, 0.34))
-	var chamber: Rect2 = Rect2(265, 435, 295, 181)
+	var chamber: Rect2 = model.tower.room_rect()
 	view._box(chamber, Color(0.36, 0.24, 0.20, 0.87), Color("a58a68"), 2)
-	for x: int in range(290, 550, 45):
-		view.draw_line(Vector2(x, 460), Vector2(x, 595), Color(0.83, 0.65, 0.42, 0.1), 2)
-	var entry: Vector2 = model.window_rect(TowerLayout.ENTRY).get_center()
-	var exit_point: Vector2 = model.window_rect(TowerLayout.SHUTTER).get_center()
-	var path: PackedVector2Array = PackedVector2Array([entry, Vector2(entry.x, 586), Vector2(exit_point.x, 586), exit_point])
+	for x: int in range(int(chamber.position.x + 25), int(chamber.end.x - 10), 45):
+		view.draw_line(Vector2(x, chamber.position.y + 25), Vector2(x, chamber.end.y - 21), Color(0.83, 0.65, 0.42, 0.1), 2)
+	var entry: Vector2 = model.window_rect(model.tower.entry_window()).get_center()
+	var exit_point: Vector2 = model.window_rect(model.tower.shutter_window()).get_center()
+	var path_y: float = model.tower.floor_y(model.tower.interior_floor()) - 24
+	var path: PackedVector2Array = PackedVector2Array([entry, Vector2(entry.x, path_y), Vector2(exit_point.x, path_y), exit_point])
 	view.draw_polyline(path, Color("f2ca89"), 4)
-	view.draw_line(Vector2(285, 590), Vector2(553, 590), Color("d8b68b"), 10)
-	view._lantern(Vector2(413, 495))
+	view.draw_line(Vector2(chamber.position.x + 20, path_y + 4), Vector2(chamber.end.x - 7, path_y + 4), Color("d8b68b"), 10)
+	view._lantern(Vector2(chamber.get_center().x, chamber.position.y + 60))
 	# The exterior ladder remains visible through the wall, in its original position.
 	if model.ladder_anchor >= 0:
 		_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 0.35)
-	for index: int in [TowerLayout.ENTRY, TowerLayout.SHUTTER]:
+	for index: int in [model.tower.entry_window(), model.tower.shutter_window()]:
 		var area: Rect2 = model.window_rect(index)
 		view.draw_rect(area, Color(0.96, 0.77, 0.48, 0.17))
 		view.draw_rect(area.grow(5), Color("ebc790"), false, 3)
@@ -293,16 +335,16 @@ func _bracket(view: CastleView, point: Vector2, horizontal: bool, tint: Color) -
 
 func _available(view: CastleView, model: TowerState) -> void:
 	for at: int in model.reachable_regions():
-		if at == 6:
+		if at == model.tower.interior_region():
 			continue
 		var floor_value: int = model.tower.region_floor(at)
-		var right_side: bool = at in [2, 4]
-		if model is TutorialState:
-			for anchor: int in model.tower.anchor_count():
-				var ends: Array[int] = model.tower.anchor_ends(anchor)
-				if at in ends:
-					var endpoint: Vector2 = model.anchor_base(anchor) if at == ends[0] else model.anchor_top(anchor)
-					right_side = endpoint.x >= 400
+		var right_side: bool = false
+		for anchor: int in model.tower.anchor_count():
+			var ends: Array[int] = model.tower.anchor_ends(anchor)
+			if at in ends:
+				var endpoint: Vector2 = model.anchor_base(anchor) if at == ends[0] else model.anchor_top(anchor)
+				right_side = endpoint.x >= 400
+				break
 		var left: float = 400 if right_side else 92
 		var width: float = 228 if model.floor_has_gap(floor_value) else 536
 		view.draw_rect(Rect2(left, model.tower.floor_y(floor_value) - 12, width, 12), Color(0.52, 0.79, 0.73, 0.32))
@@ -361,13 +403,26 @@ func _juice(view: CastleView, model: TowerState) -> void:
 			view.draw_string(CastleView.FONT, area.position + Vector2(-10, -19), "CLEAN", HORIZONTAL_ALIGNMENT_CENTER, area.size.x + 20, 19, Color(1, 0.92, 0.72, 1 - age / 0.65))
 	var route_age: float = view.clock - route_at
 	if model.gallery_open and route_age >= 0 and route_age < 0.7:
-		var y: float = model.tower.floor_y(1)
+		var y: float = model.tower.floor_y(model.tower.region_floor(model.tower.gallery_regions()[0]))
 		view.draw_line(Vector2(320, y), Vector2(400, y), Color(1, 0.81, 0.35, 1 - route_age / 0.7), 8)
 		if not view.reduced_motion:
 			view.draw_circle(Vector2(lerpf(320, 400, route_age / 0.7), y), 7, Color("ffe5a2"))
 	var shutter_age: float = view.clock - shutter_at
-	if model.shutter_open and shutter_age >= 0 and shutter_age < 0.55:
-		view.draw_rect(model.window_rect(TowerLayout.SHUTTER).grow(12), Color(1, 0.82, 0.46, 0.25 * (1 - shutter_age / 0.55)))
+	if model.shutter_open and model.tower.shutter_window() >= 0 and shutter_age >= 0 and shutter_age < 0.55:
+		view.draw_rect(model.window_rect(model.tower.shutter_window()).grow(12), Color(1, 0.82, 0.46, 0.25 * (1 - shutter_age / 0.55)))
+
+func _ascent(view: CastleView, model: TowerState) -> void:
+	var progress: float = float(view.campaign_flow.get("ascent_progress", 0.0))
+	var base: Vector2 = model.hero + Vector2(0, 8)
+	var top: Vector2 = Vector2(base.x, -140)
+	_ladder(view, base, top, 0.9, Color("f2d192"))
+	var feet: Vector2 = base.lerp(Vector2(base.x, 100), smoothstep(0.0, 0.9, progress))
+	if view.reduced_motion:
+		feet = model.hero
+	view.characters._draw_aligned(view, view.characters.heroes["climb"], view.characters.bounds["climb"], feet, 66, 1.0)
+	# The exit is in the same exterior world; a short fade connects to the next floor.
+	var fade: float = smoothstep(0.7, 1.0, progress)
+	view.draw_rect(Rect2(0, 0, 720, 1280), Color(0.07, 0.12, 0.23, fade))
 
 func _mechanisms(view: CastleView, model: TowerState) -> void:
 	for index: int in model.tower.anchor_count():

@@ -5,7 +5,7 @@ var failures: int = 0
 
 func _initialize() -> void:
 	var records: Array = JSON.parse_string(FileAccess.get_file_as_string("res://assets/generated/production_prompts.json"))
-	verify(records.size() == 22, "all 22 generated PNG deliverables recorded")
+	verify(records.size() == 25, "all 25 generated PNG deliverables recorded")
 	for record: Dictionary in records:
 		var path: String = "res://" + str(record["file"])
 		var source: Image = Image.new()

@@ -10,20 +10,7 @@ func _init(step: int = 1) -> void:
 	super(1, 0)
 	tutorial_step = clampi(step, 1, 3)
 	board = TUTORIAL_DATA["boards"][tutorial_step - 1]
-	windows.clear()
-	anchor_x.clear()
-	hook_keys.clear()
-	required_window.clear()
-	chapter = 2
-	has_gap = not board["gaps"].is_empty()
-	for item: Dictionary in board["windows"]:
-		var rect: Array = item["rect"]
-		windows.append(Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])))
-		required_window.append(int(item.get("requires_window", -1)))
-	for item: Dictionary in board["anchors"]:
-		var base: Array = item["base"]
-		anchor_x.append(float(base[0]))
-		hook_keys.append(int(item.get("requires_window", -1)))
+	configure_data(board)
 
 func tutorial_step_data() -> Dictionary:
 	return board
@@ -31,6 +18,12 @@ func tutorial_step_data() -> Dictionary:
 func initial_hero() -> Vector2:
 	var point: Array = board["hero"]
 	return Vector2(float(point[0]), float(point[1]))
+
+func stage_id() -> String:
+	return "tutorial_%d" % tutorial_step
+
+func initial_region() -> int:
+	return 0
 
 func visible_floors() -> Array[int]:
 	var result: Array[int] = []
@@ -91,3 +84,30 @@ func gap_on_floor(index: int) -> bool:
 		if int(value) == index:
 			return true
 	return false
+
+func entry_window() -> int:
+	return -1
+
+func shutter_window() -> int:
+	return -1
+
+func gallery_window() -> int:
+	return -1
+
+func gallery_regions() -> Array[int]:
+	return []
+
+func interior_region() -> int:
+	return -1
+
+func interior_floor() -> int:
+	return -1
+
+func completion_region() -> int:
+	return [1, 1, 2][tutorial_step - 1]
+
+func retired_bridge() -> int:
+	return -1
+
+func room_rect() -> Rect2:
+	return Rect2()

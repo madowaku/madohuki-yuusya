@@ -51,9 +51,10 @@ func reset() -> void:
 					masks[index].cells[y * DirtMask.WIDTH + x] = 0
 					masks[index].remaining -= 1
 		masks[index].total_cells = masks[index].remaining
-	hero = Vector2(248, tower.floor_y(0))
+	hero = tower.initial_hero()
 	walk_target = hero.x
-	region = 0
+	region = tower.initial_region()
+	floor_index = _floor_for_region(region)
 	shutter_open = false
 	gallery_open = false
 	placement_mode = false
@@ -79,32 +80,63 @@ func can_act() -> bool:
 	return phase == "playing" and not paused and not busy()
 
 func inside() -> bool:
-	return region == 6
+	return tower.interior_region() >= 0 and region == tower.interior_region()
 
 func floor_has_gap(value: int) -> bool:
-	return tower.gap_on_floor(value) and not (value == 1 and gallery_open)
+	if not tower.gap_on_floor(value):
+		return false
+	if gallery_open:
+		for gallery_region: int in tower.gallery_regions():
+			if _floor_for_region(gallery_region) == value:
+				return false
+	return true
 
 func window_unlocked(index: int) -> bool:
-	return index != TowerLayout.SHUTTER or shutter_open
+	if index < 0 or index >= masks.size():
+		return false
+	if index == tower.shutter_window() and not shutter_open:
+		return false
+	var requirement: int = tower.window_requirement(index)
+	if requirement >= 0 and (requirement >= masks.size() or not is_clean(requirement)):
+		return false
+	if tower.window_requires_all_other(index):
+		for other: int in masks.size():
+			if other != index and not is_clean(other):
+				return false
+	return true
 
 func can_reach_floor(index: int) -> bool:
-	return tower.window_region(index) == region or (gallery_open and region in [1, 2] and tower.window_region(index) in [1, 2])
+	if index < 0 or index >= masks.size():
+		return false
+	var gallery: Array[int] = tower.gallery_regions()
+	var window_region: int = tower.window_region(index)
+	return window_region == region or (gallery_open and gallery.has(region) and gallery.has(window_region))
 
 func accessible(index: int) -> bool:
 	if index < 0 or index >= masks.size() or not can_act() or inside() or not window_unlocked(index):
 		return false
 	var window_region: int = tower.window_region(index)
-	var same_landing: bool = window_region == region or (gallery_open and region in [1, 2] and window_region in [1, 2])
+	var gallery: Array[int] = tower.gallery_regions()
+	var same_landing: bool = window_region == region or (gallery_open and gallery.has(region) and gallery.has(window_region))
 	return same_landing and absf(hero.x - window_rect(index).get_center().x) < 110.0
+
+func _floor_for_region(value: int) -> int:
+	if value == tower.interior_region():
+		return tower.interior_floor()
+	return tower.region_floor(value)
 
 func same_balcony(x: float) -> bool:
 	return not floor_has_gap(floor_index) or (hero.x <= WallLayout.GAP_LEFT and x <= WallLayout.GAP_LEFT) or (hero.x >= WallLayout.GAP_RIGHT and x >= WallLayout.GAP_RIGHT)
 
 func anchor_enabled(index: int) -> bool:
-	return index >= 0 and index < tower.anchor_count() and not (index == 4 and gallery_open and ladder_anchor != 4)
+	var retired_bridge: int = tower.retired_bridge()
+	return index >= 0 and index < tower.anchor_count() and not (index == retired_bridge and gallery_open and ladder_anchor != retired_bridge)
 
 func anchor_unlocked(index: int) -> bool:
-	return anchor_enabled(index) and is_clean(tower.hook_keys[index])
+	if not anchor_enabled(index):
+		return false
+	var requirement: int = tower.anchor_requirement(index)
+	return requirement < 0 or (requirement < masks.size() and is_clean(requirement))
 
 func anchor_on_floor(index: int) -> bool:
 	return anchor_enabled(index) and tower.anchor_ends(index).has(region)
@@ -113,7 +145,7 @@ func anchor_endpoint(index: int) -> Vector2:
 	var ends: Array[int] = tower.anchor_ends(index)
 	if ends.has(region):
 		return tower.anchor_base(index) if region == ends[0] else tower.anchor_top(index)
-	return tower.anchor_base(index) if floor_index == tower.region_floor(ends[0]) else tower.anchor_top(index)
+	return tower.anchor_base(index) if floor_index == _floor_for_region(ends[0]) else tower.anchor_top(index)
 
 func anchor_marker(index: int) -> Vector2:
 	if tower.is_horizontal_anchor(index):
@@ -123,8 +155,12 @@ func anchor_marker(index: int) -> Vector2:
 func hook_hit_rect(index: int) -> Rect2:
 	# At a shared landing, incoming and outgoing hooks have separate targets.
 	var point: Vector2 = anchor_marker(index) + Vector2(0, 16)
-	if not tower.is_horizontal_anchor(index) and floor_index == tower.region_floor(int(tower.anchor_ends(index)[1])) and floor_index in [1, 2]:
-		point.x += 100.0 if point.x < 360 else -100.0
+	if not tower.is_horizontal_anchor(index):
+		var ends: Array[int] = tower.anchor_ends(index)
+		var upper_floor: int = maxi(_floor_for_region(ends[0]), _floor_for_region(ends[1]))
+		if floor_index == upper_floor and floor_index > 0 and floor_index < tower.floor_count() - 1:
+			var center_x: float = tower.room_rect().get_center().x
+			point.x += 100.0 if point.x < center_x else -100.0
 	return Rect2(point - TowerLayout.HIT_SIZE * 0.5, TowerLayout.HIT_SIZE)
 
 func _body_hit_rect(first: Vector2, last: Vector2) -> Rect2:
@@ -196,7 +232,7 @@ func set_hints_enabled(value: bool) -> void:
 	changed.emit()
 
 func _region_total() -> int:
-	return 7
+	return tower.region_count()
 
 func reachable_regions() -> Array[int]:
 	var result: Array[int] = []
@@ -259,15 +295,30 @@ func _anchor_for_edge(first_region: int, last_region: int) -> int:
 	return -1
 
 func _region_point(value: int) -> Vector2:
-	if value == 6:
-		return Vector2(360.0, tower.floor_y(2) - 24.0)
-	var floor_number: int = tower.region_floor(value)
-	var x: float = 360.0
-	if value in [1, 3]:
-		x = 210.0
-	elif value in [2, 4]:
-		x = 510.0
-	return Vector2(x, tower.floor_y(floor_number))
+	var interior: int = tower.interior_region()
+	if value == interior and interior >= 0:
+		var room: Rect2 = tower.room_rect()
+		return Vector2(room.get_center().x, room.end.y - 24.0)
+	var x_total: float = 0.0
+	var samples: int = 0
+	for index: int in masks.size():
+		if tower.window_region(index) == value:
+			x_total += window_rect(index).get_center().x
+			samples += 1
+	for index: int in tower.anchor_count():
+		var ends: Array[int] = tower.anchor_ends(index)
+		if ends[0] == value:
+			x_total += tower.anchor_base(index).x
+			samples += 1
+		elif ends[1] == value:
+			x_total += tower.anchor_top(index).x
+			samples += 1
+	if value == tower.initial_region():
+		x_total += tower.initial_hero().x
+		samples += 1
+	var x: float = x_total / float(samples) if samples > 0 else tower.room_rect().get_center().x
+	var floor_number: int = _floor_for_region(value)
+	return Vector2(x, tower.floor_y(clampi(floor_number, 0, maxi(0, tower.floor_count() - 1))))
 
 func report_unreachable_window(index: int) -> void:
 	if index < 0 or index >= masks.size():
@@ -299,50 +350,39 @@ func report_unreachable_window(index: int) -> void:
 	if not found_gap and path.is_empty():
 		trace.append(tower.window_rect(index).get_center())
 	unreachable_points = trace
-	if found_gap:
-		nudge_age = 0.0
-		idle_nudged = true
+	# An unreachable tap itself should call attention to the ladder even when an
+	# authored board has no drawable missing edge.
+	nudge_age = 0.0
+	idle_nudged = true
 	event_occurred.emit("unreachable_window", index)
 	changed.emit()
 
 func destination_region_at(point: Vector2) -> int:
+	var interior: int = tower.interior_region()
+	if interior >= 0 and tower.room_rect().grow(18.0).has_point(point):
+		return interior
 	var best_floor: int = -1
 	var best_distance: float = INF
-	var floor_count: int = tower.DATA["floors"].size()
-	if tower is TutorialLayout:
-		var tutorial_layout: TutorialLayout = tower as TutorialLayout
-		floor_count = tutorial_layout.tutorial_step_data()["floors"].size()
-	for floor_number: int in floor_count:
+	for floor_number: int in tower.floor_count():
 		var distance: float = absf(point.y - tower.floor_y(floor_number))
 		if distance < best_distance:
 			best_distance = distance
 			best_floor = floor_number
 	if best_distance > 64.0:
 		return -1
-	if tower is TutorialLayout:
-		var tutorial: TutorialLayout = tower as TutorialLayout
-		match tutorial.tutorial_step:
-			1:
-				return 0 if best_floor == 0 else 1
-			2:
-				return 0 if point.x < 360.0 else 1
-			3:
-				if best_floor == 0:
-					return 0
-				return 1 if point.x < 360.0 else 2
-	match best_floor:
-		0:
-			return 0
-		1:
-			return 1 if point.x < 360.0 else 2
-		2:
-			return 3 if point.x < 360.0 else 4
-		3:
-			return 5
-	return -1
+	var nearest_region: int = -1
+	var horizontal_distance: float = INF
+	for candidate: int in tower.region_count():
+		if candidate == interior or _floor_for_region(candidate) != best_floor:
+			continue
+		var distance: float = absf(point.x - _region_point(candidate).x)
+		if distance < horizontal_distance:
+			horizontal_distance = distance
+			nearest_region = candidate
+	return nearest_region
 
 func move_to_region(destination: int, destination_x: float = -1.0) -> bool:
-	if not can_act() or inside() and destination != 6:
+	if not can_act() or (inside() and destination != tower.interior_region()):
 		return false
 	var path: Array[int] = _path(region, destination, ladder_anchor)
 	if path.is_empty():
@@ -383,23 +423,44 @@ func select_ladder() -> void:
 
 func _links(at: int, with_ladder: int) -> Array[int]:
 	var result: Array[int] = []
-	if gallery_open and at in [1, 2]:
-		result.append(3 - at)
-	if is_clean(TowerLayout.ENTRY):
-		if at == 3:
-			result.append(6)
-		elif at == 6:
-			result.append(3)
-	if shutter_open:
-		if at == 4:
-			result.append(6)
-		elif at == 6:
-			result.append(4)
+	var gallery: Array[int] = tower.gallery_regions()
+	if gallery_open and gallery.has(at):
+		for gallery_region: int in gallery:
+			if gallery_region != at and not result.has(gallery_region):
+				result.append(gallery_region)
+	var interior: int = tower.interior_region()
+	if interior >= 0:
+		var entry: int = tower.entry_window()
+		if entry >= 0 and entry < masks.size() and is_clean(entry):
+			_add_bidirectional_region_link(result, at, tower.window_region(entry), interior)
+		var shutter: int = tower.shutter_window()
+		if shutter_open and shutter >= 0 and shutter < masks.size():
+			_add_bidirectional_region_link(result, at, tower.window_region(shutter), interior)
 	if with_ladder >= 0:
-		var ends: Array = tower.anchor_ends(with_ladder)
+		var ends: Array[int] = tower.anchor_ends(with_ladder)
 		if ends.has(at):
-			result.append(int(ends[1]) if at == int(ends[0]) else int(ends[0]))
+			var next: int = ends[1] if at == ends[0] else ends[0]
+			if not result.has(next):
+				result.append(next)
 	return result
+
+func _add_bidirectional_region_link(result: Array[int], at: int, portal_region: int, interior: int) -> void:
+	if at == portal_region and not result.has(interior):
+		result.append(interior)
+	elif at == interior and not result.has(portal_region):
+		result.append(portal_region)
+
+func _portal_window_for_region(target_region: int) -> int:
+	var entry: int = tower.entry_window()
+	if entry >= 0 and entry < masks.size() and tower.window_region(entry) == target_region and is_clean(entry):
+		return entry
+	var shutter: int = tower.shutter_window()
+	if shutter >= 0 and shutter < masks.size() and tower.window_region(shutter) == target_region and shutter_open:
+		return shutter
+	return -1
+
+func _is_portal_window(index: int) -> bool:
+	return index >= 0 and (index == tower.entry_window() or index == tower.shutter_window())
 
 func _path(start: int, finish: int, with_ladder: int) -> Array[int]:
 	var queue: Array[int] = [start]
@@ -521,9 +582,9 @@ func interact_window(index: int) -> bool:
 		return false
 	_mark_input_activity()
 	if inside():
-		if index not in [TowerLayout.ENTRY, TowerLayout.SHUTTER]:
+		if not _is_portal_window(index):
 			return false
-		if index == TowerLayout.SHUTTER and not shutter_open:
+		if index == tower.shutter_window() and not shutter_open:
 			_remember()
 			jobs.append({"type": "walk", "x": window_rect(index).get_center().x})
 			jobs.append({"type": "shutter"})
@@ -540,19 +601,19 @@ func interact_window(index: int) -> bool:
 		help_visible = false
 		changed.emit()
 		return true
-	if index == TowerLayout.SHUTTER and not shutter_open:
+	if index == tower.shutter_window() and not shutter_open:
 		event_occurred.emit("shutter_rattled", index)
 		return false
-	if index == TowerLayout.GALLERY_KEY and is_clean(index) and not gallery_open and can_reach_floor(index):
+	if index == tower.gallery_window() and is_clean(index) and not gallery_open and can_reach_floor(index):
 		_activate_gallery()
 		return true
 	var target_region: int = tower.window_region(index)
-	if index in [TowerLayout.ENTRY, TowerLayout.SHUTTER] and is_clean(index):
+	if _is_portal_window(index) and is_clean(index) and tower.interior_region() >= 0:
 		if not _path(region, target_region, ladder_anchor).is_empty():
 			_remember()
 			if not move_to_region(target_region, window_rect(index).get_center().x):
 				return false
-			jobs.append({"type": "region", "region": 6})
+			jobs.append({"type": "region", "region": tower.interior_region()})
 			return true
 	if not _path(region, target_region, ladder_anchor).is_empty():
 		return move_to_region(target_region, window_rect(index).get_center().x)
@@ -568,21 +629,27 @@ func wipe(index: int, from: Vector2, to: Vector2) -> int:
 		if is_clean(index):
 			event_occurred.emit("window_cleaned", index)
 			event_occurred.emit("window_revealed", index)
-			if index == TowerLayout.GALLERY_KEY:
+			if index == tower.gallery_window():
 				_activate_gallery()
 			_check_clear()
 		changed.emit()
 	return erased
 
 func _activate_gallery() -> void:
+	if tower.gallery_window() < 0 or gallery_open:
+		return
 	_remember()
 	gallery_open = true
-	event_occurred.emit("mechanism_activated", TowerLayout.GALLERY_KEY)
+	event_occurred.emit("mechanism_activated", tower.gallery_window())
 	_check_clear()
 	changed.emit()
 
 func _check_clear() -> void:
-	if cleaned_count() == masks.size() and gallery_open and shutter_open and region == 5 and phase != "clear":
+	var gallery_complete: bool = tower.gallery_window() < 0 or gallery_open
+	var shutter_complete: bool = tower.shutter_window() < 0 or shutter_open
+	var completion_region: int = tower.completion_region()
+	var region_complete: bool = completion_region < 0 or region == completion_region
+	if cleaned_count() == masks.size() and gallery_complete and shutter_complete and region_complete and phase != "clear":
 		phase = "clear"
 		placement_mode = false
 		event_occurred.emit("stage_cleared", masks.size())
@@ -598,7 +665,7 @@ func undo() -> bool:
 	var previous: Dictionary = history.pop_back()
 	hero = previous["hero"]
 	region = int(previous["region"])
-	floor_index = tower.region_floor(region)
+	floor_index = _floor_for_region(region)
 	ladder_anchor = int(previous["ladder"])
 	moves = int(previous["moves"])
 	shutter_open = bool(previous["shutter"])
@@ -623,22 +690,29 @@ func undo() -> bool:
 	return true
 
 func _begin_transition(destination: int) -> void:
-	var uses_ladder: bool = destination != 6 and region != 6 and not (gallery_open and region in [1, 2] and destination in [1, 2])
+	var interior: int = tower.interior_region()
+	var gallery: Array[int] = tower.gallery_regions()
+	var gallery_walk: bool = gallery_open and gallery.has(region) and gallery.has(destination)
+	var uses_ladder: bool = destination != interior and region != interior and not gallery_walk
 	var start_point: Vector2 = hero
 	var end_point: Vector2 = hero
 	if uses_ladder:
 		start_point = anchor_endpoint(ladder_anchor)
 		end_point = anchor_top(ladder_anchor) if region == int(tower.anchor_ends(ladder_anchor)[0]) else anchor_base(ladder_anchor)
-	elif destination == 6:
-		var portal: int = TowerLayout.ENTRY if region == 3 else TowerLayout.SHUTTER
-		start_point = Vector2(window_rect(portal).get_center().x, tower.floor_y(2))
+	elif destination == interior and interior >= 0:
+		var portal: int = _portal_window_for_region(region)
+		if portal < 0:
+			return
+		start_point = Vector2(window_rect(portal).get_center().x, tower.floor_y(tower.interior_floor()))
 		end_point = start_point + Vector2(0, -24)
-	elif region == 6:
-		var portal: int = TowerLayout.ENTRY if destination == 3 else TowerLayout.SHUTTER
-		start_point = Vector2(window_rect(portal).get_center().x, tower.floor_y(2) - 24)
+	elif region == interior and interior >= 0:
+		var portal: int = _portal_window_for_region(destination)
+		if portal < 0:
+			return
+		start_point = Vector2(window_rect(portal).get_center().x, tower.floor_y(tower.interior_floor()) - 24)
 		end_point = start_point + Vector2(0, 24)
 	else:
-		end_point.x = 440.0 if destination == 2 else 280.0
+		end_point.x = _region_point(destination).x
 	walk_target = start_point.x
 	if absf(hero.x - walk_target) > 1:
 		return
@@ -685,8 +759,9 @@ func tick(delta: float) -> void:
 		hero = transition_from.lerp(transition_to, smoothstep(0, 1, transition_progress))
 		if transition_progress >= 1:
 			var was_inside: bool = inside()
+			var source_region: int = region
 			region = transition_region
-			floor_index = tower.region_floor(region)
+			floor_index = _floor_for_region(region)
 			if transition_ladder:
 				climb_distance += absf(transition_to.y - transition_from.y)
 				if transition_to.y > transition_from.y:
@@ -696,7 +771,9 @@ func tick(delta: float) -> void:
 					event_occurred.emit("bridge_crossed", bridge_crossings)
 				event_occurred.emit("hero_finished_climb", floor_index)
 			elif inside() != was_inside:
-				event_occurred.emit("hero_entered_window" if inside() else "hero_exited_window", TowerLayout.ENTRY if hero.x < 360 else TowerLayout.SHUTTER)
+				var portal_region: int = source_region if was_inside else region
+				var portal: int = _portal_window_for_region(portal_region)
+				event_occurred.emit("hero_entered_window" if inside() else "hero_exited_window", portal)
 			transitioning = false
 			climbing = false
 			jobs.pop_front()
@@ -734,15 +811,28 @@ func tick(delta: float) -> void:
 			"shutter":
 				shutter_open = true
 				jobs.pop_front()
-				event_occurred.emit("shutter_opened", TowerLayout.SHUTTER)
+				event_occurred.emit("shutter_opened", tower.shutter_window())
 				changed.emit()
 	elif held_direction != 0:
 		walk_to(hero.x + held_direction * 80)
 	var previous_x: float = hero.x
 	hero.x = move_toward(hero.x, walk_target, 460.0 * delta)
 	walking_distance += absf(hero.x - previous_x)
-	if jobs.is_empty() and not inside() and gallery_open and floor_index == 1:
-		region = 1 if hero.x <= 360 else 2
+	if jobs.is_empty() and not inside() and gallery_open:
+		var gallery: Array[int] = tower.gallery_regions()
+		var same_floor: Array[int] = []
+		for gallery_region: int in gallery:
+			if _floor_for_region(gallery_region) == floor_index:
+				same_floor.append(gallery_region)
+		if same_floor.size() > 1:
+			var nearest: int = region
+			var nearest_distance: float = INF
+			for gallery_region: int in same_floor:
+				var distance: float = absf(hero.x - _region_point(gallery_region).x)
+				if distance < nearest_distance:
+					nearest_distance = distance
+					nearest = gallery_region
+			region = nearest
 
 func set_paused(value: bool) -> void:
 	# Freeze the transaction in place; resume continues it without losing the ladder.

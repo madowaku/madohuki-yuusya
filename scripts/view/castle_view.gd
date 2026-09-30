@@ -24,6 +24,11 @@ var particles: Array[Dictionary] = []
 var glint: float = 0.0
 var bubble_times: Array[float] = []
 var tower_painter: TowerPainter = TowerPainter.new()
+var ending_painter: EndingPainter = EndingPainter.new()
+var campaign_flow: Dictionary = {}
+
+func set_campaign_flow(value: Dictionary) -> void:
+	campaign_flow = value
 
 func bind(model: StageState) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -97,6 +102,9 @@ func _on_event(event_name: String, detail: int) -> void:
 
 func _draw() -> void:
 	if state == null:
+		return
+	if state is EndingState:
+		ending_painter.draw(self, state as EndingState)
 		return
 	if state is TowerState:
 		tower_painter.draw(self)

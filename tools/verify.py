@@ -46,7 +46,7 @@ if args.certificate_bundle:
     project_file.write_text(project_text, encoding="utf-8")
 
 try:
-    for name in ["stage", "art", "run", "route_solver", "ui_runtime", "tower", "tutorial", "ux_controls"]:
+    for name in ["stage", "art", "run", "route_solver", "ui_runtime", "tower", "tutorial", "ux_controls", "authored", "campaign"]:
         log = logs / f"{name}.log"
         log.write_text("", encoding="utf-8")
         try:
@@ -74,6 +74,8 @@ try:
     reports.append({"test": "tower_solver", "passed": solver.returncode == 0, "exit": solver.returncode})
     tutorial_solver = subprocess.run([sys.executable, str(root / "tools" / "solve_tutorial.py")], timeout=60)
     reports.append({"test": "tutorial_solver", "passed": tutorial_solver.returncode == 0, "exit": tutorial_solver.returncode})
+    authored_solver = subprocess.run([sys.executable, str(root / "tools" / "solve_authored.py")], timeout=60)
+    reports.append({"test": "authored_solver", "passed": authored_solver.returncode == 0, "exit": authored_solver.returncode})
 finally:
     if original_project is not None:
         project_file.write_bytes(original_project)

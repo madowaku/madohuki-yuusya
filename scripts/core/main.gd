@@ -5,6 +5,7 @@ extends Node
 @onready var sound: SoundBank = $Sound
 var state: StageState = TowerState.new()
 var journey: CastleRun = CastleRun.new()
+var campaign_run: CampaignRun = CampaignRun.new()
 var run_records: Dictionary = {}
 var active_window: int = -1
 var active_touch: int = -1
@@ -16,6 +17,9 @@ var step_clock: float = 0.0
 var web_clock: float = 0.0
 var tutorial_advance_timer: float = 0.0
 var hints_enabled_preference: bool = true
+# The MUST SHIP route stays active by default. The parent can enable the
+# authored 4/6/12/6-window extension after its solver and browser route pass.
+var full_campaign_enabled: bool = false
 
 func _ready() -> void:
 	state.phase = "title"
@@ -27,6 +31,7 @@ func _ready() -> void:
 	hud.direction_changed.connect(func(value: float) -> void: state.held_direction = value)
 	state.event_occurred.connect(_event)
 	sound.muted = hud.muted
+	_sync_flow()
 	if OS.has_feature("web"):
 		# Read-only instrumentation stays available in the shipped build.
 		JavaScriptBridge.eval("window.windowHero = {state: {}, ready: true};")
@@ -45,6 +50,12 @@ func _process(delta: float) -> void:
 	if keyboard_direction != 0:
 		state.walk_to(state.hero.x + keyboard_direction * 110)
 	state.tick(minf(delta, 0.05))
+	if campaign_run.active:
+		var outcome: String = campaign_run.tick(delta, state.paused)
+		if outcome == "ending":
+			_begin_ending()
+		elif not outcome.is_empty() and outcome != "ascent_started":
+			_begin_campaign_stage(outcome)
 	step_clock += delta
 	if state.climbing and not state.paused and step_clock > 0.36:
 		sound.play("step")
@@ -60,6 +71,8 @@ func _process(delta: float) -> void:
 					_begin_tower()
 				else:
 					_begin_tutorial(tutorial.tutorial_step + 1)
+	if campaign_run.active or state is EndingState:
+		_sync_flow()
 	if OS.has_feature("web"):
 		web_clock += delta
 		if web_clock > 0.2:
@@ -221,6 +234,7 @@ func _pointer_up() -> void:
 	castle.wiping = false
 
 func _begin_wall() -> void:
+	campaign_run.stop()
 	_pointer_up()
 	hud.result_delay = 0.0
 	hud.message_until = 0.0
@@ -244,8 +258,10 @@ func _switch_state(model: StageState) -> void:
 	state.event_occurred.connect(_event)
 	castle.invalidate()
 	hud.refresh()
+	_sync_flow()
 
 func _begin_tower() -> void:
+	campaign_run.stop()
 	tutorial_advance_timer = 0.0
 	hud.result_delay = 0
 	hud.credits_open = false
@@ -253,7 +269,9 @@ func _begin_tower() -> void:
 	_switch_state(TowerState.new())
 	sound.begin()
 
-func _begin_tutorial(step: int) -> void:
+func _begin_tutorial(step: int, keep_campaign: bool = false) -> void:
+	if not keep_campaign:
+		campaign_run.stop()
 	tutorial_advance_timer = 0.0
 	hud.result_delay = 0.0
 	hud.credits_open = false
@@ -262,6 +280,71 @@ func _begin_tutorial(step: int) -> void:
 	tutorial.configure_tutorial(step)
 	_switch_state(tutorial)
 	sound.begin()
+
+func _start_campaign() -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var stage_ids: Array[String] = CampaignRun.FULL_STAGE_IDS if full_campaign_enabled else CampaignRun.DEFAULT_STAGE_IDS
+	var stage_labels: Array[String] = CampaignRun.FULL_STAGE_LABELS if full_campaign_enabled else CampaignRun.DEFAULT_STAGE_LABELS
+	var first_stage: String = campaign_run.begin(stage_ids, stage_labels)
+	if first_stage == "ending":
+		_begin_ending()
+	else:
+		_begin_campaign_stage(first_stage)
+
+func _begin_campaign_stage(stage_id: String) -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	match stage_id:
+		"tutorial_1":
+			var first: TutorialState = TutorialState.new()
+			first.configure_tutorial(1)
+			_switch_state(first)
+		"tutorial_2":
+			var second: TutorialState = TutorialState.new()
+			second.configure_tutorial(2)
+			_switch_state(second)
+		"tutorial_3":
+			var third: TutorialState = TutorialState.new()
+			third.configure_tutorial(3)
+			_switch_state(third)
+		"tower":
+			_switch_state(TowerState.new())
+		"switchback", "gallery_return", "heart_window":
+			var authored: TowerState = TowerState.new()
+			authored.configure(AuthoredLayout.new(stage_id), [])
+			_switch_state(authored)
+		_:
+			push_warning("Unknown campaign stage: %s" % stage_id)
+			_start_campaign()
+	sound.begin()
+
+func _begin_ending() -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var ending: EndingState = EndingState.new()
+	ending.configure_ending(campaign_run.ending_stats())
+	_switch_state(ending)
+
+func flow_snapshot() -> Dictionary:
+	var result: Dictionary = state.snapshot()
+	result.merge(campaign_run.snapshot(), true)
+	result["language"] = hud.language
+	return result
+
+func _sync_flow() -> void:
+	if not is_node_ready() or castle == null or hud == null:
+		return
+	var snapshot: Dictionary = flow_snapshot()
+	castle.set_campaign_flow(snapshot)
+	if hud.has_method("set_campaign_flow"):
+		hud.call("set_campaign_flow", snapshot)
 
 func _command(action: String) -> void:
 	if action == "start_classic":
@@ -272,9 +355,13 @@ func _command(action: String) -> void:
 	if action == "undo" and state is TowerState:
 		_pointer_up()
 		hud.result_delay = 0
-		if state is TutorialState:
+		var tower_state: TowerState = state as TowerState
+		if campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent"] and not tower_state.history.is_empty() and not tower_state.paused:
+			campaign_run.cancel_transition()
+		if state is TutorialState and not campaign_run.active:
 			tutorial_advance_timer = 0.0
-		(state as TowerState).undo()
+		tower_state.undo()
+		_sync_flow()
 		return
 	if action == "action" and state is TowerState:
 		(state as TowerState).select_ladder()
@@ -288,19 +375,32 @@ func _command(action: String) -> void:
 		_save_settings()
 		hud.refresh()
 		return
+	if action == "replay":
+		_start_campaign()
+		return
 	if action == "title":
 		_begin_tower()
 		state.phase = "title"
 		hud.refresh()
 		return
+	if campaign_run.active and action in ["restart", "retry_wall", "new_castle"]:
+		if state is EndingState:
+			_start_campaign()
+		else:
+			var current_stage: String = campaign_run.restart_current()
+			_begin_campaign_stage(current_stage)
+		return
+	if action == "start" and state is TowerState and state.phase == "title":
+		_start_campaign()
+		return
+	if action == "start" and state is EndingState:
+		_start_campaign()
+		return
 	if state is TutorialState and action in ["start", "restart", "retry_wall", "new_castle"]:
 		_begin_tutorial((state as TutorialState).tutorial_step)
 		return
 	if state is TowerState and action in ["start", "restart", "retry_wall", "new_castle"]:
-		if action == "start" and state.phase == "title":
-			_begin_tutorial(1)
-		else:
-			_begin_tower()
+		_begin_tower()
 		return
 	if action.begins_with("gift:"):
 		if journey.choose_gift(action.trim_prefix("gift:")):
@@ -316,7 +416,7 @@ func _command(action: String) -> void:
 			journey.start(seed_value)
 			_begin_wall()
 		"pause":
-			if state.phase == "playing":
+			if state.phase == "playing" or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"] and not state.paused):
 				_pointer_up()
 				state.set_paused(true)
 		"plan":
@@ -334,6 +434,7 @@ func _command(action: String) -> void:
 			hud.language = "en" if hud.language == "ja" else "ja"
 			hud.message_until = 0
 			hud.rebuild()
+			_sync_flow()
 			_save_settings()
 		"sound":
 			hud.muted = not hud.muted
@@ -375,6 +476,12 @@ func _command(action: String) -> void:
 func _event(event_name: String, detail: int) -> void:
 	if event_name != "window_clean_progress":
 		print("[WindowHero] %s %d %s" % [event_name, detail, JSON.stringify(state.snapshot())])
+	if campaign_run.active and event_name == "stage_cleared":
+		campaign_run.start_clear(campaign_run.make_record(state))
+		hud.result_delay = 0.0
+		sound.play("clear")
+		_sync_flow()
+		return
 	if state is TutorialState:
 		match event_name:
 			"ladder_placed": sound.play("place")
@@ -449,7 +556,7 @@ func _event(event_name: String, detail: int) -> void:
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT] and is_node_ready():
 		_pointer_up()
-		if state.phase == "playing":
+		if state.phase == "playing" or (campaign_run.active and campaign_run.flow_phase in ["clean_pause", "ascent", "ending"]):
 			state.set_paused(true)
 
 func _load_settings() -> void:
@@ -484,7 +591,9 @@ func _debug_browser_command(arguments: Array) -> void:
 
 func debug_snapshot() -> Dictionary:
 	var result: Dictionary = state.snapshot()
+	result["credits_open"] = hud.credits_open
 	result["journey"] = journey.snapshot()
+	result.merge(campaign_run.snapshot(), true)
 	result["language"] = hud.language
 	result["buttons"] = hud.button_snapshot()
 	return result

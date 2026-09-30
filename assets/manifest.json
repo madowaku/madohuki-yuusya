@@ -77,11 +77,32 @@
     "sha256": "b75708b53e45b06d17d470aeeca5b766e3d1b3999f03f13ec4eb863ca846c14c"
   },
   {
+    "file": "assets/generated/demon_king_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "f95430df87564c2242c92de8e74bcf648cc6f25bd51a6a0a671e78340d284c3e"
+  },
+  {
+    "file": "assets/generated/heart_window_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "5a67c262cd99d83bc738077530c2ca16f7abaaaa818403d4851f9bcf1c15ce7f"
+  },
+  {
     "file": "assets/generated/ladder_brackets_v02.png",
     "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
     "license": "AI-generated project asset; not a third-party CC0 grant",
     "included_in_web": true,
     "sha256": "fe2842b12f0af0c62fb2dda8ef4e86bc384773e69ec2d3030d1f7edc0cd21e60"
+  },
+  {
+    "file": "assets/generated/legendary_ladder_v1.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "b7817496eb060205f5f44ae94a6030fc908268ac84424d58831371528e978a85"
   },
   {
     "file": "assets/generated/processed/README.md",
@@ -95,7 +116,7 @@
     "source": "Original project work",
     "license": "Original work; no third-party samples",
     "included_in_web": false,
-    "sha256": "d371b7dff7d9c48317fea986e31aa84fc4cfd06803f500fdada414863361f4c8"
+    "sha256": "2abf593e6f04b61b3441512a34ce1dc965403288d1edefca3919a3532310c999"
   },
   {
     "file": "assets/generated/raw/hero/hero_carry_ladder_v01.png",

@@ -261,5 +261,42 @@
         230
       ]
     }
+  },
+  {
+    "name": "demon_king_v1",
+    "category": "npc",
+    "file": "assets/generated/demon_king_v1.png",
+    "prompt": "Use case: illustration-story. Asset type: one standalone sprite for WINDOW HERO, a peaceful medieval window-cleaning logic puzzle. Primary request: a small tired but gentle Demon King seen in three-quarter side view looking toward screen left, seated upright on a modest wooden chair. Round compact adult creature, two small blunt curved ivory horns, tousled dark violet hair, sleepy expressive eyes, warm pale lavender skin, dark plum royal robe with a simple pale-gold collar and tiny crown slightly crooked. One open hand rests on the chair arm; calm wistful expression, no anger. Style: storybook 2D game illustration, bold dark desaturated navy contours, restrained flat cel shading, two tones per material, rounded readable forms, same cozy palette as an ochre-cap teal-cape window-cleaner hero. Composition: single full-body seated character and chair fully visible, centered with generous transparent margins, facing left; readable at 100 pixels total height. Lighting: soft amber side light from a newly polished window on the left. Constraints: genuinely transparent alpha PNG, no scenery, no window, no floor, no contact shadow, no lettering, no dialog, no weapons, no armor, no battle pose, no glow background, no checkerboard, no watermark.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30"
+  },
+  {
+    "name": "legendary_ladder_v1",
+    "category": "runtime_copy",
+    "file": "assets/generated/legendary_ladder_v1.png",
+    "prompt": "Use case: stylized-concept. ONE standalone legendary ladder prop for WINDOW HERO, matching the attached hero and picture-book art reference. Tall narrow vertical ladder, orthographic front three-quarter view, complete silhouette with generous transparent margins. Warm honey wood rails, dark desaturated navy bold contours, 10 clear broad rungs; brass cuffs and tiny sky-blue inlays. At the TOP, a large amusing pair of rounded little carved CLOUD WINGS and a golden sun medallion with a humble sleepy smiling face, like a ridiculous holy relic made for washing the windows of heaven. Two small wooden extensions telescoping upward suggest this everyday tool could extend impossibly far. It must unquestionably read as a useful LADDER, not a weapon, throne, doorway or ornate sword. Feet have sturdy simple brass caps. Magical without elaborate filigree; few large shapes, shallow flat 2D cel shading, warm gold with muted teal accents, friendly cozy fantasy. Entire ladder isolated, no hero, no castle, no scenery, no ground or shadow, no atmospheric background, no labels, no particles detached far from silhouette, no realism or 3D. Portrait composition within image. Transparent PNG.",
+    "reference_images": [
+      "assets/reference/hero_master.png",
+      "assets/reference/style_reference_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29",
+    "source_file": "assets/generated/raw/items/item_legendary_ladder_v01.png"
+  },
+  {
+    "name": "heart_window_v1",
+    "category": "runtime_copy",
+    "file": "assets/generated/heart_window_v1.png",
+    "prompt": "Edit the attached HEART WINDOW into its CLEAN REVEAL concept. Preserve exactly the outer arched blue-gray stone surround, ivy leaves, brass heart crest, sill, window mullions, shape, viewpoint and composition. Change ONLY the dark dirty glass panes: all grime removed, revealing warm amber light and a tiny peaceful old-fashioned living room: a round wooden table with two mismatched cups, an empty cozy chair, a small pot of flowers, a lamp, a few shelves. No monster, king or person. A quiet invitation to be kind; emotionally warm after a long night. The brass heart crest catches a little warm light. Same restrained storybook 2D outlines and shallow cel shading, no realistic rendering. Keep all outer background genuinely TRANSPARENT and remove any background haze or glow outside the stone/ivy silhouette, no ground or cast shadow. Complete isolated window asset, transparent PNG, no text, no surrounding wall. Match attached frame precisely so dirty/clean concepts can be compared.",
+    "reference_images": [
+      "assets/generated/raw/windows/window_heart_concept_v01.png"
+    ],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-29",
+    "source_file": "assets/generated/raw/windows/window_heart_clean_hint_v01.png"
   }
 ]
