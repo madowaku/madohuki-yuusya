@@ -18,11 +18,22 @@ Combat is not the default solution.
 
 ## Current Priority
 
-Implement and polish the Vertical Slice defined in:
+Implement and polish the Visual / UX Pass defined in:
 
-`docs/VERTICAL_SLICE_v0.1.md`
+`docs/VISUAL_UX_PASS_v0.1.md`
 
-Do not expand scope until its Acceptance Criteria pass.
+The current design direction is a hand-crafted tower logic puzzle:
+
+- many small windows arranged irregularly
+- one ladder reused as vertical ladder and horizontal bridge
+- meaningful ladder placement / leaving / repositioning decisions
+- occasional exterior-to-interior routes through windows
+- inner shutters opened from inside
+- minimal explanatory UI and no unnecessary item systems
+
+Preserve the validated ladder-puzzle behavior in `docs/LADDER_PUZZLE_v0.3.md`.
+
+Do not broaden scope beyond the current pass until its Acceptance Criteria are checked.
 
 ## Engineering Rules
 
@@ -36,6 +47,10 @@ Do not expand scope until its Acceptance Criteria pass.
 - Add debug hooks that help AI agents inspect state.
 - Warnings and runtime errors are treated as failures.
 - Do not add dependencies without a clear reason.
+- Keep visual windows small if desired, but keep mobile hit targets at least 44px-equivalent and non-overlapping.
+- Automate routine ladder retrieval; preserve only meaningful player decisions about whether and where to move the ladder.
+- Prefer visual feedback over explanatory text.
+- Undo should support puzzle experimentation without forcing repeated cleaning work.
 
 ## Suggested Structure
 
@@ -68,8 +83,12 @@ Prefer explicit gameplay events such as:
 
 - ladder_placed
 - ladder_retrieved
+- ladder_repositioned
 - hero_started_climb
 - hero_finished_climb
+- hero_entered_window
+- hero_exited_window
+- shutter_opened
 - window_clean_progress
 - window_cleaned
 - window_revealed
@@ -93,6 +112,9 @@ For each task:
 If any of these fail, stop adding content:
 
 - ladder placement feels awkward
+- routine ladder retrieval creates busywork
+- small windows are hard to tap
+- interior traversal loses spatial clarity
 - climbing feels slow
 - cleaning feels like chores
 - final dirt becomes pixel hunting
