@@ -14,110 +14,114 @@ The core is:
 
 **CLIMB → CLEAN → DISCOVER → OPTIMIZE**
 
-Combat is not the default solution.
+This is a hand-crafted tower logic puzzle, not a roguelite.
 
 ## Current Priority
 
-Implement and polish:
+Execute docs/ASTRA_FINAL_SPRINT_v1.0.md.
 
-docs/UX_PASS_v0.2.md
+This is the final jam shipping target.
 
-Human testing found that the current ladder controls are harder to understand than the puzzle itself. Fix control legibility before adding content.
+Work top-to-bottom by PHASE and keep a shippable Web build after every completed phase.
 
 Primary UX principle:
 
 **操作方法を推理させない。解法だけを推理させる。**
 
-The intended interaction language is:
+Primary production principle:
 
-- tap a reachable destination to move
-- tap the ladder to manipulate the ladder
-- show legal destinations as full ghost ladders
-- selecting a new ladder destination implies automatic routine retrieval and transport
-- keep the ladder in place until the player explicitly chooses a new destination
-- tapping an unreachable window must explain the missing connection visually, not fail silently
+**Always preserve a submission-ready build.**
 
-Add three tiny teaching floors before the twelve-window tower:
+Relevant source docs:
 
-1. vertical ladder
-2. horizontal bridge
-3. reposition without Retrieve
-
-Preserve the validated puzzle behavior and solver coverage from:
-
+- docs/UX_PASS_v0.2.md
 - docs/VISUAL_UX_PASS_v0.1.md
 - docs/VISUAL_UX_PASS_RESULTS_v0.1.md
 - docs/LADDER_PUZZLE_v0.3.md
 
-Do not add new items, combat, roguelite systems, puzzle mechanics or tower content until UX PASS v0.2 human checks pass.
+## Autonomous Execution
+
+Time is limited. Make reasonable implementation decisions without waiting for small approvals.
+
+Do stop and avoid scope expansion when a choice would:
+
+- change the core puzzle identity
+- add a large new system
+- risk the working Web submission
+- weaken first-use control clarity
+
+Commit coherent milestones and keep the itch ZIP current.
 
 ## Engineering Rules
 
 - Keep gameplay data separate from presentation where practical.
 - Prefer small composable scenes/resources over one giant script.
-- Support mouse and touch from the start.
+- Support mouse and touch.
 - Portrait reference: 720x1280.
-- Also verify 360x800 usability.
-- Avoid hard-coded screen coordinates where anchors/containers can be used.
-- Keep game state restartable and deterministic enough for automated tests.
-- Add debug hooks that help AI agents inspect state.
-- Warnings and runtime errors are treated as failures.
-- Do not add dependencies without a clear reason.
-- Keep mobile hit targets at least 44px-equivalent and non-overlapping.
-- Direct manipulation should map object-to-action: ladder controls ladder, destination controls movement.
-- Routine ladder retrieval is automatic; destination choice always belongs to the player.
-- Prefer full ghost-ladder previews over abstract hook markers.
-- Unreachable interactions must respond visually instead of silently failing.
-- Prefer visual feedback over explanatory text.
-- Undo should restore meaningful puzzle decisions without forcing repeated cleaning work.
+- Verify 360x800.
+- Mobile hit targets >=44px-equivalent.
+- No warnings or runtime errors.
+- Keep game state deterministic enough for solver/tests.
+- Direct manipulation: ladder controls ladder; destination controls movement.
+- Routine ladder retrieval is automatic.
+- Destination choice always belongs to the player.
+- Prefer ghost ladders over abstract hook-only UI.
+- Unreachable taps must respond visually.
+- Undo restores meaningful decisions.
+- Do not make players repeat cleaning work due to route experimentation.
 
-## Core Signals / Events
+## Shipping Priority
 
-Prefer explicit gameplay events such as:
+1. UX PASS v0.2
+2. Silent tutorial T1/T2/T3
+3. Polish the 12-window tower
+4. Preserve shippable itch build
+5. Tower ascent flow
+6. Heart Window final floor
+7. Ending
+8. Extra authored floors only if time remains
 
-- ladder_selected
-- ladder_candidate_previewed
-- ladder_repositioned
-- hero_destination_selected
-- hero_started_climb
-- hero_finished_climb
-- unreachable_target_selected
-- route_gap_indicated
-- hero_entered_window
-- hero_exited_window
-- shutter_opened
-- window_clean_progress
-- window_cleaned
-- window_revealed
-- mechanism_activated
-- state_undone
-- stage_cleared
+A strong short game is better than a long weak game.
 
-## AI Agent Workflow
+## Do Not Build
 
-For each task:
+Before submission, do not add:
 
-1. Read README + relevant docs.
-2. State the acceptance criteria being implemented.
-3. Make the smallest coherent change.
-4. Run available validation.
-5. Inspect actual game behavior, not only static checks.
-6. Test both mouse and touch interaction semantics.
-7. Record known limitations.
-8. Do not silently broaden scope.
+- roguelite progression
+- procedural runs
+- shop
+- meta upgrades
+- combat
+- enemy AI
+- inventory
+- large item systems
+- interior maze systems
+- multiple ladder management
+- 3D conversion
+- large art rewrites
+
+## Validation Gate
+
+After each meaningful milestone:
+
+1. run available tests
+2. run solver when puzzle topology changed
+3. inspect actual game behavior
+4. verify mouse
+5. verify touch
+6. export Web
+7. rebuild itch ZIP
+8. record limitations
 
 ## Feel Before Content
 
-If any of these fail, stop adding content:
+Stop adding content if:
 
-- player does not know what to tap to move the ladder
+- player does not know what to tap
 - player searches for Retrieve
-- ladder destinations are visually ambiguous
+- ladder destinations are ambiguous
 - unreachable targets fail silently
 - control confusion is mistaken for puzzle difficulty
-- drag gestures conflict with CLEAN
-- small windows are hard to tap
-- interior traversal loses spatial clarity
-- cleaning feels like chores
-- reveal lacks payoff
-- player does not want to reach the next window
+- cleaning becomes chores
+- a new floor adds length but no AHA
+- the current build is no longer safely submittable
