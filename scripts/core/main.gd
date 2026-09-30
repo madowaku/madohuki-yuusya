@@ -3,7 +3,7 @@ extends Node
 @onready var castle: CastleView = $Castle
 @onready var hud: GameHUD = $UI/HUD
 @onready var sound: SoundBank = $Sound
-var state: StageState = StageState.new()
+var state: StageState = TowerState.new()
 var journey: CastleRun = CastleRun.new()
 var run_records: Dictionary = {}
 var active_window: int = -1
@@ -68,6 +68,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					state.climb()
 				KEY_E:
 					state.retrieve()
+				KEY_Z:
+					_command("undo")
 				KEY_F3:
 					debug_visible = not debug_visible
 					hud.debug_label.visible = debug_visible
@@ -82,6 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				_pointer_up()
 	elif event is InputEventMouseMotion:
 		var motion: InputEventMouseMotion = event as InputEventMouseMotion
+		_update_tower_preview(motion.position)
 		if dragging and active_touch < 0:
 			_pointer_move(motion.position)
 	elif event is InputEventScreenTouch:
@@ -112,6 +115,9 @@ func _pointer_down(point: Vector2) -> void:
 	last_pointer = point
 	castle.pointer = point
 	active_window = -1
+	if state is TowerState:
+		_tower_pointer_down(point)
+		return
 	for index: int in state.masks.size():
 		if state.window_rect(index).grow(8).has_point(point):
 			if not state.window_unlocked(index):
@@ -142,10 +148,34 @@ func _pointer_down(point: Vector2) -> void:
 	if point.y > StageData.FLOORS[state.floor_index] - 100 and point.y < StageData.FLOORS[state.floor_index] + 22:
 		state.walk_to(point.x)
 
+func _tower_pointer_down(point: Vector2) -> void:
+	var model: TowerState = state as TowerState
+	if model.placement_mode:
+		for index: int in model.candidate_anchors():
+			if model.hook_hit_rect(index).has_point(point):
+				model.request_place(index)
+				return
+	elif model.ladder_anchor >= 0 and model.anchor_on_floor(model.ladder_anchor):
+		if model.hook_hit_rect(model.ladder_anchor).has_point(point):
+			model.climb()
+			return
+	for index: int in model.masks.size():
+		if model.tower.window_hit_rect(index).has_point(point):
+			if model.interact_window(index) and not model.is_clean(index) and model.window_unlocked(index) and not model.inside():
+				active_window = index
+				castle.wiping = true
+			return
+	if not model.inside() and Rect2(model.hero + Vector2(-44, -24), Vector2(88, 88)).has_point(point):
+		model.select_ladder()
+		return
+	if absf(point.y - model.hero.y) < 60:
+		model.walk_to(point.x)
+
 func _pointer_move(point: Vector2) -> void:
 	if not dragging or not state.can_act():
 		return
 	castle.pointer = point
+	_update_tower_preview(point)
 	if active_window >= 0:
 		var erased: int = state.wipe(active_window, last_pointer, point)
 		if erased > 0:
@@ -153,6 +183,18 @@ func _pointer_move(point: Vector2) -> void:
 		if state.is_clean(active_window):
 			castle.wiping = false
 	last_pointer = point
+
+func _update_tower_preview(point: Vector2) -> void:
+	if not state is TowerState:
+		return
+	var model: TowerState = state as TowerState
+	if not model.placement_mode:
+		return
+	model.preview_anchor = -1
+	for index: int in model.candidate_anchors():
+		if model.hook_hit_rect(index).has_point(point):
+			model.preview_anchor = index
+			return
 
 func _pointer_up() -> void:
 	dragging = false
@@ -172,7 +214,46 @@ func _begin_wall() -> void:
 	sound.begin()
 	sound.play("retrieve")
 
+func _switch_state(model: StageState) -> void:
+	_pointer_up()
+	if state.event_occurred.is_connected(_event):
+		state.event_occurred.disconnect(_event)
+	state = model
+	castle.bind(state)
+	hud.bind(state, journey)
+	state.event_occurred.connect(_event)
+	castle.invalidate()
+	hud.refresh()
+
+func _begin_tower() -> void:
+	hud.result_delay = 0
+	hud.credits_open = false
+	hud.planning_open = false
+	_switch_state(TowerState.new())
+	sound.begin()
+
 func _command(action: String) -> void:
+	if action == "start_classic":
+		journey.start(journey.castle_seed)
+		_switch_state(StageState.new())
+		_begin_wall()
+		return
+	if action == "undo" and state is TowerState:
+		_pointer_up()
+		hud.result_delay = 0
+		(state as TowerState).undo()
+		return
+	if action == "action" and state is TowerState:
+		(state as TowerState).select_ladder()
+		return
+	if action == "title":
+		_begin_tower()
+		state.phase = "title"
+		hud.refresh()
+		return
+	if state is TowerState and action in ["start", "restart", "retry_wall", "new_castle"]:
+		_begin_tower()
+		return
 	if action.begins_with("gift:"):
 		if journey.choose_gift(action.trim_prefix("gift:")):
 			_begin_wall()
@@ -186,15 +267,6 @@ func _command(action: String) -> void:
 					seed_value = seed_value % 999999 + 1
 			journey.start(seed_value)
 			_begin_wall()
-		"title":
-			_pointer_up()
-			hud.planning_open = false
-			hud.result_delay = 0.0
-			journey.start(journey.castle_seed)
-			state.configure(journey.layout(), journey.gifts)
-			state.phase = "title"
-			castle.invalidate()
-			hud.refresh()
 		"pause":
 			if state.phase == "playing":
 				_pointer_up()
@@ -255,6 +327,15 @@ func _command(action: String) -> void:
 func _event(event_name: String, detail: int) -> void:
 	if event_name != "window_clean_progress":
 		print("[WindowHero] %s %d %s" % [event_name, detail, JSON.stringify(state.snapshot())])
+	if state is TowerState:
+		match event_name:
+			"ladder_placed", "shutter_opened": sound.play("place")
+			"ladder_retrieved", "state_undone", "shutter_rattled": sound.play("retrieve")
+			"window_cleaned", "mechanism_activated": sound.play("shine")
+			"stage_cleared":
+				hud.result_delay = 1.2
+				sound.play("clear")
+		return
 	match event_name:
 		"ladder_placed":
 			sound.play("place")

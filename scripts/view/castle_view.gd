@@ -23,9 +23,12 @@ var reveal_times: Array[float] = []
 var particles: Array[Dictionary] = []
 var glint: float = 0.0
 var bubble_times: Array[float] = []
+var tower_painter: TowerPainter = TowerPainter.new()
 
 func bind(model: StageState) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	if state != null and state.event_occurred.is_connected(_on_event):
+		state.event_occurred.disconnect(_on_event)
 	state = model
 	state.event_occurred.connect(_on_event)
 	_ensure_window_storage()
@@ -76,6 +79,8 @@ func _update_dirt(index: int) -> void:
 	revisions[index] = mask.revision
 
 func _on_event(event_name: String, detail: int) -> void:
+	if state is TowerState:
+		tower_painter.event(self, event_name)
 	if event_name == "window_cleaned":
 		reveal_times[detail] = clock
 		glint = 0.24
@@ -92,6 +97,9 @@ func _on_event(event_name: String, detail: int) -> void:
 
 func _draw() -> void:
 	if state == null:
+		return
+	if state is TowerState:
+		tower_painter.draw(self)
 		return
 	_draw_sky()
 	_draw_castle()

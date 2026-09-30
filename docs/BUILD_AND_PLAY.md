@@ -28,6 +28,21 @@ First import: Godot may try to read the project theme before its font has been i
 
 ## Controls
 
+The default board is **VISUAL / UX PASS v0.1**, a fixed twelve-window tower:
+
+- Drag across reachable glass to clean it. The hero approaches automatically; four broad zigzags suffice. The final 5.5% snaps clear.
+- Tap the hero to show legal ladder destinations. Tap a destination to place or reposition the single ladder. The hero automatically reaches the old ladder, retrieves it, carries it and places it exactly where you chose. A destination across the current bridge is selectable when transport remains possible.
+- Tap the installed ladder's arrow marker to climb, descend or cross. It stays in place until you choose another destination.
+- Clean the openable upper-left window, then tap it to enter. Tap the inner latch on the right to open the shutter; tap that window again to exit. Exterior geometry and the ladder remain visible in the same coordinates.
+- Top-right Undo (or Z) returns one meaningful action, including an unfinished transport. Polished glass is retained. Undoing the permanent gallery leaves its window polished; tap it once to reactivate the mechanism.
+- Menu pauses time and transport. Resume continues the same command. Menu also provides language, sound, reduced motion and access to the original three-wall run.
+- Keyboard: Left/Right or A/D walks; Space toggles ladder candidates; Up/Down or W/S uses the installed ladder; Z undoes; Escape pauses. Optional E retrieves the current ladder.
+- All twelve windows are required. Climb back to the crown after Undoing the finish to complete again without repeating cleaning. The independent minimum is four placements; there is no move limit.
+
+### Original three-wall controls
+
+Select **Play the original three walls** from the tower menu/result screen. Its previously validated gifts and ladder-puzzle rules are preserved:
+
 - **Clean:** drag a mouse or one finger across a window on your current floor. The hero approaches distant windows automatically. Broad zigzags work; the final 5.5% clears automatically.
 - **Walk:** tap the ledge, hold the left/right buttons, or use Left/Right (A/D).
 - **Place:** tap a glowing ladder circle. The silhouette previews the entire ladder. The bottom action button also selects a nearby valid anchor.
@@ -57,7 +72,9 @@ python tools/verify.py --godot godot
 
 On a restricted Windows host where Godot cannot read the system root certificate store, pass a PEM CA bundle with `--certificate-bundle` or set `GODOT_CA_BUNDLE`. The wrapper applies this only during test runs and restores `project.godot` afterward; the game itself has no certificate-file dependency.
 
-The 35 assertions cover locked anchors, invalid indices, reachability, stationary input, pausing, the two-placement solution, both-end retrieval, early final-window cleaning, backtracking and deterministic restart.
+The wrapper runs the original stage/art/run/route/UI suites plus the new tower suite and independent tower solver. The tower suite verifies automatic transport across the old bridge and interior, transaction Undo, latch and gallery Undo, post-clear Undo, disjoint hit targets and Japanese/English UI at both resolutions. `python tools/solve_tower.py` can also run separately; it verifies the four-placement minimum and reverse reachability of every reachable legal state. See [the Pass results](VISUAL_UX_PASS_RESULTS_v0.1.md) for current counts and browser evidence.
+
+The original 35 stage assertions cover locked anchors, invalid indices, reachability, stationary input, pausing, the two-placement solution, both-end retrieval, early final-window cleaning, backtracking and deterministic restart.
 
 The UI runtime test covers both resolutions and languages: controls stay onscreen, text/buttons do not overlap, gift descriptions fit their cards, and buttons have at least 44px touch targets at 360px width. It also checks the rule map, gift selection, final records, wall retries, pause/resume and sound. Preexisting native settings are restored. The verification wrapper fails on warnings/runtime errors even if Godot exits with code zero, and writes logs under `output/verification/`.
 
@@ -80,5 +97,9 @@ The UI runtime test covers both resolutions and languages: controls stay onscree
 - `scripts/core/main.gd`: input translation, composition, settings and browser instrumentation.
 
 ## Current scope
+
+The default is now the one-screen tower in [VISUAL / UX PASS v0.1](VISUAL_UX_PASS_v0.1.md). `tools/playtest-tower-browser.js` drives it through actual mouse input at 720×1280 or CDP touch at 360×800, including Undo, interior entry, latch opening, exterior exit, automatic transport, four-placement completion and release debug-boundary checks. Run it with Playwright CLI `run-code --filename tools/playtest-tower-browser.js` from the title screen. Output is saved under `output/playwright/`.
+
+### Preserved original prototype
 
 The first wall remains the original five-window vertical slice. After the user's first-use acceptance and explicit request to develop ladder logic puzzles, it was expanded into **three authored walls / sixteen windows** with seeded positions and two gift choices. The final wall is a taller four-floor tower with a six-window route: cleaning E creates a permanent horizontal gallery, enabling an AHA sequence that reuses vertical climbing and the sideways ladder bridge. The exact solver confirms target routes of seven placements without Reach and five with Reach; human completion time and difficulty still need playtesting. See [LADDER_PUZZLE_v0.3.md](LADDER_PUZZLE_v0.3.md) for rules and route verification. The Demon King / Heart Window finale and additional NPCs remain outside this prototype.

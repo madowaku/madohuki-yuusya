@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--godot", default=os.environ.get("GODOT_BIN", "godot"))
@@ -45,7 +46,7 @@ if args.certificate_bundle:
     project_file.write_text(project_text, encoding="utf-8")
 
 try:
-    for name in ["stage", "art", "run", "route_solver", "ui_runtime"]:
+    for name in ["stage", "art", "run", "route_solver", "ui_runtime", "tower"]:
         log = logs / f"{name}.log"
         log.write_text("", encoding="utf-8")
         result = subprocess.run(
@@ -63,6 +64,8 @@ try:
         print(f"{'PASS' if passed else 'FAIL'} {name}: {'; '.join(summary)}")
         if not passed:
             print(output)
+    solver = subprocess.run([sys.executable, str(root / "tools" / "solve_tower.py")], timeout=60)
+    reports.append({"test": "tower_solver", "passed": solver.returncode == 0, "exit": solver.returncode})
 finally:
     if original_project is not None:
         project_file.write_bytes(original_project)
