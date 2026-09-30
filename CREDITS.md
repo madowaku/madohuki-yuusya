@@ -19,7 +19,8 @@ The font binary's embedded name records 13/14 explicitly identify OFL 1.1; its G
 
 - Hero master and six poses, goblin merchant with three expressions, moon-moth astronomer, five dirt overlays, style/palette references, legendary ladder and Heart Window concepts were created with the built-in OpenAI image generator. Prompts, reference inputs and intended filenames are recorded in `assets/generated/production_prompts.json`. The tool does not expose its model version; no specific Images 2.5 version is claimed. Generated images are project assets, not Kenney CC0 assets.
 - Hero poses, merchant expressions, the moon-moth astronomer and all five dirt overlays are integrated in the game. Legendary ladder and Heart Window remain separate concepts in the asset review scene and are excluded from the game export.
-- Roofs, flags, ivy, room furnishings, ordinary ladder, interaction marks and environment composition are drawn by project code around the Kenney scaffold. Character artwork stays separate from gameplay state.
+- The v0.2 ordinary ladder and physical iron brackets use the generated transparent prop atlas `assets/generated/ladder_brackets_v02.png`. Runtime atlas regions preserve the original alpha; ghost ladders use simple matching geometry for clear selection.
+- Roofs, flags, ivy, room furnishings, interaction marks and environment composition are drawn by project code around the Kenney scaffold. Character artwork stays separate from gameplay state.
 - `tools/generate_audio.py` creates the original cleaning sound, shine chime, ending chime, climbing tick and quiet music. It uses deterministic synthesis and no sampled recordings.
 - `assets/manifest.json` records repository asset paths, runtime inclusion, source/license notes and SHA-256 checksums.
 

@@ -1,7 +1,8 @@
 class_name TowerHUD
 extends GameHUD
-## The board owns interaction. Only progress, Undo and Menu remain on screen.
+## The board owns interaction. Progress, Undo, visibility and Menu remain on screen.
 var undo_button: Button
+var help_button: Button
 
 func rebuild() -> void:
 	if not state is TowerState:
@@ -40,6 +41,10 @@ func rebuild() -> void:
 	undo_button = _icon("undo")
 	undo_button.tooltip_text = tr_pair("一手もどる", "Undo one move")
 	row.add_child(undo_button)
+	help_button = _icon("help")
+	help_button.tooltip_text = tr_pair("できる操作を見る", "Show available actions")
+	help_button.toggle_mode = true
+	row.add_child(help_button)
 	var menu: Button = _icon("pause")
 	menu.tooltip_text = tr_pair("メニュー", "Menu")
 	row.add_child(menu)
@@ -59,7 +64,7 @@ func rebuild() -> void:
 
 func _icon(action: String) -> BoardIconButton:
 	var button: BoardIconButton = BoardIconButton.new()
-	button.glyph_key = "undo" if action == "undo" else "menu"
+	button.glyph_key = "menu" if action == "pause" else action
 	button.name = action.to_pascal_case()
 	button.custom_minimum_size = Vector2(88, 88)
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -90,14 +95,17 @@ func refresh() -> void:
 	if header == null:
 		return
 	var model: TowerState = state as TowerState
-	var show_overlay: bool = model.paused or (model.phase == "clear" and result_delay <= 0) or credits_open
+	var teaching: bool = model is TutorialState
+	var show_overlay: bool = model.paused or (model.phase == "clear" and not teaching and result_delay <= 0) or credits_open
 	title_top.visible = model.phase == "title" and not show_overlay
 	title_bottom.visible = title_top.visible
 	header.visible = model.phase != "title" and not show_overlay
 	overlay.visible = show_overlay
-	chapter_label.text = "%dF" % (model.floor_index + 1)
-	counter.text = "%d / 12" % model.cleaned_count()
+	chapter_label.text = "T%d" % (model as TutorialState).tutorial_step if teaching else "%dF" % (model.floor_index + 1)
+	counter.text = "%d / %d" % [model.cleaned_count(), model.layout.window_count()]
 	undo_button.disabled = model.history.is_empty() or model.paused
+	help_button.set_pressed_no_signal(model.help_visible)
+	help_button.disabled = model.paused or model.busy() or model.phase != "playing"
 	if show_overlay:
 		_build_overlay()
 
@@ -126,13 +134,13 @@ func _build_overlay() -> void:
 		column.add_child(_button(tr_pair("一手もどって考える", "Undo and explore"), "undo"))
 	else:
 		column.add_child(_label(tr_pair("ひとやすみ", "A LITTLE BREAK"), 36))
-		column.add_child(_label(tr_pair("窓をなぞると、光が差す。\n勇者をタップ → ハシゴの行き先を選ぶ。\n開いた窓をタップ → 中へ。", "Drag a window to let the light in.\nTap the hero → choose the next ladder hook.\nTap an open window → step inside."), 23))
 		column.add_child(_button(tr_pair("つづける", "Continue"), "resume"))
 		column.add_child(_button(tr_pair("この塔をやり直す", "Retry this tower"), "restart"))
 		var settings: HBoxContainer = _row(column)
 		settings.add_child(_button("♪ " + ("OFF" if muted else "ON"), "sound", 166))
 		settings.add_child(_button("日本語 / EN", "language", 200))
 		column.add_child(_button(tr_pair("動きを控えめに：", "Reduced motion: ") + ("ON" if reduced_motion else "OFF"), "motion"))
+		column.add_child(_button(tr_pair("操作の合図：", "Idle cues: ") + ("ON" if (state as TowerState).hints_enabled else "OFF"), "hints"))
 	column.add_child(_button(tr_pair("以前の3城壁で遊ぶ", "Play the original three walls"), "start_classic"))
 	column.add_child(_button(tr_pair("タイトルへ", "Title"), "title"))
 

@@ -28,15 +28,16 @@ First import: Godot may try to read the project theme before its font has been i
 
 ## Controls
 
-The default board is **VISUAL / UX PASS v0.1**, a fixed twelve-window tower:
+The default flow is **UX PASS v0.2**: T1 vertical, T2 bridge, T3 reposition, then the twelve-window tower. The three short teaching boards contain no instruction paragraphs and advance after polishing their windows:
 
 - Drag across reachable glass to clean it. The hero approaches automatically; four broad zigzags suffice. The final 5.5% snaps clear.
-- Tap the hero to show legal ladder destinations. Tap a destination to place or reposition the single ladder. The hero automatically reaches the old ladder, retrieves it, carries it and places it exactly where you chose. A destination across the current bridge is selectable when transport remains possible.
-- Tap the installed ladder's arrow marker to climb, descend or cross. It stays in place until you choose another destination.
+- Tap the carried ladder beside the hero, or the installed ladder itself, to show legal destinations as full ghost ladders. Tap anywhere along a ghost to select it. The hero automatically reaches the old ladder, retrieves it, carries it and places it exactly where you chose. A destination across the current bridge is selectable when transport remains possible.
+- Tap a destination window or ledge to walk, climb or cross the installed route automatically. The ladder stays in place until you choose another destination.
+- An unreachable window responds with a brief trace that stops at the first missing connection. The eye button shows reachable regions, dirty windows and legal ghost ladders without showing a solution order. Idle cues pulse once after five seconds; they can be disabled in Menu.
 - Clean the openable upper-left window, then tap it to enter. Tap the inner latch on the right to open the shutter; tap that window again to exit. Exterior geometry and the ladder remain visible in the same coordinates.
 - Top-right Undo (or Z) returns one meaningful action, including an unfinished transport. Polished glass is retained. Undoing the permanent gallery leaves its window polished; tap it once to reactivate the mechanism.
 - Menu pauses time and transport. Resume continues the same command. Menu also provides language, sound, reduced motion and access to the original three-wall run.
-- Keyboard: Left/Right or A/D walks; Space toggles ladder candidates; Up/Down or W/S uses the installed ladder; Z undoes; Escape pauses. Optional E retrieves the current ladder.
+- Keyboard: Left/Right or A/D walks; Space toggles ladder candidates; Up/Down or W/S uses the installed ladder; Z undoes; Escape pauses.
 - All twelve windows are required. Climb back to the crown after Undoing the finish to complete again without repeating cleaning. The independent minimum is four placements; there is no move limit.
 
 ### Original three-wall controls
@@ -72,7 +73,7 @@ python tools/verify.py --godot godot
 
 On a restricted Windows host where Godot cannot read the system root certificate store, pass a PEM CA bundle with `--certificate-bundle` or set `GODOT_CA_BUNDLE`. The wrapper applies this only during test runs and restores `project.godot` afterward; the game itself has no certificate-file dependency.
 
-The wrapper runs the original stage/art/run/route/UI suites plus the new tower suite and independent tower solver. The tower suite verifies automatic transport across the old bridge and interior, transaction Undo, latch and gallery Undo, post-clear Undo, disjoint hit targets and Japanese/English UI at both resolutions. `python tools/solve_tower.py` can also run separately; it verifies the four-placement minimum and reverse reachability of every reachable legal state. See [the Pass results](VISUAL_UX_PASS_RESULTS_v0.1.md) for current counts and browser evidence.
+The wrapper runs the original stage/art/run/route/UI suites, tower, tutorial and direct-control suites, plus independent tower/tutorial solvers. The checks cover automatic transport, destination movement, Undo, feedback, visibility, idle cues and Japanese/English UI at both resolutions. `python tools/solve_tower.py` verifies the four-placement tower minimum; `python tools/solve_tutorial.py` verifies teaching-board minima and recoverability. See [v0.2 results](UX_PASS_RESULTS_v0.2.md) for current counts and browser evidence.
 
 The original 35 stage assertions cover locked anchors, invalid indices, reachability, stationary input, pausing, the two-placement solution, both-end retrieval, early final-window cleaning, backtracking and deterministic restart.
 
@@ -98,7 +99,7 @@ The UI runtime test covers both resolutions and languages: controls stay onscree
 
 ## Current scope
 
-The default is now the one-screen tower in [VISUAL / UX PASS v0.1](VISUAL_UX_PASS_v0.1.md). `tools/playtest-tower-browser.js` drives it through actual mouse input at 720×1280 or CDP touch at 360×800, including Undo, interior entry, latch opening, exterior exit, automatic transport, four-placement completion and release debug-boundary checks. Run it with Playwright CLI `run-code --filename tools/playtest-tower-browser.js` from the title screen. Output is saved under `output/playwright/`.
+The default flow follows [UX PASS v0.2](UX_PASS_v0.2.md). `tools/playtest-ux-browser.js` drives all three teaching boards and the tower through actual mouse input at 720×1280 or CDP touch at 360×800, including direct ladder/ghost selection, destination movement, Undo, feedback, Help, interior/latch controls and four-placement completion. Run it with Playwright CLI `run-code --filename tools/playtest-ux-browser.js` from the title screen. Output is saved under `output/playwright/`.
 
 ### Preserved original prototype
 

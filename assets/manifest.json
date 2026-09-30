@@ -77,6 +77,13 @@
     "sha256": "b75708b53e45b06d17d470aeeca5b766e3d1b3999f03f13ec4eb863ca846c14c"
   },
   {
+    "file": "assets/generated/ladder_brackets_v02.png",
+    "source": "OpenAI built-in image generation; see assets/generated/production_prompts.json",
+    "license": "AI-generated project asset; not a third-party CC0 grant",
+    "included_in_web": true,
+    "sha256": "fe2842b12f0af0c62fb2dda8ef4e86bc384773e69ec2d3030d1f7edc0cd21e60"
+  },
+  {
     "file": "assets/generated/processed/README.md",
     "source": "Original project work",
     "license": "Original work; no third-party samples",
@@ -88,7 +95,7 @@
     "source": "Original project work",
     "license": "Original work; no third-party samples",
     "included_in_web": false,
-    "sha256": "a1fa19a8e2ac6ba20b536b532cb75800a03b3495e319374d44c8b83ca492fa36"
+    "sha256": "d371b7dff7d9c48317fea986e31aa84fc4cfd06803f500fdada414863361f4c8"
   },
   {
     "file": "assets/generated/raw/hero/hero_carry_ladder_v01.png",
@@ -222,6 +229,13 @@
     "license": "AI-generated project asset; not a third-party CC0 grant",
     "included_in_web": false,
     "sha256": "762a3cc1c62cfe0bc891636a8176cd39705762819c6094f47a9fefece373709d"
+  },
+  {
+    "file": "assets/generated/ux_props_v02_prompt.json",
+    "source": "Original project work",
+    "license": "Original work; no third-party samples",
+    "included_in_web": true,
+    "sha256": "053c8d05fb893067b639b863936ebb41064443b6fd8ec8516296501cfdbdd417"
   },
   {
     "file": "assets/licenses/Godot-MIT.txt",

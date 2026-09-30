@@ -237,5 +237,29 @@
     "tool": "built-in image_gen",
     "model": "not exposed by tool",
     "date": "2026-09-30"
+  },
+  {
+    "name": "ladder_brackets_v02",
+    "category": "props",
+    "file": "assets/generated/ladder_brackets_v02.png",
+    "prompt": "Use case: stylized-concept. Asset type: 2D game prop atlas on a genuinely transparent background, for a portrait medieval castle window cleaning logic puzzle. Primary request: one neat sprite atlas with exactly two separately isolated objects: on the left a front-facing narrow wooden ladder with two straight parallel honey oak rails and twelve evenly spaced rungs, iron wrapped ends; on the right a small front-facing dark wrought iron paired ladder bracket fixture, two riveted attachment plates connected by a short curved socket. Style: crisp painterly pixel art, dark navy outlines, warm amber light, muted bronze highlights, detailed but readable at tiny sizes. Composition: ladder occupies x=15..45 percent and y=10..90 percent, bracket occupies x=65..90 percent and y=35..60 percent, large transparent space separating them, no contact shadows beyond sprite borders. Orthographic 2D front view, rails vertical, no perspective. Constraints: transparent alpha, no scene, no characters, no lettering, no arrows, no icons, no checkerboard painted into image, no watermark. Objects intended as gameplay props, readable silhouettes.",
+    "reference_images": [],
+    "tool": "built-in image_gen",
+    "model": "not exposed by tool",
+    "date": "2026-09-30",
+    "atlas_regions": {
+      "ladder": [
+        130,
+        54,
+        318,
+        1426
+      ],
+      "bracket": [
+        612,
+        612,
+        316,
+        230
+      ]
+    }
   }
 ]

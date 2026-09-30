@@ -1,9 +1,14 @@
 class_name TowerPainter
 extends RefCounted
 ## Presentation only. The exterior and cutaway use exactly the same world coordinates.
+const PROPS: Texture2D = preload("res://assets/generated/ladder_brackets_v02.png")
+const LADDER_REGION: Rect2 = Rect2(130, 54, 318, 1426)
+const BRACKET_REGION: Rect2 = Rect2(612, 612, 316, 230)
 var rattle_at: float = -10
 var shutter_at: float = -10
 var route_at: float = -10
+var selection_at: float = -10
+var selection_was_visible: bool = false
 
 func event(view: CastleView, event_name: String) -> void:
 	match event_name:
@@ -18,15 +23,20 @@ func event(view: CastleView, event_name: String) -> void:
 func draw(view: CastleView) -> void:
 	var model: TowerState = view.state as TowerState
 	var wall: TowerLayout = model.tower
+	var teaching: bool = model is TutorialState
 	_sky(view, model)
-	_wall(view, Rect2(76, 116, 568, 1164))
+	_wall(view, Rect2(76, 450 if teaching else 116, 568, 830 if teaching else 1164))
 	for x: int in range(80, 650, 62):
-		view._box(Rect2(x, 100, 38, 32), Color("646a80"), Color("192636"), 3)
+		view._box(Rect2(x, 434 if teaching else 100, 38, 32), Color("646a80"), Color("192636"), 3)
 	view._ivy(Vector2(91, 190), 30)
 	view._ivy(Vector2(626, 554), 32)
 	view._ivy(Vector2(110, 960), 18)
-	view._banner(Vector2(108, 420), Color("88556b"))
-	for floor_value: int in 4:
+	if not teaching:
+		view._banner(Vector2(108, 420), Color("88556b"))
+	var visible_floors: Array = [0, 1, 2, 3]
+	if teaching:
+		visible_floors = (wall as TutorialLayout).tutorial_step_data()["visible_floors"]
+	for floor_value: int in visible_floors:
 		var y: float = wall.floor_y(floor_value)
 		if model.floor_has_gap(floor_value):
 			_ledge(view, 92, y, 228)
@@ -34,42 +44,40 @@ func draw(view: CastleView) -> void:
 		else:
 			_ledge(view, 92, y, 536)
 	_mechanisms(view, model)
-	for index: int in 12:
+	for index: int in wall.window_count():
 		_window(view, model, index)
 	if model.ladder_anchor >= 0:
 		_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 1)
 	if model.inside():
 		_cutaway(view, model)
-	if model.placement_mode:
+	var show_candidates: bool = model.placement_mode or model.help_visible
+	if show_candidates and not selection_was_visible:
+		selection_at = view.clock
+	selection_was_visible = show_candidates
+	if show_candidates:
+		view.draw_rect(Rect2(76, 116, 568, 1164), Color(0.03, 0.05, 0.12, 0.10))
+		var fade: float = 1.0 if view.reduced_motion else clampf((view.clock - selection_at) / 0.15, 0, 1)
 		for index: int in model.candidate_anchors():
-			_ladder(view, model.anchor_base(index), model.anchor_top(index), 0.16)
-			_marker(view, model.hook_hit_rect(index).get_center(), "↔" if wall.is_horizontal_anchor(index) else "↕", Color("b8dfe0"))
+			_ghost(view, model, index, fade, index == model.preview_anchor)
 	if model.preview_anchor >= 0:
 		if model.ladder_anchor >= 0:
 			_ladder(view, model.anchor_base(model.ladder_anchor), model.anchor_top(model.ladder_anchor), 0.28, Color("c3817b"))
-		_ladder(view, model.anchor_base(model.preview_anchor), model.anchor_top(model.preview_anchor), 0.5)
-	if model.ladder_anchor >= 0 and model.anchor_on_floor(model.ladder_anchor) and not model.inside() and not model.placement_mode:
-		_marker(view, model.hook_hit_rect(model.ladder_anchor).get_center(), "↔" if wall.is_horizontal_anchor(model.ladder_anchor) else "↕", Color("ecd2a0"))
+		if model.busy():
+			_ghost(view, model, model.preview_anchor, 1, true)
 	_hero(view, model)
-	if model.phase == "playing" and not model.paused and not model.busy() and not model.inside():
-		# The hero is the placement handle; this stays quiet until touched.
-		var handle: Vector2 = model.hero + Vector2(0, 20)
-		view.draw_arc(handle, 19, 0, TAU, 24, Color(0.91, 0.80, 0.58, 0.6), 2)
-		for side: int in [-1, 1]:
-			view.draw_line(handle + Vector2(side * 6, -10), handle + Vector2(side * 6, 10), Color("e5c991"), 2)
-		for rung: int in 3:
-			view.draw_line(handle + Vector2(-6, -7 + rung * 7), handle + Vector2(6, -7 + rung * 7), Color("e5c991"), 2)
+	if model.ladder_anchor < 0 and not model.inside() and model.phase == "playing":
+		var carry: Vector2 = model.carried_ladder_hit_rect().get_center()
+		_ladder(view, carry + Vector2(0, 30), carry - Vector2(0, 30), 1)
+	if model.help_visible:
+		_available(view, model)
+	_feedback(view, model)
 	_juice(view, model)
 	if view.wiping:
 		view._box(Rect2(view.pointer - Vector2(17, 4), Vector2(34, 8)), Color("fae4a8"), CastleView.INK, 2)
 		view.draw_line(view.pointer + Vector2(0, 4), view.pointer + Vector2(5, 19), Color("8dd4c1"), 5)
-	if not model.is_clean(0) and model.phase == "playing":
-		var center: Vector2 = model.window_rect(0).get_center()
-		var offset: float = 0.0 if view.reduced_motion else sin(view.clock * 2.5) * 22
-		view.draw_line(center + Vector2(-22 + offset, 0), center + Vector2(14 + offset, 0), Color(1, 0.92, 0.72, 0.75), 7)
 
 func _sky(view: CastleView, model: TowerState) -> void:
-	var dawn: float = float(model.cleaned_count()) / 12.0
+	var dawn: float = float(model.cleaned_count()) / model.layout.window_count()
 	for stripe: int in 64:
 		var top: Color = Color("111e42").lerp(Color("314666"), dawn * 0.7)
 		var bottom: Color = Color("283b59").lerp(Color("7b6671"), dawn)
@@ -239,6 +247,13 @@ func _ladder(view: CastleView, base: Vector2, top: Vector2, alpha: float, color:
 		var shake: Vector2 = Vector2(sin(age * 70) * (1 - age / 0.18) * 2, 0)
 		base += shake
 		top += shake
+	if alpha >= 0.99:
+		var angle: float = (top - base).angle() + PI / 2
+		var length: float = base.distance_to(top)
+		view.draw_set_transform(base, angle)
+		view.draw_texture_rect_region(PROPS, Rect2(-21, -length, 42, length), LADDER_REGION)
+		view.draw_set_transform(Vector2.ZERO)
+		return
 	var direction: Vector2 = (top - base).normalized()
 	var perpendicular: Vector2 = Vector2(-direction.y, direction.x)
 	color.a = alpha
@@ -260,6 +275,68 @@ func _marker(view: CastleView, point: Vector2, symbol: String, tint: Color) -> v
 		var end: Vector2 = point + direction * side * 14
 		view.draw_polyline(PackedVector2Array([end - direction * side * 6 - perpendicular * 6, end, end - direction * side * 6 + perpendicular * 6]), tint, 3)
 
+func _ghost(view: CastleView, model: TowerState, index: int, fade: float, selected: bool) -> void:
+	var base: Vector2 = model.anchor_base(index)
+	var top: Vector2 = model.anchor_top(index)
+	var tint: Color = Color("ffe4a3") if selected else Color("e9cb8e")
+	var halo: Color = tint
+	halo.a = (0.17 if selected else 0.09) * fade
+	view.draw_line(base, top, halo, 74)
+	_ladder(view, base, top, (0.95 if selected else 0.67) * fade, tint)
+	view.draw_circle(base, 6, Color(tint, 0.7 * fade))
+	view.draw_circle(top, 6, Color(tint, 0.7 * fade))
+
+func _bracket(view: CastleView, point: Vector2, horizontal: bool, tint: Color) -> void:
+	view.draw_set_transform(point, PI / 2 if horizontal else 0.0)
+	view.draw_texture_rect_region(PROPS, Rect2(-26, -18, 52, 36), BRACKET_REGION, Color.WHITE if tint == Color("a99c82") else Color("a2afc7"))
+	view.draw_set_transform(Vector2.ZERO)
+
+func _available(view: CastleView, model: TowerState) -> void:
+	for at: int in model.reachable_regions():
+		if at == 6:
+			continue
+		var floor_value: int = model.tower.region_floor(at)
+		var right_side: bool = at in [2, 4]
+		if model is TutorialState:
+			for anchor: int in model.tower.anchor_count():
+				var ends: Array[int] = model.tower.anchor_ends(anchor)
+				if at in ends:
+					var endpoint: Vector2 = model.anchor_base(anchor) if at == ends[0] else model.anchor_top(anchor)
+					right_side = endpoint.x >= 400
+		var left: float = 400 if right_side else 92
+		var width: float = 228 if model.floor_has_gap(floor_value) else 536
+		view.draw_rect(Rect2(left, model.tower.floor_y(floor_value) - 12, width, 12), Color(0.52, 0.79, 0.73, 0.32))
+	for index: int in model.reachable_windows():
+		if not model.is_clean(index):
+			_arch_outline(view, model.window_rect(index).grow(7), Color("e4dcaf"))
+
+func _arch_outline(view: CastleView, area: Rect2, tint: Color) -> void:
+	var radius: float = area.size.x / 2
+	var center: Vector2 = area.position + Vector2(radius, radius)
+	view.draw_arc(center, radius, PI, TAU, 24, tint, 2)
+	view.draw_polyline(PackedVector2Array([center - Vector2(radius, 0), Vector2(area.position.x, area.end.y), area.end, center + Vector2(radius, 0)]), tint, 2)
+
+func _feedback(view: CastleView, model: TowerState) -> void:
+	if model.unreachable_window >= 0 and model.unreachable_age < 1.2:
+		var fade: float = 1 - model.unreachable_age / 1.2
+		var tint: Color = Color(0.97, 0.76, 0.57, fade)
+		_arch_outline(view, model.window_rect(model.unreachable_window).grow(9), tint)
+		if model.unreachable_points.size() > 1:
+			view.draw_polyline(PackedVector2Array(model.unreachable_points), Color(0.86, 0.79, 0.68, fade * 0.65), 3)
+		if model.unreachable_gap.size() == 2:
+			var stop: Vector2 = model.unreachable_gap[0]
+			var radius: float = 18.0 if view.reduced_motion else 16 + sin(model.unreachable_age * PI / 1.2) * 12
+			view.draw_arc(stop, radius, 0, TAU, 32, tint, 3)
+			view.draw_line(stop - Vector2(7, 7), stop + Vector2(7, 7), tint, 3)
+			view.draw_line(stop - Vector2(7, -7), stop + Vector2(7, -7), tint, 3)
+	if model.nudge_age >= 0 and model.nudge_age < 1.0 and not model.paused:
+		var alpha: float = sin(model.nudge_age * PI) * 0.75
+		var rect: Rect2 = model.carried_ladder_hit_rect() if model.ladder_anchor < 0 else model.ladder_hit_rect()
+		view.draw_rect(rect.grow(-9), Color(1, 0.82, 0.47, alpha), false, 3)
+		for index: int in model.reachable_windows():
+			if not model.is_clean(index):
+				_arch_outline(view, model.window_rect(index).grow(7), Color(1, 0.86, 0.64, alpha))
+
 func _hero(view: CastleView, model: TowerState) -> void:
 	var moving: bool = absf(model.hero.x - model.walk_target) > 2
 	if moving:
@@ -267,12 +344,15 @@ func _hero(view: CastleView, model: TowerState) -> void:
 	if view.wiping:
 		view.facing = signf(view.pointer.x - model.hero.x) if absf(view.pointer.x - model.hero.x) > 1 else 1.0
 	var pose: String = view.characters.hero_pose(model, view.wiping, view.clock - view.place_time < 0.25)
+	if model.ladder_anchor < 0 and not model.climbing and not view.wiping:
+		# The carried prop beside the hero is the sole visible ladder/control surface.
+		pose = "walk" if moving else "idle"
 	if model.inside():
 		pose = "carry_ladder" if model.ladder_anchor < 0 else ("walk" if moving else "idle")
 	view.characters._draw_aligned(view, view.characters.heroes[pose], view.characters.bounds[pose], model.hero, 66, view.facing)
 
 func _juice(view: CastleView, model: TowerState) -> void:
-	for index: int in 12:
+	for index: int in model.layout.window_count():
 		var age: float = view.clock - view.reveal_times[index]
 		if age >= 0 and age < 0.65:
 			var area: Rect2 = model.window_rect(index)
@@ -291,12 +371,14 @@ func _juice(view: CastleView, model: TowerState) -> void:
 
 func _mechanisms(view: CastleView, model: TowerState) -> void:
 	for index: int in model.tower.anchor_count():
-		if model.tower.is_horizontal_anchor(index):
-			continue
 		var key: int = model.tower.hook_keys[index]
-		var top: Vector2 = model.anchor_top(index) + Vector2(0, -8)
-		var tint: Color = Color("a99c82") if model.is_clean(key) else Color("677187")
-		view.draw_arc(top, 7, PI, TAU * 0.85, 14, tint, 3)
+		var horizontal: bool = model.tower.is_horizontal_anchor(index)
+		var top: Vector2 = model.anchor_top(index)
+		var tint: Color = Color("a99c82") if key < 0 or model.is_clean(key) else Color("677187")
+		_bracket(view, model.anchor_base(index), horizontal, tint)
+		_bracket(view, top, horizontal, tint)
+		if key < 0 or key >= view.reveal_times.size():
+			continue
 		var age: float = view.clock - view.reveal_times[key]
 		if age >= 0 and age < 0.7:
 			var source: Vector2 = model.window_rect(key).get_center()

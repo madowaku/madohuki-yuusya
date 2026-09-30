@@ -14,10 +14,13 @@ var browser_callback: JavaScriptObject
 var debug_visible: bool = false
 var step_clock: float = 0.0
 var web_clock: float = 0.0
+var tutorial_advance_timer: float = 0.0
+var hints_enabled_preference: bool = true
 
 func _ready() -> void:
 	state.phase = "title"
 	_load_settings()
+	(state as TowerState).set_hints_enabled(hints_enabled_preference)
 	castle.bind(state)
 	hud.bind(state, journey)
 	hud.command.connect(_command)
@@ -46,6 +49,17 @@ func _process(delta: float) -> void:
 	if state.climbing and not state.paused and step_clock > 0.36:
 		sound.play("step")
 		step_clock = 0
+	if tutorial_advance_timer > 0.0 and state is TutorialState:
+		var tutorial: TutorialState = state as TutorialState
+		if tutorial.phase != "clear":
+			tutorial_advance_timer = 0.0
+		elif not tutorial.paused:
+			tutorial_advance_timer = maxf(0.0, tutorial_advance_timer - delta)
+			if tutorial_advance_timer == 0.0:
+				if tutorial.tutorial_step >= 3:
+					_begin_tower()
+				else:
+					_begin_tutorial(tutorial.tutorial_step + 1)
 	if OS.has_feature("web"):
 		web_clock += delta
 		if web_clock > 0.2:
@@ -67,7 +81,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				KEY_UP, KEY_DOWN, KEY_W, KEY_S:
 					state.climb()
 				KEY_E:
-					state.retrieve()
+					if not state is TowerState:
+						state.retrieve()
 				KEY_Z:
 					_command("undo")
 				KEY_F3:
@@ -150,26 +165,33 @@ func _pointer_down(point: Vector2) -> void:
 
 func _tower_pointer_down(point: Vector2) -> void:
 	var model: TowerState = state as TowerState
-	if model.placement_mode:
-		for index: int in model.candidate_anchors():
-			if model.hook_hit_rect(index).has_point(point):
-				model.request_place(index)
-				return
-	elif model.ladder_anchor >= 0 and model.anchor_on_floor(model.ladder_anchor):
-		if model.hook_hit_rect(model.ladder_anchor).has_point(point):
-			model.climb()
-			return
 	for index: int in model.masks.size():
 		if model.tower.window_hit_rect(index).has_point(point):
 			if model.interact_window(index) and not model.is_clean(index) and model.window_unlocked(index) and not model.inside():
 				active_window = index
 				castle.wiping = true
 			return
-	if not model.inside() and Rect2(model.hero + Vector2(-44, -24), Vector2(88, 88)).has_point(point):
+	if model.placement_mode:
+		var candidate: int = model.placement_candidate_at(point)
+		if candidate >= 0:
+			model.request_place(candidate)
+		elif model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
+			model.select_ladder()
+		elif model.ladder_anchor < 0 and model.carried_ladder_hit_rect().has_point(point):
+			model.select_ladder()
+		return
+	if model.help_visible:
+		var help_candidate: int = model.placement_candidate_at(point)
+		if help_candidate >= 0:
+			model.request_place(help_candidate)
+			return
+	if model.ladder_anchor >= 0 and model.ladder_hit_rect().has_point(point):
 		model.select_ladder()
 		return
-	if absf(point.y - model.hero.y) < 60:
-		model.walk_to(point.x)
+	if model.ladder_anchor < 0 and model.carried_ladder_hit_rect().has_point(point):
+		model.select_ladder()
+		return
+	model.tap_destination(point)
 
 func _pointer_move(point: Vector2) -> void:
 	if not dragging or not state.can_act():
@@ -190,11 +212,7 @@ func _update_tower_preview(point: Vector2) -> void:
 	var model: TowerState = state as TowerState
 	if not model.placement_mode:
 		return
-	model.preview_anchor = -1
-	for index: int in model.candidate_anchors():
-		if model.hook_hit_rect(index).has_point(point):
-			model.preview_anchor = index
-			return
+	model.preview_anchor = model.placement_candidate_at(point)
 
 func _pointer_up() -> void:
 	dragging = false
@@ -219,6 +237,8 @@ func _switch_state(model: StageState) -> void:
 	if state.event_occurred.is_connected(_event):
 		state.event_occurred.disconnect(_event)
 	state = model
+	if state is TowerState:
+		(state as TowerState).set_hints_enabled(hints_enabled_preference)
 	castle.bind(state)
 	hud.bind(state, journey)
 	state.event_occurred.connect(_event)
@@ -226,10 +246,21 @@ func _switch_state(model: StageState) -> void:
 	hud.refresh()
 
 func _begin_tower() -> void:
+	tutorial_advance_timer = 0.0
 	hud.result_delay = 0
 	hud.credits_open = false
 	hud.planning_open = false
 	_switch_state(TowerState.new())
+	sound.begin()
+
+func _begin_tutorial(step: int) -> void:
+	tutorial_advance_timer = 0.0
+	hud.result_delay = 0.0
+	hud.credits_open = false
+	hud.planning_open = false
+	var tutorial: TutorialState = TutorialState.new()
+	tutorial.configure_tutorial(step)
+	_switch_state(tutorial)
 	sound.begin()
 
 func _command(action: String) -> void:
@@ -241,18 +272,35 @@ func _command(action: String) -> void:
 	if action == "undo" and state is TowerState:
 		_pointer_up()
 		hud.result_delay = 0
+		if state is TutorialState:
+			tutorial_advance_timer = 0.0
 		(state as TowerState).undo()
 		return
 	if action == "action" and state is TowerState:
 		(state as TowerState).select_ladder()
+		return
+	if action == "help" and state is TowerState:
+		(state as TowerState).toggle_help()
+		return
+	if action == "hints" and state is TowerState:
+		hints_enabled_preference = not hints_enabled_preference
+		(state as TowerState).set_hints_enabled(hints_enabled_preference)
+		_save_settings()
+		hud.refresh()
 		return
 	if action == "title":
 		_begin_tower()
 		state.phase = "title"
 		hud.refresh()
 		return
+	if state is TutorialState and action in ["start", "restart", "retry_wall", "new_castle"]:
+		_begin_tutorial((state as TutorialState).tutorial_step)
+		return
 	if state is TowerState and action in ["start", "restart", "retry_wall", "new_castle"]:
-		_begin_tower()
+		if action == "start" and state.phase == "title":
+			_begin_tutorial(1)
+		else:
+			_begin_tower()
 		return
 	if action.begins_with("gift:"):
 		if journey.choose_gift(action.trim_prefix("gift:")):
@@ -327,6 +375,15 @@ func _command(action: String) -> void:
 func _event(event_name: String, detail: int) -> void:
 	if event_name != "window_clean_progress":
 		print("[WindowHero] %s %d %s" % [event_name, detail, JSON.stringify(state.snapshot())])
+	if state is TutorialState:
+		match event_name:
+			"ladder_placed": sound.play("place")
+			"window_cleaned": sound.play("shine")
+			"state_undone": sound.play("retrieve")
+			"stage_cleared":
+				tutorial_advance_timer = 0.8
+				sound.play("clear")
+		return
 	if state is TowerState:
 		match event_name:
 			"ladder_placed", "shutter_opened": sound.play("place")
@@ -401,6 +458,7 @@ func _load_settings() -> void:
 		hud.language = str(config.get_value("settings", "language", "ja"))
 		hud.muted = bool(config.get_value("settings", "muted", false))
 		hud.reduced_motion = bool(config.get_value("settings", "reduced_motion", false))
+		hints_enabled_preference = bool(config.get_value("settings", "hints_enabled", true))
 		hud.best_moves = int(config.get_value("record", "moves", 0))
 		var saved_records: Variant = config.get_value("record", "castles", {})
 		if saved_records is Dictionary:
@@ -412,6 +470,7 @@ func _save_settings() -> void:
 	config.set_value("settings", "language", hud.language)
 	config.set_value("settings", "muted", hud.muted)
 	config.set_value("settings", "reduced_motion", hud.reduced_motion)
+	config.set_value("settings", "hints_enabled", hints_enabled_preference)
 	config.set_value("record", "moves", hud.best_moves)
 	config.set_value("record", "castles", run_records)
 	config.save("user://settings.cfg")
@@ -420,7 +479,7 @@ func _debug_browser_command(arguments: Array) -> void:
 	if arguments.is_empty():
 		return
 	var action: String = str(arguments[0])
-	if action in ["start", "restart", "pause", "resume", "title", "language"]:
+	if action in ["start", "restart", "pause", "resume", "title", "language", "help", "hints"]:
 		_command(action)
 
 func debug_snapshot() -> Dictionary:
